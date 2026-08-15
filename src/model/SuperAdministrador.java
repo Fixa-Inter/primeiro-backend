@@ -3,18 +3,21 @@ package model;
 public class SuperAdministrador {
 
     private Integer id;                // coluna: id
-    private String cargo;              // coluna: cargo
+    private String funcao;             // coluna: funcao
     private String nome;               // coluna: nome
     private String senhaHash;          // coluna: senha_hash
+    private String email;              // coluna: email
 
     // construtor
 
-    public SuperAdministrador(Integer id, String cargo, String nome, String senhaHash) {
+    public SuperAdministrador(Integer id, String funcao, String nome, String senhaHash, String email) {
         this.id = id;
-        this.cargo = cargo;
+        this.funcao = funcao;
         this.nome = nome;
         this.senhaHash = senhaHash;
+        this.email = email;
     }
+
 
     // getters e setters
 
@@ -26,12 +29,12 @@ public class SuperAdministrador {
         this.id = id;
     }
 
-    public String getCargo() {
-        return cargo;
+    public String getFuncao() {
+        return funcao;
     }
 
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
+    public void setFuncao(String funcao) {
+        this.funcao = funcao;
     }
 
     public String getNome() {
@@ -50,11 +53,20 @@ public class SuperAdministrador {
         this.senhaHash = senhaHash;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+
     // toString
 
     @Override
     public String toString(){
-        return "SuperAdministrador{id=%d, cargo='%s', nome='%s', senhaHash='%s'}"
-                .formatted(id, cargo, nome, senhaHash);
+        return "SuperAdministrador{id=%d, funcao='%s', nome='%s', senhaHash='%s', email='%s'}"
+                .formatted(id, funcao, nome, senhaHash, email);
     }
 }

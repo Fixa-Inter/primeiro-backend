@@ -2,21 +2,25 @@ package model;
 
 import java.time.LocalDate;
 
+import java.time.LocalDate;
+
 public class Usuario {
 
-    private Integer id;               // coluna: id
-    private String nome;              // coluna: nome
-    private String senhaHash;         // coluna: senha_hash
-    private Boolean estaAtivo;        // coluna: esta_Ativo
-    private String email;             // coluna: email
-    private LocalDate dataCriacao;    // coluna: data_criacao
-    private String cargo;             // coluna: cargo
-    private Integer fkInstituicao;    // coluna: fk_instituicao_id
-    private  Integer fkTipoDeAcesso;  // coluna: k_tipo_de_acesso_id
+    private Integer id;                 // coluna: id
+    private String nome;                // coluna: nome
+    private String senhaHash;           // coluna: senha_hash
+    private Boolean estaAtivo;          // coluna: esta_Ativo
+    private String email;               // coluna: email
+    private LocalDate dataCriacao;      // coluna: data_criacao
+    private String cargo;               // coluna: cargo
+    private String tipoDeAcesso;        // coluna: tipo_de_acesso
+    private Integer fkInstituicao;      // coluna: fk_instituicao_id
+    private LocalDate dataUltimoAcesso; // coluna: data_ultimo_acesso
 
 
     // construtor
-    public Usuario(Integer id, String nome, String senhaHash, Boolean estaAtivo, String email, LocalDate dataCriacao, String cargo, Integer fkInstituicao, Integer fkTipoDeAcesso) {
+
+    public Usuario(Integer id, String nome, String senhaHash, Boolean estaAtivo, String email, LocalDate dataCriacao, String cargo, String tipoDeAcesso, Integer fkInstituicao, LocalDate dataUltimoAcesso) {
         this.id = id;
         this.nome = nome;
         this.senhaHash = senhaHash;
@@ -24,9 +28,11 @@ public class Usuario {
         this.email = email;
         this.dataCriacao = dataCriacao;
         this.cargo = cargo;
+        this.tipoDeAcesso = tipoDeAcesso;
         this.fkInstituicao = fkInstituicao;
-        this.fkTipoDeAcesso = fkTipoDeAcesso;
+        this.dataUltimoAcesso = dataUltimoAcesso;
     }
+
 
     // getters e setters
 
@@ -86,6 +92,14 @@ public class Usuario {
         this.cargo = cargo;
     }
 
+    public String getTipoDeAcesso() {
+        return tipoDeAcesso;
+    }
+
+    public void setTipoDeAcesso(String tipoDeAcesso) {
+        this.tipoDeAcesso = tipoDeAcesso;
+    }
+
     public Integer getFkInstituicao() {
         return fkInstituicao;
     }
@@ -94,19 +108,19 @@ public class Usuario {
         this.fkInstituicao = fkInstituicao;
     }
 
-    public Integer getFkTipoDeAcesso() {
-        return fkTipoDeAcesso;
+    public LocalDate getDataUltimoAcesso() {
+        return dataUltimoAcesso;
     }
 
-    public void setFkTipoDeAcesso(Integer fkTipoDeAcesso) {
-        this.fkTipoDeAcesso = fkTipoDeAcesso;
+    public void setDataUltimoAcesso(LocalDate dataUltimoAcesso) {
+        this.dataUltimoAcesso = dataUltimoAcesso;
     }
 
     // toString
 
     @Override
     public String toString(){
-        return "Usuario{id=%d, nome='%s', senhaHash='%s', estaAtivo=%b, email='%s', dataCriacao=%s, cargo='%s', fkInstituicao=%d, fkTipoDeAcesso=%d}"
-                .formatted(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, fkInstituicao, fkInstituicao);
+        return "Usuario{id=%d, nome='%s', senhaHash='%s', estaAtivo=%b, email='%s', dataCriacao=%s, cargo='%s', tipoDeAcesso='%s', fkTipoDeAcesso=%d, dataUltimoAcesso=%s}"
+                .formatted(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkInstituicao, dataUltimoAcesso);
         }
 }
