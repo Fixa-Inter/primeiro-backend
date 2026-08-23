@@ -1,4 +1,4 @@
-package model;
+package com.model;
 
 import java.security.PrivateKey;
 import java.sql.Timestamp;
