@@ -5,7 +5,7 @@ public class Endereco {
     private Integer id;              // coluna: id
     private String rua;              // coluna: rua
     private String bairro;           // coluna: bairro
-    private String complementp;      // coluna: complemento
+    private String complemento;      // coluna: complemento
     private String cidade;           // coluna: cidade
     private String estado;           // coluna: estado
     private Integer numero;          // coluna: numero
@@ -14,11 +14,11 @@ public class Endereco {
 
     // construtor
 
-    public Endereco(Integer id, String rua, String bairro, String complementp, String cidade, String estado, Integer numero, String cep, Integer fkInstituicao) {
+    public Endereco(Integer id, String rua, String bairro, String complemento, String cidade, String estado, Integer numero, String cep, Integer fkInstituicao) {
         this.id = id;
         this.rua = rua;
         this.bairro = bairro;
-        this.complementp = complementp;
+        this.complemento = complemento;
         this.cidade = cidade;
         this.estado = estado;
         this.numero = numero;
@@ -52,12 +52,12 @@ public class Endereco {
         this.bairro = bairro;
     }
 
-    public String getComplementp() {
-        return complementp;
+    public String getComplemento() {
+        return complemento;
     }
 
     public void setComplementp(String complementp) {
-        this.complementp = complementp;
+        this.complemento = complemento;
     }
 
     public String getCidade() {
@@ -102,9 +102,9 @@ public class Endereco {
 
     // toString
 
-    @Override
+    @Overridex
     public String toString(){
         return "Endereco{id=%d, rua='%s', bairro='%s', complemento='%s', cidade='%s', estado='%s', numero='%s', cep='%s'}"
-                .formatted(id, rua, bairro, complementp, cidade, estado, numero, cep, fkInstituicao);
+                .formatted(id, rua, bairro, complemento, cidade, estado, numero, cep, fkInstituicao);
     }
 }
