@@ -102,7 +102,7 @@ public class Endereco {
 
     // toString
 
-    @Overridex
+    @Override
     public String toString(){
         return "Endereco{id=%d, rua='%s', bairro='%s', complemento='%s', cidade='%s', estado='%s', numero='%s', cep='%s'}"
                 .formatted(id, rua, bairro, complemento, cidade, estado, numero, cep, fkInstituicao);
