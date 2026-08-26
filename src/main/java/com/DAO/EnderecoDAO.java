@@ -23,7 +23,6 @@ public class EnderecoDAO extends DAO{
 
         // recebe dados do endereco a ser cadastrado
 
-        Integer id = endereco.getId();
         String rua = endereco.getRua();
         String bairro = endereco.getBairro();
         String complemento = endereco.getComplemento();
@@ -42,23 +41,22 @@ public class EnderecoDAO extends DAO{
         // string com comando sql
 
         String sql = """
-                INSERT INTO endereco (ID, RUA, BAIRRO, COMPLEMENTO, CIDADE, ESTADO, NUMERO, CEP, FK_INSTITUICAO_ID)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO endereco (RUA, BAIRRO, COMPLEMENTO, CIDADE, ESTADO, NUMERO, CEP, FK_INSTITUICAO_ID)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             // colocando valores no script sql
 
-            pstmt.setInt(1, id);
-            pstmt.setString(2, rua);
-            pstmt.setString(3, bairro);
-            pstmt.setString(4, complemento);
-            pstmt.setString(5, cidade);
-            pstmt.setString(6, estado);
-            pstmt.setInt(7, numero);
-            pstmt.setString(8, cep);
-            pstmt.setInt(9, fkInstituicao);
+            pstmt.setString(1, rua);
+            pstmt.setString(2, bairro);
+            pstmt.setString(3, complemento);
+            pstmt.setString(4, cidade);
+            pstmt.setString(5, estado);
+            pstmt.setInt(6, numero);
+            pstmt.setString(7, cep);
+            pstmt.setInt(8, fkInstituicao);
 
             pstmt.execute();
 
@@ -76,7 +74,7 @@ public class EnderecoDAO extends DAO{
 
         // string com comando sql
 
-        String sql = "SELECT id, rua, bairro, complemento, cidade, estado, numero, cep, fkInstituicao FROM ENDERECO WHERE fkInstituicao = ?";
+        String sql = "SELECT id, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id FROM endereco WHERE fk_instituicao_id = ?";
 
         Endereco e;
 
@@ -130,7 +128,7 @@ public class EnderecoDAO extends DAO{
 
         // String builder para implementar campos do update, ista para adicionar os valores que vao ser adicionados
 
-        StringBuilder sql = new StringBuilder("UPDATE endereco SET");
+        StringBuilder sql = new StringBuilder("UPDATE endereco SET ");
         List<Object> valores = new ArrayList<>();
 
         // verifica se os valores novos sao iguais aos antigos, e se nao for altera
@@ -207,7 +205,7 @@ public class EnderecoDAO extends DAO{
 
         // string com comando SQL
 
-        String sql = "DELETE FROM endereco WHERE ID  = ?";
+        String sql = "DELETE FROM endereco WHERE ID = ?";
 
         try (PreparedStatement pstmt = this.conn.prepareStatement(sql)){
             pstmt.setInt(1, id);
