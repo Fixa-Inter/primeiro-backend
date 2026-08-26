@@ -1,9 +1,12 @@
 package com.Testes;
 
 import com.DAO.EnderecoDAO;
+import com.DAO.InstituicaoDAO;
 import com.model.Endereco;
+import com.model.Instituicao;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class Main {
     static void main() {
@@ -22,7 +25,7 @@ public class Main {
             System.out.print("Endereco cadastrado");
 
             // select
-            Endereco select = dao.pesquisarIdInstituicao(2);
+            Endereco select = dao.pesquisarIdEndereco(2);
             System.out.println("Endereco encontrado: " + "\n" + select);
 
             // update
@@ -42,6 +45,21 @@ public class Main {
             erro.printStackTrace(System.err);
         }
 
-        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+     LocalDate dataCadastroGerminare = LocalDate.of(2026, 01, 10);
+    Instituicao germinare = new Instituicao(null, "Germinare", true, "germinare@email_fake", dataCadastroGerminare, "23088915000104");
+
+    try (InstituicaoDAO dao = new InstituicaoDAO()){
+
+
+
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    } catch (ClassNotFoundException e) {
+        throw new RuntimeException(e);
+    }
+
     }
 }

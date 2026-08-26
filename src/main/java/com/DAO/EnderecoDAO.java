@@ -70,7 +70,7 @@ public class EnderecoDAO extends DAO{
     }
 
     // select
-    public Endereco pesquisarIdInstituicao(int idInstituicao) throws SQLException {
+    public Endereco pesquisarIdEndereco(int idInstituicao) throws SQLException {
 
         // string com comando sql
 
@@ -90,15 +90,15 @@ public class EnderecoDAO extends DAO{
 
                 // recebe informacoes do select e adiciona cada uma a sua variavel
 
-                Integer id = rs.getInt("id");
+                int id = rs.getInt("id");
                 String rua = rs.getString("rua");
                 String bairro = rs.getString("bairro");
                 String complemento = rs.getString("complemento");
                 String cidade = rs.getString("cidade");
                 String estado = rs.getString("estado");
-                Integer numero = rs.getInt("numero");
+                int numero = rs.getInt("numero");
                 String cep = rs.getString("cep");
-                Integer fkInstituicao = rs.getInt("fk_instituicao_id"); // duvida: aqui eu coloco o nome do que esta no BD ou na model??
+                int fkInstituicao = rs.getInt("fk_instituicao_id"); // duvida: aqui eu coloco o nome do que esta no BD ou na model??
 
                 // cria um objeto endereco com essas variaveis
 
@@ -126,7 +126,7 @@ public class EnderecoDAO extends DAO{
         String cep = alterado.getCep();
         Integer fkInstituicao = alterado.getFkInstituicao();
 
-        // String builder para implementar campos do update, ista para adicionar os valores que vao ser adicionados
+        // String builder para implementar campos do update e Lista para adicionar os valores que vao ser adicionados
 
         StringBuilder sql = new StringBuilder("UPDATE endereco SET ");
         List<Object> valores = new ArrayList<>();
@@ -219,5 +219,4 @@ public class EnderecoDAO extends DAO{
             throw e;
         }
     }
-
 }
