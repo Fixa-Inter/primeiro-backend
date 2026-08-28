@@ -42,7 +42,7 @@ public class InstituicaoDAO extends DAO{
                 default -> throw new IllegalArgumentException();
             };
         } catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
-            return null; // nao tem filtro mas funciona normal
+            return null;
         }
 
     }
@@ -56,23 +56,18 @@ public class InstituicaoDAO extends DAO{
     // insert
     public void cadastrar(Instituicao instituicao) throws SQLException {
 
-        // recebe os dados de instituicao a ser cadastrada
-
         String nome = instituicao.getNome();
         Boolean estaAtivo = instituicao.getEstaAtivo();
         String emailCorporativo = instituicao.getEmailCorporativo();
         LocalDate dataCadastro = instituicao.getDataCadastro();
         String cnpj = instituicao.getCnpj();
 
-        // string com comando SQL
 
         String sql = """
                      INSERT INTO instituicao (NOME, ESTA_ATIVO, EMAIL_CORPORATIVO, DATA_CADASTRO, CNPJ)
                      VALUES (?, ?, ?, ?, ?)
                      """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
-
-            // colocando valores no script
 
             pstmt.setString(1, nome);
             pstmt.setBoolean(2, estaAtivo);
@@ -84,39 +79,36 @@ public class InstituicaoDAO extends DAO{
 
             conn.commit();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             conn.rollback();
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 
     // select
     public List<Instituicao> listar(String campoFiltro, Object valorFiltro, String campoSequencia, String direcaoSequencia) throws SQLException {
 
-        // variavel auxiliar para verificar se vai ter filtro
         boolean temFiltro = true;
 
         List<Instituicao> instituicoes = new ArrayList<>();
 
+
         String sql = "SELECT id, nome, esta_ativo, email_corporativo, data_cadastro, cnpj FROM instituicao";
 
-        // Verificando se tem o campo de filtragem digitado pelo usuario
         if (campoFiltro != null && camposFiltraveis.containsKey(campoFiltro)){
             sql += " WHERE %s = ?".formatted(campoFiltro);
         } else {
             temFiltro = false;
         }
 
-        // verificando campo e direcao da ordenacao
         if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
-            sql += "ORDER BY ID ASC";
+            sql += " ORDER BY ID ASC";
         }
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
 
-            // verifica se tem filtro, se sim define a variavel do comando SQL
             if (temFiltro){
                 pstmt.setObject(1, valorFiltro);
             }
@@ -144,10 +136,7 @@ public class InstituicaoDAO extends DAO{
     }
 
     // select id
-
-    public Instituicao pesquisarIdInstituicao(int idInstituicao) throws SQLException{
-
-        // String com comando SQL
+    public Instituicao pesquisarId(int idInstituicao) throws SQLException{
 
         String sql = "SELECT id, nome, esta_ativo, email_corporativo, data_cadastro, cnpj FROM instituicao WHERE id = ?";
 
@@ -158,12 +147,9 @@ public class InstituicaoDAO extends DAO{
 
             try (ResultSet rs = pstmt.executeQuery()){
 
-                // se nao tiver instituicao
                 if (!rs.next()){
                     throw new SQLException("Erro ao procurar instituicao");
                 }
-
-                // recebe informacoes do select e adiciona cada uma a sua variavel
 
                 int id = rs.getInt("id");
                 String nome = rs.getString("nome");
@@ -172,8 +158,6 @@ public class InstituicaoDAO extends DAO{
                 Date dataCadastroSql = rs.getDate("data_cadastro");
                 LocalDate data_cadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
                 String cnpj = rs.getString("cnpj");
-
-                // cria um objeto com essas variaveis
 
                 i = new Instituicao(id, nome, esta_ativo, email_corporativo, data_cadastro, cnpj);
 
@@ -186,9 +170,7 @@ public class InstituicaoDAO extends DAO{
 
     // select nome
 
-    public Instituicao pesquisarNomeInstituicao(String nomeInstituicao) throws SQLException{
-
-        // String com comando SQL
+    public Instituicao pesquisarNome(String nomeInstituicao) throws SQLException{
 
         String sql = "SELECT id, nome, esta_ativo, email_corporativo, data_cadastro, cnpj FROM instituicao WHERE nome = ?";
 
@@ -199,12 +181,9 @@ public class InstituicaoDAO extends DAO{
 
             try (ResultSet rs = pstmt.executeQuery()){
 
-                // se nao tiver instituicao
                 if (!rs.next()){
                     throw new SQLException("Erro ao procurar insituicao");
                 }
-
-                // recebe informacoes do select e adiciona cada uma a sua variavel
 
                 int id = rs.getInt("id");
                 String nome = rs.getString("nome");
@@ -213,8 +192,6 @@ public class InstituicaoDAO extends DAO{
                 Date dataCadastroSql = rs.getDate("data_cadastro");
                 LocalDate data_cadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
                 String cnpj = rs.getString("cnpj");
-
-                // cria um objeto com essas variaveis
 
                 i = new Instituicao(id, nome, esta_ativo, email_corporativo, data_cadastro, cnpj);
 
@@ -237,12 +214,8 @@ public class InstituicaoDAO extends DAO{
         LocalDate dataCadastro = alterada.getDataCadastro();
         String cnpj = alterada.getCnpj();
 
-        // String builder para implementar campos do update e Lista para adicionar os valores que vao ser adicionados
-
         StringBuilder sql = new StringBuilder("UPDATE instituicao SET ");
         List<Object> valores = new ArrayList<>();
-
-        // verifica se os valores novos sao iguais aos antigos, e se nao for altera
 
         if (!Objects.equals(nome, original.getNome())){
             sql.append("nome = ?, ");
@@ -273,17 +246,14 @@ public class InstituicaoDAO extends DAO{
             return;
         }
 
-        // remocao da ultima virgula + 2 espacos extras no final
         sql.setLength(sql.length() - 2);
-
-        // adiciona WHERE
 
         sql.append(" WHERE id = ?");
         valores.add(id);
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)){
+        try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())){
             for (int i = 0; i < valores.size(); i++) {
-                pstmt.setObject(i, valores.get(i));
+                pstmt.setObject(i + 1, valores.get(i));
             }
 
             pstmt.executeUpdate();
