@@ -1,21 +1,16 @@
 package com.Testes;
 
-import com.DAO.EnderecoDAO;
-import com.DAO.MetodoPagamentoDAO;
-import com.DAO.PlanoDAO;
-import com.DAO.SuperAdministradorDAO;
-import com.model.Endereco;
-import com.model.MetodoPagamento;
-import com.model.Plano;
-import com.model.SuperAdministrador;
+import com.DAO.*;
+import com.model.*;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.List;
 
 public class Main {
     static void main() {
 
-        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
         // TESTES DAO ENDERECO
 
 //        Endereco endereco = new Endereco(null, "Rua zuma de Sá Fernandes", "Presidente Altino", "Ap 103, torre 2", "Osaco", "SP", 323, "06213040", 1);
@@ -26,19 +21,19 @@ public class Main {
 //
 //            // cadastro
 //            dao.cadastrar(endereco);
-//            System.out.print("Endereco cadastrado");
+//            System.out.print("Endereco cadastrado \n");
 //
 //            // select
-//            Endereco select = dao.pesquisarIdInstituicao(2);
-//            System.out.println("Endereco encontrado: " + "\n" + select);
+//            Endereco select = dao.pesquisarId(2);
+//            System.out.println("Endereco encontrado: " + "\n" + select + "\n");
 //
 //            // update
 //            dao.atualizar(endereco_2, endereco_3);
-//            System.out.println("Endereco trocado!");
+//            System.out.println("Endereco trocado! \n");
 //
 //            // delete
 //            dao.remover(7);
-//            System.out.print("Removido com sucesso!");
+//            System.out.print("Removido com sucesso! \n");
 //
 //
 //        } catch (SQLException erro) {
@@ -49,138 +44,189 @@ public class Main {
 //            erro.printStackTrace(System.err);
 //        }
 
-        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // TESTES DAO INSTITUICAO
 
 
-        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //TESTES DAO METODO_PAGAMENTO
-//        MetodoPagamento m1 = new MetodoPagamento(null, "Cheque");
-//        MetodoPagamento m2 = new MetodoPagamento(null,"Boleto");
+//    try (InstituicaoDAO dao = new InstituicaoDAO()){
+
+//        Instituicao germinare = dao.pesquisarId(1);
 //
-//        try(MetodoPagamentoDAO daoMetodoPagamento = new MetodoPagamentoDAO()){
-        //inserir
-//            daoMetodoPagamento.cadastrar(m1);
+//        LocalDate dataCadastroSTAR = LocalDate.of(2026, 02, 23);
+//        Instituicao star = new Instituicao(germinare.getId(), "StarMax()", true, "starMAX@email_fake", dataCadastroSTAR, "33011915028614");
+
+//        // cadastro
+//        dao.cadastrar(germinare);
+//        System.out.println("Instituição cadastrada com sucesso!");
+
+//        // update
 //
-//            //select
-//            for (int i = 0; i < daoMetodoPagamento.buscar().size(); i++) {
-//                MetodoPagamento metodoPagtoExibir;
-//
-//                metodoPagtoExibir = new MetodoPagamento(daoMetodoPagamento.buscar().get(i).getId(),daoMetodoPagamento.buscar().get(i).getDescricao());
-//                System.out.println("%d  | %s".formatted(metodoPagtoExibir.getId(),metodoPagtoExibir.getDescricao()));
-//            }
-//
-//            //alterar
-//            daoMetodoPagamento.atualizar(daoMetodoPagamento.pesquisarPorId(5),m2);
-//            //select
-//            for (int i = 0; i < daoMetodoPagamento.buscar().size(); i++) {
-//                MetodoPagamento metodoPagtoExibir;
-//
-//                metodoPagtoExibir = new MetodoPagamento(daoMetodoPagamento.buscar().get(i).getId(),daoMetodoPagamento.buscar().get(i).getDescricao());
-//                System.out.println("%d  | %s".formatted(metodoPagtoExibir.getId(),metodoPagtoExibir.getDescricao()));
-//            }
-//
-//            //delete
-//            daoMetodoPagamento.remover(13);
+//        dao.atualizar(germinare, star);
+//        System.out.println("Registro atualizado com sucesso!");
 //
 //
-//            //select
-//            for (int i = 0; i < daoMetodoPagamento.buscar().size(); i++) {
-//                MetodoPagamento metodoPagtoExibir;
+//        Instituicao selectNOME = dao.pesquisarNome("Colégio Técnico Nova Esperança");
 //
-//                metodoPagtoExibir = new MetodoPagamento(daoMetodoPagamento.buscar().get(i).getId(),daoMetodoPagamento.buscar().get(i).getDescricao());
-//                System.out.println("%d  | %s".formatted(metodoPagtoExibir.getId(),metodoPagtoExibir.getDescricao()));
-//            }
-//        } catch (SQLException e) {
-//            System.out.print(e.getMessage());
-//            e.printStackTrace(System.err); //q isso?
-//        } catch (ClassNotFoundException e) {
-//            System.out.print(e.getMessage());
-//            e.printStackTrace(System.err); //q isso?
+//        System.out.print(selectNOME);
+
+
+//    LocalDate dataCadastroBRITO = LocalDate.of(2025, 02, 23);
+//    Instituicao brito = new Instituicao(null, "BRITO", true, "BRITO@email_fake", dataCadastroBRITO, "43011915028614");
+
+//    dao.remover(13);
+//
+//    // select
+//    String campoFiltro = "esta_ativo";
+//    Object valorFiltro = dao.converterValor(campoFiltro, "true");
+//    String campoSequencia = "id";
+//    String direcaoSequencia = "ASC";
+//
+//    List<Instituicao> resultado = dao.listar(campoFiltro, valorFiltro, campoSequencia, direcaoSequencia);
+//
+//    System.out.println("Resultado escontrados" + "\n");
+//
+//    for (int i = 0; i < resultado.size(); i++) {
+//        Instituicao item = resultado.get(i);
+//        System.out.print("Item " + (i + 1) + ": \n" + item + "\n");
+//    }
+//
+//
+//    } catch (SQLException e) {
+//        throw new RuntimeException(e);
+//    } catch (ClassNotFoundException e) {
+//        throw new RuntimeException(e);
+//    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // TESTE USUARIO DAO
+
+//    try (UsuarioDAO dao = new UsuarioDAO()){
+//
+//        LocalDate dataCadastroMIGUEL = LocalDate.of(2026, 1, 1);
+//        LocalDate dataCadastroUltimoAcessoMIGUEL = LocalDate.of(2026, 7, 31);
+//
+//        LocalDate dataCadastroYUJI = LocalDate.of(2026, 2, 28);
+//        LocalDate dataCadastroUltimoAcessoYUJI = LocalDate.of(2026, 8, 11);
+//
+//        Usuario miguel = new Usuario(null, "Miguel", "admin123", true, "miguel@email_falso", dataCadastroMIGUEL, "Estudante", "Solicitante", 1, dataCadastroUltimoAcessoMIGUEL);
+
+
+        // insert
+//        dao.cadastrar(miguel);
+//        System.out.println("Usuario cadastrado com sucesso!");
+
+        // select id
+//        System.out.print(dao.pesquisarPorId(11));
+//        System.out.println();
+
+        // select pelo nome
+//        System.out.println(dao.pesquisarPorNome("Miguel"));
+//        System.out.println();
+
+        // update
+//        Usuario original = dao.pesquisarPorId(11);
+//        Usuario yuji = new Usuario(original.getId(), "Yuji", "admin123", true, "yuji@email_falso", dataCadastroYUJI, "Estudante", "Solicitante", 1, dataCadastroUltimoAcessoYUJI);
+//        dao.atualizar(original, yuji);
+
+//        // delete
+//        dao.remover(11);
+//
+//
+//        // select
+//        String campoFiltro = "esta_ativo";
+//        Object valorFiltro = dao.converterValor(campoFiltro, "true");
+//        String campoSequencia = "id";
+//        String direcaoSequencia = "ASC";
+//
+//        List<Usuario> resultado = dao.listar(campoFiltro, valorFiltro, campoSequencia, direcaoSequencia);
+//
+//        System.out.println("Resultado escontrados" + "\n");
+//
+//        for (int i = 0; i < resultado.size(); i++) {
+//            Usuario item = resultado.get(i);
+//            System.out.print("Item " + (i + 1) + ": \n" + item + "\n");
 //        }
 //
-//        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//
+//
+//    } catch (SQLException e) {
+//        throw new RuntimeException(e);
+//    } catch (ClassNotFoundException e) {
+//        throw new RuntimeException(e);
+//    }
 
-        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//        //TESTE DAO PLANO
-//        Plano p1 = new Plano(
-//                null,
-//                "TESTE",
-//                500.00,
-//                12,
-//                "Plano de teste anual"
-//        );
-//
-//        Plano p2 = new Plano(
-//                null,
-//                "TESTE",
-//                1000.00,
-//                12,
-//                "Plano de teste anual"
-//        );
-//
-//        try (PlanoDAO pdao = new PlanoDAO()) {
 
-//            // INSERT
-//            pdao.cadastrar(p1);
-//
-//            Integer id = p1.getId();
-//
-//            // SELECT POR ID
-//            Plano original = pdao.pesquisarPorId(8);
-//
-//            System.out.println(
-//                    "%d | %s | %.2f | %d | %s".formatted(
-//                            original.getId(),
-//                            original.getNome(),
-//                            original.getValorMensal(),
-//                            original.getDuracaoMeses(),
-//                            original.getDescricao()
-//                    )
-//            );
-//
-//            // ALTERAR
-//            pdao.atualizar(original, p2);
-//
-//            // SELECT DEPOIS DA ALTERAÇÃO
-//            Plano atualizado = pdao.pesquisarPorId(8);
-//
-//            System.out.println(
-//                    "%d | %s | %.2f | %d | %s".formatted(
-//                            atualizado.getId(),
-//                            atualizado.getNome(),
-//                            atualizado.getValorMensal(),
-//                            atualizado.getDuracaoMeses(),
-//                            atualizado.getDescricao()
-//                    )
+    // -----------------------------------------------------------------------------------------------------------------
+    // TESTE PAGAMENTO
 
-            //delete
+//    try (PagamentoDAO dao = new PagamentoDAO()){
 
-//            pdao.remover(17);
+        LocalDate dataPagamento = LocalDate.of(2026, 1, 1);
+//        Pagamento pagamento = new Pagamento(null, (float) 100.0, dataPagamento.atStartOfDay(), true, 1, 1);
+
+//        dao.cadastrar(pagamento);
+//        System.out.println("Pagamento inserido com sucesso!");
+
+//        String campoFiltro = "foi_realizado";
+//        Object valorFiltro = dao.converterValor(campoFiltro, "true");
+//        String campoSequencia = "id";
+//        String direcaoSequencia = "ASC";
 //
-//        } catch (SQLException | ClassNotFoundException e) {
-//            throw new RuntimeException(e);
+//        List<Pagamento> pagamentos = dao.listar(campoFiltro, valorFiltro, campoSequencia, direcaoSequencia);
+//
+//        for (int i = 0; i <pagamentos.size(); i++) {
+//            Pagamento pag = pagamentos.get(i);
+//            System.out.print("Pagamento " + (i + 1) + " :" + "\n" + pag + "\n");
 //        }
-            // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //TESTE SUPER ADMINISTRADOR
-//        try {
-//            SuperAdministradorDAO sadao = new SuperAdministradorDAO();
 //
-//            sadao.remover(2);
+//        Pagamento original = dao.pesquisarId(5);
+//        Pagamento alterado = new Pagamento(original.getId(), (float) 150.0, dataPagamento.atStartOfDay(), true, 1, 1);
 //
-//            ArrayList<SuperAdministrador> select = sadao.buscar(null,null,null,null);
+//        dao.atualizar(original, alterado);
 //
-//            for (SuperAdministrador sadmin : select){
-//                System.out.println("%d | %s | %s | %s".formatted(sadmin.getId(), sadmin.getNome(), sadmin.getFuncao(), sadmin.getEmail()));
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        } catch (ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
+//        System.out.print(dao.pesquisarId(5));
+//
+//        dao.remover(5);
+//
+//    } catch (SQLException e) {
+//        throw new RuntimeException(e);
+//    } catch (ClassNotFoundException e) {
+//        throw new RuntimeException(e);
+//    }
 
-        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // TESTE FOTO USUARIO
+
+        try (FotoUsuarioDAO dao = new FotoUsuarioDAO()){
+
+            // insert
+
+//            LocalDate dataRegistro = LocalDate.of(2026, 1, 1);
+
+//            FotoUsuario fotoUsuario = new FotoUsuario(null, dataRegistro, "url_falsa", 11);
+//
+//            dao.cadastrar(fotoUsuario);
+
+            // update
+
+//            FotoUsuario original = dao.pesquisarFkID(11);
+//            FotoUsuario alterado = new FotoUsuario(original.getId(), dataRegistro, "url falsa nova", 11);
+//
+//            dao.atualizar(original, alterado);
+
+            // select
+
+//            System.out.print(dao.pesquisarFkID(11));
+
+            // delete
+
+            dao.remover(11);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

@@ -21,8 +21,6 @@ public class EnderecoDAO extends DAO{
     // insert
     public void cadastrar(Endereco endereco) throws SQLException {
 
-        // recebe dados do endereco a ser cadastrado
-
         String rua = endereco.getRua();
         String bairro = endereco.getBairro();
         String complemento = endereco.getComplemento();
@@ -32,13 +30,11 @@ public class EnderecoDAO extends DAO{
         String cep = endereco.getCep();
         Integer fkInstituicao = endereco.getFkInstituicao();
 
-        // deixa complemento como null se estiver vazio
 
         if (complemento == null || complemento.isBlank()){
             complemento = null;
         }
 
-        // string com comando sql
 
         String sql = """
                 INSERT INTO endereco (RUA, BAIRRO, COMPLEMENTO, CIDADE, ESTADO, NUMERO, CEP, FK_INSTITUICAO_ID)
@@ -46,8 +42,6 @@ public class EnderecoDAO extends DAO{
                 """;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            // colocando valores no script sql
 
             pstmt.setString(1, rua);
             pstmt.setString(2, bairro);
@@ -64,15 +58,14 @@ public class EnderecoDAO extends DAO{
 
         } catch (SQLException e) {
             conn.rollback();
-            throw new RuntimeException(e);
+            throw e;
         }
 
     }
 
     // select
-    public Endereco pesquisarIdEndereco(int idInstituicao) throws SQLException {
+    public Endereco pesquisarId(int idInstituicao) throws SQLException {
 
-        // string com comando sql
 
         String sql = "SELECT id, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id FROM endereco WHERE fk_instituicao_id = ?";
 
@@ -83,12 +76,9 @@ public class EnderecoDAO extends DAO{
 
             try (ResultSet rs = pstmt.executeQuery()){
 
-                // se nao tiver o endereco ele manda essa excecao
                 if (!rs.next()){
                     throw new SQLException("Erro ao procurar por Endereco");
                 }
-
-                // recebe informacoes do select e adiciona cada uma a sua variavel
 
                 int id = rs.getInt("id");
                 String rua = rs.getString("rua");
@@ -99,8 +89,6 @@ public class EnderecoDAO extends DAO{
                 int numero = rs.getInt("numero");
                 String cep = rs.getString("cep");
                 int fkInstituicao = rs.getInt("fk_instituicao_id"); // duvida: aqui eu coloco o nome do que esta no BD ou na model??
-
-                // cria um objeto endereco com essas variaveis
 
                 e = new Endereco(id, rua, bairro, complemento, cidade, estado, numero, cep, fkInstituicao);
             }
@@ -114,8 +102,6 @@ public class EnderecoDAO extends DAO{
     public void atualizar(Endereco original, Endereco alterado) throws SQLException {
 
 
-        // recebe dados do endereco alterado
-
         Integer id = alterado.getId();
         String rua = alterado.getRua();
         String bairro = alterado.getBairro();
@@ -126,12 +112,10 @@ public class EnderecoDAO extends DAO{
         String cep = alterado.getCep();
         Integer fkInstituicao = alterado.getFkInstituicao();
 
-        // String builder para implementar campos do update e Lista para adicionar os valores que vao ser adicionados
 
         StringBuilder sql = new StringBuilder("UPDATE endereco SET ");
         List<Object> valores = new ArrayList<>();
 
-        // verifica se os valores novos sao iguais aos antigos, e se nao for altera
 
         if(!Objects.equals(rua, original.getRua())){
             sql.append("rua = ?, ");
@@ -177,14 +161,11 @@ public class EnderecoDAO extends DAO{
             return;
         }
 
-        // remocao da ultima virgula + 2 espacos extras no final
         sql.setLength(sql.length() - 2);
 
-        // adiciona a clausula where
         sql.append(" WHERE id = ?");
         valores.add(id);
 
-        // seta os valores adicionados
         try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())){
             for (int i = 0; i < valores.size(); i++) {
                 pstmt.setObject(i + 1, valores.get(i));
@@ -202,8 +183,6 @@ public class EnderecoDAO extends DAO{
 
     // delete
     public void remover(int id) throws SQLException {
-
-        // string com comando SQL
 
         String sql = "DELETE FROM endereco WHERE ID = ?";
 
