@@ -1,19 +1,231 @@
 package com.Testes;
 
-import com.DAO.EnderecoDAO;
-import com.DAO.MetodoPagamentoDAO;
-import com.DAO.PlanoDAO;
-import com.DAO.SuperAdministradorDAO;
-import com.model.Endereco;
-import com.model.MetodoPagamento;
-import com.model.Plano;
-import com.model.SuperAdministrador;
+import com.DAO.*;
+import com.model.*;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Main {
     static void main() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         // TESTES DAO ENDERECO
@@ -182,5 +394,50 @@ public class Main {
 //        }
 
         // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //TESTE CONTRATO
+//        Contrato c1 = new Contrato(null, LocalDate.of(2021,10,21), LocalDate.of(2022,4,21), 4,1,false);
+//        Contrato c2 = new Contrato(null, LocalDate.of(2021,10,21), LocalDate.of(2022,4,21), 4,1,false);
+//
+//        try (ContratoDAO cdao = new ContratoDAO()){
+//            //insert
+//            //cdao.cadastrar(c1);
+//
+//            //select
+//            ArrayList<Contrato> resultado = cdao.buscar(null,null, null, null);
+//            for(Contrato c : resultado){
+//                System.out.println("%d | %s | %s | %d | %d | %b".formatted(c.getId(),c.getDataInicio(),c.getDataVencimento(),c.getFkPlano(),c.getFkInstituicao(),c.getEstaVigente()));
+//            }
+//
+//            System.out.println("------------------------------------");
+//
+//            cdao.remover(4);
+//            cdao.remover(5);
+//
+//            //select ordenado
+//            ArrayList<Contrato> resultado2 = cdao.buscar(null,null, "FK_PLANO_ID", "DESC");
+//            for(Contrato c : resultado2){
+//                System.out.println("%d | %s | %s | %d | %d | %b".formatted(c.getId(),c.getDataInicio(),c.getDataVencimento(),c.getFkPlano(),c.getFkInstituicao(),c.getEstaVigente()));
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        } catch (ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+
+        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        
+//        try{
+//            SuperAdministradorDAO s1 = new SuperAdministradorDAO();
+//            ArrayList<SuperAdministrador> select = s1.buscar(null,null,null,null);
+//            for (SuperAdministrador sadmin : select){
+//                System.out.println("%d | %s | %s | %s".formatted(sadmin.getId(), sadmin.getNome(), sadmin.getFuncao(), sadmin.getEmail()));
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        } catch (ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+        }
     }
 }
