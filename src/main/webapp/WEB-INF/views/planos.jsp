@@ -1,9 +1,10 @@
-<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="com.model.Plano" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    List<Plano> planos = (List<Plano>) request.getAttribute("planos");
+    ArrayList<Plano> planos =
+            (ArrayList<Plano>) request.getAttribute("planos");
 %>
 
 <!DOCTYPE html>
@@ -11,12 +12,18 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Planos</title>
+    <title>Planos</title>
 </head>
 
 <body>
 
 <h1>Planos cadastrados</h1>
+
+<a href="${pageContext.request.contextPath}/planos?action=create">
+    Cadastrar novo plano
+</a>
+
+<br><br>
 
 <%
     if (planos == null) {
@@ -28,7 +35,7 @@
 } else if (planos.isEmpty()) {
 %>
 
-<p>Nenhum plano encontrado.</p>
+<p>Nenhum plano cadastrado.</p>
 
 <%
 } else {
@@ -39,7 +46,8 @@
     <tr>
         <th>ID</th>
         <th>Nome</th>
-        <th>Valor</th>
+        <th>Valor mensal</th>
+        <th>Duração</th>
         <th>Descrição</th>
     </tr>
 
@@ -48,10 +56,27 @@
     %>
 
     <tr>
-        <td><%= plano.getId() %></td>
-        <td><%= plano.getNome() %></td>
-        <td><%= plano.getValorMensal() %></td>
-        <td><%= plano.getDescricao() %></td>
+
+        <td>
+            <%= plano.getId() %>
+        </td>
+
+        <td>
+            <%= plano.getNome() %>
+        </td>
+
+        <td>
+            <%= plano.getValorMensal() %>
+        </td>
+
+        <td>
+            <%= plano.getDuracaoMeses() %> meses
+        </td>
+
+        <td>
+            <%= plano.getDescricao() %>
+        </td>
+
     </tr>
 
     <%
@@ -65,4 +90,5 @@
 %>
 
 </body>
+
 </html>
