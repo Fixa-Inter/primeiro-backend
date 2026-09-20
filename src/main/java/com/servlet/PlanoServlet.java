@@ -79,11 +79,42 @@ public class PlanoServlet extends HttpServlet {
 
         try (PlanoDAO dao = new PlanoDAO()) {
 
+            String campoFiltro = request.getParameter("campoFiltro");
+            String valorFiltroTexto = request.getParameter("valorFiltro");
+            Object valorFiltro = null;
+            String campoSequencia, direcaoSequencia;
+            String ordenacao = request.getParameter("ordenacao");
+
+            if (campoFiltro != null && !campoFiltro.isBlank()
+                    && valorFiltroTexto != null && !valorFiltroTexto.isBlank()) {
+
+                if (campoFiltro.equals("VALOR_MENSAL")) {
+
+                    valorFiltro = Double.parseDouble(valorFiltroTexto);
+
+                } else if (campoFiltro.equals("DURACAO_MESES")) {
+
+                    valorFiltro = Integer.parseInt(valorFiltroTexto);
+
+                } else {
+
+                    valorFiltro = valorFiltroTexto;
+                }
+            }
+
+            if (ordenacao != null && !ordenacao.isBlank()){
+                campoSequencia = ordenacao.split("-")[0];
+                direcaoSequencia = ordenacao.split("-")[1];
+            } else{
+                campoSequencia = null;
+                direcaoSequencia = null;
+            }
+
             ArrayList<Plano> planos = dao.buscar(
-                    null,
-                    null,
-                    null,
-                    null
+                    campoFiltro,
+                    valorFiltro,
+                    campoSequencia,
+                    direcaoSequencia
             );
 
             request.setAttribute("planos", planos);
