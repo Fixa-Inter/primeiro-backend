@@ -80,9 +80,16 @@
 
         <td>
 
+            <!-- EDITAR -->
+            <a href="${pageContext.request.contextPath}/planos?action=update&id=<%= plano.getId() %>">
+                Editar
+            </a>
+
+            <!-- EXCLUIR -->
             <form
                     action="${pageContext.request.contextPath}/planos"
                     method="post"
+                    style="display:inline"
             >
 
                 <input

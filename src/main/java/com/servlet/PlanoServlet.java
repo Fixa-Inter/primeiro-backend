@@ -30,9 +30,28 @@ public class PlanoServlet extends HttpServlet {
         } else if (action.equals("create")) {
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-planos.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/cadastro-plano.jsp")
                     .forward(request, response);
 
+        } else if (action.equals("update")) {
+
+            int id = Integer.parseInt(
+                    request.getParameter("id")
+            );
+
+            try (PlanoDAO dao = new PlanoDAO()) {
+
+                Plano plano = dao.pesquisarPorId(id);
+
+                request.setAttribute("plano", plano);
+
+                request
+                        .getRequestDispatcher("/WEB-INF/views/editar-plano.jsp")
+                        .forward(request, response);
+
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new ServletException(e);
+            }
         }
     }
 
@@ -46,6 +65,8 @@ public class PlanoServlet extends HttpServlet {
 
         if ("create".equals(action)) {
             cadastrarPlano(request, response);
+        } else if ("update".equals(action)) {
+            atualizarPlano(request, response);
         } else if (action.equals("delete")){
             deletarPlano(request, response);
         }
@@ -134,5 +155,51 @@ public class PlanoServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private void atualizarPlano(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
+
+        int id = Integer.parseInt(
+                request.getParameter("id")
+        );
+
+        String nome = request.getParameter("nome");
+
+        double valorMensal = Double.parseDouble(
+                request.getParameter("valorMensal")
+        );
+
+        int duracaoMeses = Integer.parseInt(
+                request.getParameter("duracaoMeses")
+        );
+
+        String descricao = request.getParameter("descricao");
+
+        try (PlanoDAO dao = new PlanoDAO()) {
+
+            // Busca como está atualmente no banco
+            Plano original = dao.pesquisarPorId(id);
+
+            // Monta o objeto com os novos dados
+            Plano alterado = new Plano(
+                    id,
+                    nome,
+                    valorMensal,
+                    duracaoMeses,
+                    descricao
+            );
+
+            dao.atualizar(original, alterado);
+
+            response.sendRedirect(
+                    request.getContextPath() + "/planos"
+            );
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new ServletException(e);
+        }
     }
 }
