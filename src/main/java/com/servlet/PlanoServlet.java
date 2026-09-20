@@ -19,21 +19,14 @@ public class PlanoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        try {
-            PlanoDAO planoDAO = new PlanoDAO();
-            ArrayList<Plano> planos = planoDAO.buscar(null,null,null,null);
+        String action = request.getParameter("action");
 
-            request.setAttribute("planos", planos);
+        if (action == null){
+            action = "read";
+        }
 
-            request
-                    .getRequestDispatcher("/WEB-INF/views/planos.jsp")
-                    .forward(request, response);
-
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        if (action.equals("read")){
+            listarPlanos(request, response);
         }
     }
 
@@ -41,5 +34,30 @@ public class PlanoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+    }
+
+    private void listarPlanos(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
+
+        try (PlanoDAO dao = new PlanoDAO()) {
+
+            ArrayList<Plano> planos = dao.buscar(
+                    null,
+                    null,
+                    null,
+                    null
+            );
+
+            request.setAttribute("planos", planos);
+
+            request
+                    .getRequestDispatcher("/WEB-INF/views/planos.jsp")
+                    .forward(request, response);
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new ServletException(e);
+        }
     }
 }
