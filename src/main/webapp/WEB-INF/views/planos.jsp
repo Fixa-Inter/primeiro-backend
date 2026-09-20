@@ -49,6 +49,7 @@
         <th>Valor mensal</th>
         <th>Duração</th>
         <th>Descrição</th>
+        <th>Ações</th>
     </tr>
 
     <%
@@ -75,6 +76,33 @@
 
         <td>
             <%= plano.getDescricao() %>
+        </td>
+
+        <td>
+
+            <form
+                    action="${pageContext.request.contextPath}/planos"
+                    method="post"
+            >
+
+                <input
+                        type="hidden"
+                        name="action"
+                        value="delete"
+                >
+
+                <input
+                        type="hidden"
+                        name="id"
+                        value="<%= plano.getId() %>"
+                >
+
+                <button type="submit">
+                    Excluir
+                </button>
+
+            </form>
+
         </td>
 
     </tr>

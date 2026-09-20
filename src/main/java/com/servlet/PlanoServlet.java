@@ -27,7 +27,7 @@ public class PlanoServlet extends HttpServlet {
 
         if (action.equals("read")){
             listarPlanos(request, response);
-        } else if ("create".equals(action)) {
+        } else if (action.equals("create")) {
 
             request
                     .getRequestDispatcher("/WEB-INF/views/cadastro-planos.jsp")
@@ -46,6 +46,8 @@ public class PlanoServlet extends HttpServlet {
 
         if ("create".equals(action)) {
             cadastrarPlano(request, response);
+        } else if (action.equals("delete")){
+            deletarPlano(request, response);
         }
     }
 
@@ -110,5 +112,27 @@ public class PlanoServlet extends HttpServlet {
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);
         }
+    }
+
+    private void deletarPlano(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ){
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        try (PlanoDAO planoDAO = new PlanoDAO()){
+            planoDAO.remover(id);
+
+            response.sendRedirect(
+                    request.getContextPath() + "/planos"
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
