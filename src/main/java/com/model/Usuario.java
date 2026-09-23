@@ -1,26 +1,30 @@
 package com.model;
 
+import com.model.enums.TipoAcesso;
+
 import java.time.LocalDate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Usuario {
 
-    private Integer id;                 // coluna: id
-    private String nome;                // coluna: nome
-    private String senhaHash;           // coluna: senha_hash
-    private Boolean estaAtivo;          // coluna: esta_Ativo
-    private String email;               // coluna: email
-    private LocalDate dataCriacao;      // coluna: data_criacao
-    private String cargo;               // coluna: cargo
-    private String tipoDeAcesso;        // coluna: tipo_de_acesso
-    private Integer fkInstituicao;      // coluna: fk_instituicao_id
-    private LocalDate dataUltimoAcesso; // coluna: data_ultimo_acesso
+    private Integer id;                     // coluna: id
+    private String nome;                    // coluna: nome
+    private String senhaHash;               // coluna: senha_hash
+    private Boolean estaAtivo;              // coluna: esta_Ativo
+    private String email;                   // coluna: email
+    private LocalDateTime dataCriacao;          // coluna: data_criacao
+    private String cargo;                   // coluna: cargo
+    private TipoAcesso tipoDeAcesso;        // coluna: tipo_de_acesso
+    private Integer fkEndereco;             // coluna: fk_endereco_id
+    private LocalDate dataAniversario;  // coluna: data_nascimento
+    private Boolean primeiroAcesso;         // coluna: primeiro acesso
 
 
     // construtor
 
-    public Usuario(Integer id, String nome, String senhaHash, Boolean estaAtivo, String email, LocalDate dataCriacao, String cargo, String tipoDeAcesso, Integer fkInstituicao, LocalDate dataUltimoAcesso) {
+    public Usuario(Integer id, String nome, String senhaHash, Boolean estaAtivo, String email, LocalDateTime dataCriacao, String cargo, TipoAcesso tipoDeAcesso, Integer fkEndereco, LocalDate dataAniversario, Boolean primeiroAcesso) {
         this.id = id;
         this.nome = nome;
         this.senhaHash = senhaHash;
@@ -29,8 +33,9 @@ public class Usuario {
         this.dataCriacao = dataCriacao;
         this.cargo = cargo;
         this.tipoDeAcesso = tipoDeAcesso;
-        this.fkInstituicao = fkInstituicao;
-        this.dataUltimoAcesso = dataUltimoAcesso;
+        this.fkEndereco = fkEndereco;
+        this.dataAniversario = dataAniversario;
+        this.primeiroAcesso = primeiroAcesso;
     }
 
 
@@ -76,11 +81,11 @@ public class Usuario {
         this.email = email;
     }
 
-    public LocalDate getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(LocalDate dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
@@ -92,35 +97,43 @@ public class Usuario {
         this.cargo = cargo;
     }
 
-    public String getTipoDeAcesso() {
+    public TipoAcesso getTipoDeAcesso() {
         return tipoDeAcesso;
     }
 
-    public void setTipoDeAcesso(String tipoDeAcesso) {
+    public void setTipoDeAcesso(TipoAcesso tipoDeAcesso) {
         this.tipoDeAcesso = tipoDeAcesso;
     }
 
-    public Integer getFkInstituicao() {
-        return fkInstituicao;
+    public Integer getFkEndereco() {
+        return fkEndereco;
     }
 
-    public void setFkInstituicao(Integer fkInstituicao) {
-        this.fkInstituicao = fkInstituicao;
+    public void setFkEndereco(Integer fkEndereco) {
+        this.fkEndereco = fkEndereco;
     }
 
-    public LocalDate getDataUltimoAcesso() {
-        return dataUltimoAcesso;
+    public LocalDate getDataAniversario() {
+        return dataAniversario;
     }
 
-    public void setDataUltimoAcesso(LocalDate dataUltimoAcesso) {
-        this.dataUltimoAcesso = dataUltimoAcesso;
+    public void setDataAniversario(LocalDate dataAniversario) {
+        this.dataAniversario = dataAniversario;
+    }
+
+    public Boolean getPrimeiroAcesso() {
+        return primeiroAcesso;
+    }
+
+    public void setPrimeiroAcesso(Boolean primeiroAcesso) {
+        this.primeiroAcesso = primeiroAcesso;
     }
 
     // toString
 
     @Override
     public String toString(){
-        return "Usuario{id=%d, nome='%s', senhaHash='%s', estaAtivo=%b, email='%s', dataCriacao=%s, cargo='%s', tipoDeAcesso='%s', fkTipoDeAcesso=%d, dataUltimoAcesso=%s}"
-                .formatted(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkInstituicao, dataUltimoAcesso);
+        return "Usuario{id=%d, nome='%s', senhaHash='%s', estaAtivo=%b, email='%s', dataCriacao=%s, cargo='%s', tipoDeAcesso='%s', fkTipoDeAcesso='%d', data_nascimento='%s', primeiro_acesso='%b'"
+                .formatted(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkEndereco,dataAniversario, primeiroAcesso);
         }
 }

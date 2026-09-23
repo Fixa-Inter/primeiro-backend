@@ -1,25 +1,27 @@
 package com.model;
 
+import com.model.enums.StatusContrato;
+
 import java.time.LocalDate;
 
 public class Contrato {
 
-    private Integer id;                // coluna: id
-    private LocalDate dataInicio;      // coluna: data_inicio
-    private LocalDate dataVencimento;  // coluna: data_vencimento
-    private Integer fkPlano;           // coluna: fk_plano_id
-    private Integer fkInstituicao;     // coluna: fk_instituicao_id
-    private Boolean estaVigente;       // coluna: esta_vigente
+    private Integer id;                       // coluna: id
+    private LocalDate dataInicio;             // coluna: data_inicio
+    private LocalDate dataVencimento;         // coluna: data_vencimento
+    private Integer fkPlano;                  // coluna: fk_plano_id
+    private Integer fkEndereco;               // coluna: fk_endereo_id
+    private StatusContrato statusContrato;    // coluna: status_contrato
 
     // construtor
 
-    public Contrato(Integer id, LocalDate dataInicio, LocalDate dataVencimento, Integer fkPlano, Integer fkInstituicao ,Boolean estaVigente) {
+    public Contrato(Integer id, LocalDate dataInicio, LocalDate dataVencimento, Integer fkPlano, Integer fkEndereco, StatusContrato statusContrato) {
         this.id = id;
         this.dataInicio = dataInicio;
         this.dataVencimento = dataVencimento;
         this.fkPlano = fkPlano;
-        this.fkInstituicao = fkInstituicao;
-        this.estaVigente = estaVigente;
+        this.fkEndereco = fkEndereco;
+        this.statusContrato = statusContrato;
     }
 
 
@@ -57,27 +59,28 @@ public class Contrato {
         this.fkPlano = fkPlano;
     }
 
-    public Integer getFkInstituicao() {
-        return fkInstituicao;
+    public StatusContrato getStatusContrato() {
+        return statusContrato;
     }
 
-    public void setFkInstituicao(Integer fkInstituicao) {
-        this.fkInstituicao = fkInstituicao;
+    public void setStatusContrato(StatusContrato statusContrato) {
+        this.statusContrato = statusContrato;
     }
 
-    public Boolean getEstaVigente() {
-        return estaVigente;
+    public Integer getFkEndereco() {
+        return fkEndereco;
     }
 
-    public void setEstaVigente(Boolean estaVigente) {
-        this.estaVigente = estaVigente;
+    public void setFkEndereco(Integer fkEndereco) {
+        this.fkEndereco = fkEndereco;
     }
+
 
     // toString
 
     @Override
     public String toString(){
-        return "Contrato{id=%d, dataInicio=%s, dataVencimento=%s, fkPlano=%d, fkInstituicao=%d,estaVigente=%b}"
-                .formatted(id, dataInicio, dataVencimento, fkPlano, fkInstituicao, estaVigente);
+        return "Contrato{id=%d, dataInicio=%s, dataVencimento=%s, fkPlano=%d, fkEndereco=%d,statusContrato=%s}"
+                .formatted(id, dataInicio, dataVencimento, fkPlano, fkEndereco, statusContrato);
     }
 }

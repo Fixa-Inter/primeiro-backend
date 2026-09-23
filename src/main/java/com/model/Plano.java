@@ -1,12 +1,15 @@
 package com.model;
 
+import java.time.LocalDateTime;
+
 public class Plano {
 
-    private Integer id;            // coluna: id
-    private String nome;           // coluna: nome
-    private Double valorMensal;     // coluna: valor_mensal
-    private Integer duracaoMeses;  // coluna: duracao_meses
-    private String descricao;      // coluna: descricao
+    private Integer id;                  // coluna: id
+    private String nome;                 // coluna: nome
+    private Double valorMensal;          // coluna: valor_mensal
+    private Integer duracaoMeses;        // coluna: duracao_meses
+    private String descricao;            // coluna: descricao
+    private LocalDateTime dataCriacao;   //coluna: data_criacao
 
     // construtor
 

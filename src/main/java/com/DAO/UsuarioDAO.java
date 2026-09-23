@@ -1,12 +1,11 @@
 package com.DAO;
 
 import com.model.Usuario;
+import com.model.enums.TipoAcesso;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,24 +19,26 @@ public class UsuarioDAO extends DAO{
 
             "id", "ID",
             "nome", "Nome",
-            "senha_hash", "Senha",
             "esta_ativo", "Esta Ativo",
             "email", "Email",
             "data_criacao", "Data Criacao",
             "cargo", "Cargo",
-            "fk_instituicao_id", "Fk Instituicao ID",
-            "data_ultimo_acesso", "Data Ultimo Acesso",
-            "tipo_de_acesso", "Tipo De Acesso"
+            "fk_endereco_id", "Fk endereco ID",
+            "tipo_de_acesso", "Tipo De Acesso",
+            "data_nascimento", "Data de nascimento",
+            "primeiro_acesso", "Data acesso"
     );
 
     // convertendo String recebida do Servlet
     public Object converterValor(String campo, String valor){
         try {
             return switch (campo) {
-                case "id", "fkInstituicao" -> Integer.parseInt(valor);
+                case "id", "fkEndereco" -> Integer.parseInt(valor);
                 case "nome", "senha_hash", "email", "cargo", "tipo_de_acesso" -> valor;
-                case "esta_ativo" -> Boolean.parseBoolean(valor);
-                case "data_criacao", "data_ultimo_acesso" -> LocalDate.parse(valor);
+                case "esta_ativo", "primeiro_acesso" -> Boolean.parseBoolean(valor);
+                case "data_criacao" -> LocalDateTime.parse(valor);
+                case "tipoAcesso" -> TipoAcesso.getCodigoComBaseNome(valor);
+                case "data_nacimento" -> LocalDate.parse(valor);
                 default -> throw new IllegalArgumentException();
             };
         } catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
@@ -56,16 +57,15 @@ public class UsuarioDAO extends DAO{
 
         String nome = usuario.getNome();
         String senhaHash = usuario.getSenhaHash();
-        boolean estaAtivo = usuario.getEstaAtivo();
         String email = usuario.getEmail();
-        LocalDate dataCriacao = usuario.getDataCriacao();
         String cargo = usuario.getCargo();
-        String tipoDeAcesso = usuario.getTipoDeAcesso();
-        int fkInstituicao = usuario.getFkInstituicao();
-        LocalDate dataUltimoAcesso = usuario.getDataUltimoAcesso();
+        int fkEndereco = usuario.getFkEndereco();
+        LocalDate dataAniversario = usuario.getDataAniversario();
+
+        // tira id, data_cricao, esta_ativo e primeiro_acesso pois o default do BD já define eles automáticamente
 
         String sql = """
-                     INSERT INTO usuario (nome, senha_hash, esta_ativo, email, data_criacao, cargo, fk_instituicao_id, data_ultimo_acesso, tipo_de_acesso)
+                     INSERT INTO usuario (nome, senha_hash, email, cargo, tipo_de_acesso, fk_endereco_id, data_nacimento)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                      """;
 
@@ -73,13 +73,11 @@ public class UsuarioDAO extends DAO{
 
             pstmt.setString(1, nome);
             pstmt.setString(2, senhaHash);
-            pstmt.setBoolean(3, estaAtivo);
-            pstmt.setString(4, email);
-            pstmt.setObject(5, dataCriacao);
-            pstmt.setString(6, cargo);
-            pstmt.setInt(7, fkInstituicao);
-            pstmt.setObject(8, dataUltimoAcesso);
-            pstmt.setString(9, tipoDeAcesso);
+            pstmt.setString(3, email);
+            pstmt.setString(4, cargo);
+            pstmt.setInt(5, TipoAcesso.Solicitante.getCodigo());
+            pstmt.setInt(6, fkEndereco);
+            pstmt.setDate(7, Date.valueOf(dataAniversario));
 
             pstmt.execute();
 
@@ -97,7 +95,7 @@ public class UsuarioDAO extends DAO{
 
         List<Usuario> usuarios = new ArrayList<>();
 
-        String sql = "SELECT id, nome, senha_hash, esta_ativo, email, data_criacao, cargo, fk_instituicao_id, data_ultimo_acesso, tipo_de_acesso FROM usuario";
+        String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_de_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario";
 
         if (campoFiltro != null && camposFiltraveis.containsKey(campoFiltro)){
             sql += " WHERE %s = ?".formatted(campoFiltro);
@@ -125,16 +123,17 @@ public class UsuarioDAO extends DAO{
                     String senhaHash = rs.getString("senha_hash");
                     boolean estaAtivo = rs.getBoolean("esta_ativo");
                     String email = rs.getString("email");
-                    Date dataCriacaoSQL = rs.getDate("data_criacao");
-                    LocalDate dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDate());
+                    Timestamp dataCriacaoSQL = rs.getTimestamp("data_criacao");
+                    LocalDateTime dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDateTime());
                     String cargo = rs.getString("cargo");
-                    String tipoDeAcesso = rs.getString("tipo_de_acesso");
-                    int fkInstituicao = rs.getInt("fk_instituicao_id");
-                    Date dataUltimoAcessoSQL =  rs.getDate("data_ultimo_acesso");
-                    LocalDate dataUltimoAcesso = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDate());
+                    TipoAcesso tipoDeAcesso = TipoAcesso.getNomeComBaseCodigo(rs.getInt("tipo_de_acesso"));
+                    int fkEnderecoID = rs.getInt("fk_endereco_id");
+                    Date dataAniversarioAcessoBD =  rs.getDate("data_nascimento");
+                    LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
+                    Boolean primeiroAcesso = rs.getBoolean("primeiro_acesso");
 
 
-                    usuarios.add(new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkInstituicao, dataUltimoAcesso));
+                    usuarios.add(new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkEnderecoID, dataAniversario, primeiroAcesso));
                 }
             }
 
@@ -147,7 +146,7 @@ public class UsuarioDAO extends DAO{
     public Usuario pesquisarPorId(int idUsuario) throws SQLException{
 
 
-        String sql = "SELECT id, nome, senha_hash, esta_ativo, email, data_criacao, cargo, fk_instituicao_id, data_ultimo_acesso, tipo_de_acesso FROM usuario WHERE id = ?";
+        String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_de_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario WHERE id = ?";
 
         Usuario u;
 
@@ -165,16 +164,17 @@ public class UsuarioDAO extends DAO{
                 String senhaHash = rs.getString("senha_hash");
                 boolean estaAtivo = rs.getBoolean("esta_ativo");
                 String email = rs.getString("email");
-                Date dataCriacaoSQL = rs.getDate("data_criacao");
-                LocalDate dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDate());
+                Timestamp dataCriacaoSQL = rs.getTimestamp("data_criacao");
+                LocalDateTime dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDateTime());
                 String cargo = rs.getString("cargo");
-                String tipoDeAcesso = rs.getString("tipo_de_acesso");
-                int fkInstituicao = rs.getInt("fk_instituicao_id");
-                Date dataUltimoAcessoSQL =  rs.getDate("data_ultimo_acesso");
-                LocalDate dataUltimoAcesso = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDate());
+                TipoAcesso tipoDeAcesso = TipoAcesso.getNomeComBaseCodigo(rs.getInt("tipo_de_acesso"));
+                int fkEnderecoID = rs.getInt("fk_endereco_id");
+                Date dataAniversarioAcessoBD =  rs.getDate("data_nascimento");
+                LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
+                Boolean primeiroAcesso = rs.getBoolean("primeiro_acesso");
 
 
-                u = new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkInstituicao, dataUltimoAcesso);
+                u = new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkEnderecoID, dataAniversario, primeiroAcesso);
 
             }
 
@@ -187,7 +187,7 @@ public class UsuarioDAO extends DAO{
     // select nome
     public Usuario pesquisarPorNome(String nomeUsuario) throws SQLException{
 
-        String sql = "SELECT id, nome, senha_hash, esta_ativo, email, data_criacao, cargo, fk_instituicao_id, data_ultimo_acesso, tipo_de_acesso FROM usuario WHERE nome = ?";
+        String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_de_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario WHERE nome = ?";
 
         Usuario u;
 
@@ -205,15 +205,17 @@ public class UsuarioDAO extends DAO{
                 String senhaHash = rs.getString("senha_hash");
                 boolean estaAtivo = rs.getBoolean("esta_ativo");
                 String email = rs.getString("email");
-                Date dataCriacaoSQL = rs.getDate("data_criacao");
-                LocalDate dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDate());
+                Timestamp dataCriacaoSQL = rs.getTimestamp("data_criacao");
+                LocalDateTime dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDateTime());
                 String cargo = rs.getString("cargo");
-                String tipoDeAcesso = rs.getString("tipo_de_acesso");
-                int fkInstituicao = rs.getInt("fk_instituicao_id");
-                Date dataUltimoAcessoSQL =  rs.getDate("data_ultimo_acesso");
-                LocalDate dataUltimoAcesso = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDate());
+                TipoAcesso tipoDeAcesso = TipoAcesso.getNomeComBaseCodigo(rs.getInt("tipo_de_acesso"));
+                int fkEnderecoID = rs.getInt("fk_endereco_id");
+                Date dataAniversarioAcessoBD =  rs.getDate("data_nascimento");
+                LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
+                Boolean primeiroAcesso = rs.getBoolean("primeiro_acesso");
 
-                u = new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkInstituicao, dataUltimoAcesso);
+
+                u = new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkEnderecoID, dataAniversario, primeiroAcesso);
             }
 
         }
@@ -223,16 +225,16 @@ public class UsuarioDAO extends DAO{
 
     public void atualizar(Usuario original, Usuario alterado) throws SQLException{
 
-        int id = alterado.getId();
+        Integer id = alterado.getId();
         String nome = alterado.getNome();
         String senhaHash = alterado.getSenhaHash();
-        boolean estaAtivo = alterado.getEstaAtivo();
+        Boolean estaAtivo = alterado.getEstaAtivo();
         String email = alterado.getEmail();
-        LocalDate dataCriacao = alterado.getDataCriacao();
         String cargo = alterado.getCargo();
-        String tipoDeAcesso = alterado.getTipoDeAcesso();
-        int fkInstituicao = alterado.getFkInstituicao();
-        LocalDate dataUltimoAcesso = alterado.getDataUltimoAcesso();
+        Integer tipoDeAcesso = alterado.getTipoDeAcesso().getCodigo();
+        Integer fkEndereco = alterado.getFkEndereco();
+        LocalDate dataAniversario = alterado.getDataAniversario();
+        Boolean primeiroAcesso = alterado.getPrimeiroAcesso();
 
         StringBuilder sql = new StringBuilder("UPDATE usuario SET ");
         List<Object> valores = new ArrayList<>();
@@ -257,10 +259,7 @@ public class UsuarioDAO extends DAO{
             valores.add(email);
         }
 
-        if (!Objects.equals(dataCriacao, original.getDataCriacao())){
-            sql.append("data_criacao = ?, ");
-            valores.add(dataCriacao);
-        }
+        // tira data_criacao pois é campo que não deve ser atualizado
 
         if (!Objects.equals(cargo, original.getCargo())){
             sql.append("cargo = ?, ");
@@ -272,9 +271,19 @@ public class UsuarioDAO extends DAO{
             valores.add(tipoDeAcesso);
         }
 
-        if (!Objects.equals(fkInstituicao, original.getFkInstituicao())){
-            sql.append("fk_instituicao_id = ?, ");
-            valores.add(fkInstituicao);
+        if (!Objects.equals(fkEndereco, original.getFkEndereco())){
+            sql.append("fk_endereco_id = ?, ");
+            valores.add(fkEndereco);
+        }
+
+        if (!Objects.equals(dataAniversario, original.getDataAniversario())){
+            sql.append("data_nascimento = ?, ");
+            valores.add(dataAniversario);
+        }
+
+        if (!Objects.equals(primeiroAcesso, original.getPrimeiroAcesso())){
+            sql.append("primeiro_acesso = ?, ");
+            valores.add(primeiroAcesso);
         }
 
         if (valores.isEmpty()){
@@ -302,7 +311,6 @@ public class UsuarioDAO extends DAO{
     }
 
     // delete
-
     public void remover(int id) throws SQLException{
 
         String sql = "DELETE from usuario where id = ?";

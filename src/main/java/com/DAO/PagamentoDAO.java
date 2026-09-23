@@ -25,7 +25,7 @@ public class PagamentoDAO extends DAO{
             "data_pagamento", "Data Pagamento",
             "foi_realizado", "Foi Realizado",
             "fk_contrato_id", "FK Contrato",
-            "fk_metodo_pagamento_id", "FK Metodo Pagamento"
+            "metodo_pagamento", "Metodo Pagamento"
     );
 
     // convertendo String recebida do Servlet
@@ -33,10 +33,11 @@ public class PagamentoDAO extends DAO{
 
         try {
             return switch (campo) {
-                case "id", "fk_contrato_id", "fk_metodo_pagamento_id" -> Integer.parseInt(valor);
+                case "id", "fk_contrato_id"-> Integer.parseInt(valor);
                 case "valor" -> Float.parseFloat(valor);
                 case "foi_realizado" -> Boolean.parseBoolean(valor);
                 case "data_pagamento" -> LocalDate.parse(valor);
+                case "metodo_pagamento" -> MetodoPagamento
                 default -> throw new IllegalArgumentException();
             };
         }  catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
