@@ -17,12 +17,22 @@ public enum StatusContrato {
     }
 
     // metodo para converter o codigo para o valor
-    public static TipoInstituicao getNomeComBaseCodigo(int codigo) {
+    public static StatusContrato getNomeComBaseCodigo(int codigo) {
         return switch (codigo) {
             case 1 -> Ativo;
             case 2 -> Inativo;
             case 3 -> Cancelado;
             default -> throw new IllegalArgumentException("Tipo de instituicao invalido: ");
+        };
+    }
+
+    // metodo para converter o valor para o codigo
+    public static int getCodigoComBaseNome(String campo) {
+        return switch (campo) {
+            case Ativo -> 1;
+            case Inativo -> 2;
+            case Cancelado -> 3;
+            default -> throw new IllegalArgumentException("Codigo de instituicao invalido: ");
         };
     }
 

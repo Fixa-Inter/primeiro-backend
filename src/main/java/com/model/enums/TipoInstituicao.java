@@ -14,7 +14,7 @@ public enum TipoInstituicao {
     }
 
     public int getCodigo() {
-        return Codigo;
+        return codigo;
     }
 
     // metodo para converter o codigo para o valor
@@ -24,7 +24,7 @@ public enum TipoInstituicao {
             case 2 -> Faculdade;
             case 3 -> Empresa;
             case 4 -> Orgao_Publico;
-            default -> throw new IllegalArgumentException("Tipo de instituicao invalido: ");
+            default -> throw new IllegalArgumentException("Tipo de instituicao invalido");
         };
     }
 
@@ -35,7 +35,7 @@ public enum TipoInstituicao {
             case Faculdade -> 2;
             case Empresa -> 3;
             case Orgao_Publico -> 4;
-            default -> throw new IllegalArgumentException("Codigo de instituicao invalido: ");
+            default -> throw new IllegalArgumentException("Codigo de instituicao invalido");
         };
     }
 

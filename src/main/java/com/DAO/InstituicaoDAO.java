@@ -1,6 +1,7 @@
 package com.DAO;
 
 import com.model.Instituicao;
+import com.model.enums.TipoInstituicao;
 import org.postgresql.core.SqlCommand;
 
 import javax.print.attribute.standard.JobKOctets;
@@ -23,10 +24,11 @@ public class InstituicaoDAO extends DAO{
 
             "id", "ID",
             "nome", "Nome",
-            "esta_ativo", "Esta Ativo",
             "email_corporativo", "Email Corporativo",
             "data_cadastro", "Data Cadastro",
-            "cnpj", "CNPJ"
+            "fk_tipo_de_instituicao", "Tipo de Instiuicao",
+            "dominio_email", "Dominio Email"
+
     );
 
 
@@ -36,9 +38,9 @@ public class InstituicaoDAO extends DAO{
         try {
             return switch (campo){
                 case "id" -> Integer.parseInt(valor);
-                case "nome", "cnpj", "email_corporativo" -> valor;
-                case "esta_ativo" -> Boolean.parseBoolean(valor);
+                case "nome", "email_corporativo", "dominio_email" -> valor;
                 case "data_cadastro" -> LocalDate.parse(valor);
+                case "fk_tipo_de_instituicao" -> TipoInstituicao.getCodigoComBaseNome(valor);
                 default -> throw new IllegalArgumentException();
             };
         } catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
@@ -57,23 +59,23 @@ public class InstituicaoDAO extends DAO{
     public void cadastrar(Instituicao instituicao) throws SQLException {
 
         String nome = instituicao.getNome();
-        Boolean estaAtivo = instituicao.getEstaAtivo();
         String emailCorporativo = instituicao.getEmailCorporativo();
-        LocalDate dataCadastro = instituicao.getDataCadastro();
-        String cnpj = instituicao.getCnpj();
+        String dominioEmail = instituicao.getDominioEmail();
+        TipoInstituicao tipoInstituicao = instituicao.getTipoDeInstituicao();
+
+        // tira as coluna id e data_cadastro pois o default do bd já preenche eles automaticamente
 
 
         String sql = """
-                     INSERT INTO instituicao (NOME, ESTA_ATIVO, EMAIL_CORPORATIVO, DATA_CADASTRO, CNPJ)
-                     VALUES (?, ?, ?, ?, ?)
+                     INSERT INTO instituicao (NOME, EMAIL_CORPORATIVO, DOMINIO_EMAIL, FK_TIPO_INSTITUICAO)
+                     VALUES (?, ?, ?, ?)
                      """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
 
             pstmt.setString(1, nome);
-            pstmt.setBoolean(2, estaAtivo);
-            pstmt.setString(3, emailCorporativo);
-            pstmt.setObject(4, dataCadastro);
-            pstmt.setString(5, cnpj);
+            pstmt.setString(2, emailCorporativo);
+            pstmt.setString(3, dominioEmail);
+            pstmt.setInt(4, tipoInstituicao.getCodigo());
 
             pstmt.execute();
 
@@ -93,7 +95,7 @@ public class InstituicaoDAO extends DAO{
         List<Instituicao> instituicoes = new ArrayList<>();
 
 
-        String sql = "SELECT id, nome, esta_ativo, email_corporativo, data_cadastro, cnpj FROM instituicao";
+        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, fk_tipo_instituicao FROM instituicao";
 
         if (campoFiltro != null && camposFiltraveis.containsKey(campoFiltro)){
             sql += " WHERE %s = ?".formatted(campoFiltro);
@@ -117,14 +119,14 @@ public class InstituicaoDAO extends DAO{
                 while (rs.next()){
                     int id = rs.getInt("id");
                     String nome = rs.getString("nome");
-                    boolean estaAtivo = rs.getBoolean("esta_ativo");
                     String emailCorporativo = rs.getString("email_corporativo");
                     Date dataCadastroSQL = rs.getDate("data_cadastro");
                     LocalDate dataCadastro = (dataCadastroSQL == null ? null : dataCadastroSQL.toLocalDate());
-                    String cnpj = rs.getString("cnpj");
+                    String dominioEmail = rs.getString("dominio_email");
+                    TipoInstituicao tipoInstituicao = TipoInstituicao.getNomeComBaseCodigo(rs.getInt("fk_tipo_instituicao"));
 
 
-                    instituicoes.add(new Instituicao(id, nome, estaAtivo, emailCorporativo,dataCadastro, cnpj));
+                    instituicoes.add(new Instituicao(id, nome, emailCorporativo,dataCadastro, tipoInstituicao, dominioEmail));
                 }
 
             }
@@ -138,7 +140,7 @@ public class InstituicaoDAO extends DAO{
     // select id
     public Instituicao pesquisarId(int idInstituicao) throws SQLException{
 
-        String sql = "SELECT id, nome, esta_ativo, email_corporativo, data_cadastro, cnpj FROM instituicao WHERE id = ?";
+        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, fk_tipo_instituicao FROM instituicao WHERE id = ?";
 
         Instituicao i;
 
@@ -153,13 +155,13 @@ public class InstituicaoDAO extends DAO{
 
                 int id = rs.getInt("id");
                 String nome = rs.getString("nome");
-                boolean esta_ativo = rs.getBoolean("esta_ativo");
                 String email_corporativo = rs.getString("email_corporativo");
                 Date dataCadastroSql = rs.getDate("data_cadastro");
                 LocalDate data_cadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
-                String cnpj = rs.getString("cnpj");
+                String dominioEmail = rs.getString("dominio_email");
+                TipoInstituicao tipoInstituicao = TipoInstituicao.getNomeComBaseCodigo(rs.getInt("fk_tipo_instituicao"));
 
-                i = new Instituicao(id, nome, esta_ativo, email_corporativo, data_cadastro, cnpj);
+                i = new Instituicao(id, nome, email_corporativo, data_cadastro, tipoInstituicao, dominioEmail);
 
             }
 
@@ -169,10 +171,9 @@ public class InstituicaoDAO extends DAO{
     }
 
     // select nome
-
     public Instituicao pesquisarNome(String nomeInstituicao) throws SQLException{
 
-        String sql = "SELECT id, nome, esta_ativo, email_corporativo, data_cadastro, cnpj FROM instituicao WHERE nome = ?";
+        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, fk_tipo_instituicao FROM instituicao WHERE nome = ?";
 
         Instituicao i;
 
@@ -187,13 +188,49 @@ public class InstituicaoDAO extends DAO{
 
                 int id = rs.getInt("id");
                 String nome = rs.getString("nome");
-                boolean esta_ativo = rs.getBoolean("esta_ativo");
                 String email_corporativo = rs.getString("email_corporativo");
                 Date dataCadastroSql = rs.getDate("data_cadastro");
                 LocalDate data_cadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
-                String cnpj = rs.getString("cnpj");
+                String dominioEmail = rs.getString("dominio_email");
+                TipoInstituicao tipoInstituicao = TipoInstituicao.getNomeComBaseCodigo(rs.getInt("fk_tipo_instituicao"));
 
-                i = new Instituicao(id, nome, esta_ativo, email_corporativo, data_cadastro, cnpj);
+                i = new Instituicao(id, nome, email_corporativo, data_cadastro, tipoInstituicao, dominioEmail);
+
+            }
+
+        }
+        conn.commit();
+        return i;
+
+    }
+
+    // select dominio email para o servlet, pois como a tabela dominio email e unique, precisa de um metodo para verificar se já existe um dominio email igual e mostrar
+    // uma excecao com mensagem pra isso, e retorna null caso n tenha esse dominio de email registrado, liberando para o registro no sistema
+
+    public Instituicao pesquisarDominioEmail(String dominioEmailInsert) throws SQLException{
+
+        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, fk_tipo_instituicao FROM instituicao WHERE dominio_email = ?";
+
+        Instituicao i;
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setString(1, dominioEmailInsert);
+
+            try (ResultSet rs = pstmt.executeQuery()){
+
+                if (!rs.next()){
+                   return null;
+                }
+
+                int id = rs.getInt("id");
+                String nome = rs.getString("nome");
+                String email_corporativo = rs.getString("email_corporativo");
+                Date dataCadastroSql = rs.getDate("data_cadastro");
+                LocalDate data_cadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
+                String dominioEmail = rs.getString("dominio_email");
+                TipoInstituicao tipoInstituicao = TipoInstituicao.getNomeComBaseCodigo(rs.getInt("fk_tipo_instituicao"));
+
+                i = new Instituicao(id, nome, email_corporativo, data_cadastro, tipoInstituicao, dominioEmail);
 
             }
 
@@ -207,12 +244,11 @@ public class InstituicaoDAO extends DAO{
     // update
     public void atualizar(Instituicao original, Instituicao alterada) throws SQLException {
 
-        int id = alterada.getId();
+        Integer id = alterada.getId();
         String nome = alterada.getNome();
-        Boolean estaAtivo = alterada.getEstaAtivo();
         String emailCorpoartivo = alterada.getEmailCorporativo();
-        LocalDate dataCadastro = alterada.getDataCadastro();
-        String cnpj = alterada.getCnpj();
+        Integer tipoInstituicao = alterada.getTipoDeInstituicao().getCodigo();
+        String dominioEmail = alterada.getDominioEmail();
 
         StringBuilder sql = new StringBuilder("UPDATE instituicao SET ");
         List<Object> valores = new ArrayList<>();
@@ -222,24 +258,21 @@ public class InstituicaoDAO extends DAO{
             valores.add(nome);
         }
 
-        if (!Objects.equals(estaAtivo, original.getEstaAtivo())){
-            sql.append("esta_ativo = ?, ");
-            valores.add(estaAtivo);
-        }
-
         if (!Objects.equals(emailCorpoartivo, original.getEmailCorporativo())){
             sql.append("email_corporativo = ?, ");
             valores.add(emailCorpoartivo);
         }
 
-        if (!Objects.equals(dataCadastro, original.getDataCadastro())){
-            sql.append("data_cadastro = ?, ");
-            valores.add(dataCadastro);
+        // tira data_cadastro pois é um campo que não deve ser atualizado
+
+        if (!Objects.equals(dominioEmail, original.getDominioEmail())){
+            sql.append("dominio_email = ?, ");
+            valores.add(dominioEmail);
         }
 
-        if (!Objects.equals(cnpj, original.getCnpj())){
-            sql.append("cnpj = ?, ");
-            valores.add(cnpj);
+        if (!Objects.equals(tipoInstituicao, original.getTipoDeInstituicao().getCodigo())){
+            sql.append("fk_tipo_instituicao = ?, ");
+            valores.add(tipoInstituicao);
         }
 
         if (valores.isEmpty()){
@@ -268,7 +301,6 @@ public class InstituicaoDAO extends DAO{
 
 
     // delete
-
     public void remover(int id) throws SQLException {
 
         String sql = "DELETE FROM instituicao WHERE id = ?";

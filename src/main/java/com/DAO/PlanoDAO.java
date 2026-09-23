@@ -169,7 +169,7 @@ public class PlanoDAO extends DAO{
         return plano;
     }
 
-    //alter
+    //update
     public void atualizar(Plano original, Plano alterado) throws SQLException{
         String nome = alterado.getNome();
         double valorMensal = alterado.getValorMensal();

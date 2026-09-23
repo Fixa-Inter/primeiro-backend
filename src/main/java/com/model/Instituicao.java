@@ -1,25 +1,27 @@
 package com.model;
 
+import com.model.enums.TipoInstituicao;
+
 import java.time.LocalDate;
 
 public class Instituicao {
 
-    private Integer id;              // coluna: id
-    private String nome;             // coluna: nome
-    private Boolean estaAtivo;       // coluna: esta_ativo
-    private String emailCorporativo; // coluna: email_corporativo
-    private LocalDate dataCadastro;  // coluna: data_cadastro
-    private String cnpj;             // coluna: cnpj
+    private Integer id;                          // coluna: id
+    private String nome;                         // coluna: nome
+    private String emailCorporativo;             // coluna: email_corporativo
+    private LocalDate dataCadastro;              // coluna: data_cadastro
+    private TipoInstituicao tipoDeInstituicao;   // coluna: tipo_de_instituicao
+    private String dominioEmail;                 // coluna: dominioEmail
 
     // Construtor
 
-    public Instituicao(Integer id, String nome, Boolean estaAtivo, String emailCorporativo, LocalDate dataCadastro, String cnpj) {
+    public Instituicao(Integer id, String nome, String emailCorporativo, LocalDate dataCadastro, TipoInstituicao tipoDeInstituicao, String dominioEmail) {
         this.id = id;
         this.nome = nome;
-        this.estaAtivo = estaAtivo;
         this.emailCorporativo = emailCorporativo;
         this.dataCadastro = dataCadastro;
-        this.cnpj = cnpj;
+        this.tipoDeInstituicao = tipoDeInstituicao;
+        this.dominioEmail = dominioEmail;
     }
 
     // Getters e setters
@@ -40,14 +42,6 @@ public class Instituicao {
         this.nome = nome;
     }
 
-    public Boolean getEstaAtivo() {
-        return estaAtivo;
-    }
-
-    public void setEstaAtivo(Boolean estaAtivo) {
-        this.estaAtivo = estaAtivo;
-    }
-
     public String getEmailCorporativo() {
         return emailCorporativo;
     }
@@ -64,19 +58,27 @@ public class Instituicao {
         this.dataCadastro = dataCadastro;
     }
 
-    public String getCnpj() {
-        return cnpj;
+    public TipoInstituicao getTipoDeInstituicao() {
+        return tipoDeInstituicao;
     }
 
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
+    public void setTipoDeInstituicao(TipoInstituicao tipoDeInstituicao) {
+        this.tipoDeInstituicao = tipoDeInstituicao;
+    }
+
+    public String getDominioEmail() {
+        return dominioEmail;
+    }
+
+    public void setDominioEmail(String dominioEmail) {
+        this.dominioEmail = dominioEmail;
     }
 
     // toString
 
     @Override
     public String toString(){
-        return "Instituicao{id=%d, nome='%s', estaAtivo=%b, emailCorporativo='%s', dataCadastro=%s, cnpj='%s'}"
-                .formatted(id, nome, estaAtivo, emailCorporativo, dataCadastro, cnpj);
+        return "Instituicao{id=%d, nome='%s', emailCorporativo='%s', dataCadastro=%s, dominioEmail=%s,tipoDeInstituicao=%s}"
+                .formatted(id, nome, emailCorporativo, dataCadastro, dominioEmail, tipoDeInstituicao);
     }
 }
