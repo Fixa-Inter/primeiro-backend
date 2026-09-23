@@ -1,20 +1,24 @@
 package com.model;
 
+import java.time.LocalDateTime;
+
 public class Endereco {
 
-    private Integer id;              // coluna: id
-    private String rua;              // coluna: rua
-    private String bairro;           // coluna: bairro
-    private String complemento;      // coluna: complemento
-    private String cidade;           // coluna: cidade
-    private String estado;           // coluna: estado
-    private Integer numero;          // coluna: numero
-    private String cep;              // coluna: cep
-    private Integer fkInstituicao;   // coluna: fk_instituicao_id
+    private Integer id;                 // coluna: id
+    private String rua;                 // coluna: rua
+    private String bairro;              // coluna: bairro
+    private String complemento;         // coluna: complemento
+    private String cidade;              // coluna: cidade
+    private String estado;              // coluna: estado
+    private String numero;              // coluna: numero
+    private String cep;                 // coluna: cep
+    private String cnpj;                // coluna: cnpj
+    private LocalDateTime dataCriacao;  // coluna: data
+    private Integer fkInstituicao;      // coluna: fk_instituicao_id
 
     // construtor
 
-    public Endereco(Integer id, String rua, String bairro, String complemento, String cidade, String estado, Integer numero, String cep, Integer fkInstituicao) {
+    public Endereco(Integer id, String rua, String bairro, String complemento, String cidade, String estado, String numero, String cep, String cnpj, LocalDateTime dataCriacao, Integer fkInstituicao) {
         this.id = id;
         this.rua = rua;
         this.bairro = bairro;
@@ -23,8 +27,11 @@ public class Endereco {
         this.estado = estado;
         this.numero = numero;
         this.cep = cep;
+        this.cnpj = cnpj;
+        this.dataCriacao = dataCriacao;
         this.fkInstituicao = fkInstituicao;
     }
+
 
     // getters e setters
 
@@ -76,11 +83,11 @@ public class Endereco {
         this.estado = estado;
     }
 
-    public Integer getNumero() {
+    public String getNumero() {
         return numero;
     }
 
-    public void setNumero(Integer numero) {
+    public void setNumero(String numero) {
         this.numero = numero;
     }
 
@@ -100,11 +107,31 @@ public class Endereco {
         this.fkInstituicao = fkInstituicao;
     }
 
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
     // toString
 
     @Override
     public String toString(){
-        return "Endereco{id=%d, rua='%s', bairro='%s', complemento='%s', cidade='%s', estado='%s', numero='%s', cep='%s'}"
-                .formatted(id, rua, bairro, complemento, cidade, estado, numero, cep, fkInstituicao);
+        return "Endereco{id=%d, rua='%s', bairro='%s', complemento='%s', cidade='%s', estado='%s', numero='%s', cep='%s', cnpj='%s', dataCriacao='%s'}"
+                .formatted(id, rua, bairro, complemento, cidade, estado, numero, cep, fkInstituicao, cnpj, dataCriacao);
     }
 }

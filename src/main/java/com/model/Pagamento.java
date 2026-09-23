@@ -12,18 +12,19 @@ public class Pagamento {
     private LocalDateTime dataPagamento;     // coluna: data_pagamento
     private Boolean foiRealizado;        // coluna: foi_realizado
     private Integer fkContrato;          // coluna: fk_contrato_id
-    private Integer fkMetodoPagamento;   // coluna: fk_metodo_pagamento_id
+    private MetodoPagamento MetodoPagamento;   // coluna: metodo_pagamento
 
     // construtor
 
-    public Pagamento(Integer id, Float valor, LocalDateTime dataPagamento, Boolean foiRealizado, Integer fkContrato, Integer fkMetodoPagamento) {
+    public Pagamento(Integer id, Float valor, LocalDateTime dataPagamento, Boolean foiRealizado, Integer fkContrato, MetodoPagamento metodoPagamento) {
         this.id = id;
         this.valor = valor;
         this.dataPagamento = dataPagamento;
         this.foiRealizado = foiRealizado;
         this.fkContrato = fkContrato;
-        this.fkMetodoPagamento = fkMetodoPagamento;
+        MetodoPagamento = metodoPagamento;
     }
+
 
     // gettes e setters
 
@@ -67,19 +68,19 @@ public class Pagamento {
         this.fkContrato = fkContrato;
     }
 
-    public Integer getFkMetodoPagamento() {
-        return fkMetodoPagamento;
+    public MetodoPagamento getMetodoPagamento() {
+        return MetodoPagamento;
     }
 
-    public void setFkMetodoPagamento(Integer fkMetodoPagamento) {
-        this.fkMetodoPagamento = fkMetodoPagamento;
+    public void setMetodoPagamento(MetodoPagamento metodoPagamento) {
+        MetodoPagamento = metodoPagamento;
     }
 
     // toString
 
     @Override
     public String toString(){
-        return "Pagamento{id=%d, valor=%f, dataPagamento=%s, foiRealizado=%b, fkContrato=%d, fkMetodoPagamento=%d}"
-                .formatted(id, valor, dataPagamento, foiRealizado, fkContrato, fkMetodoPagamento);
+        return "Pagamento{id=%d, valor=%f, dataPagamento=%s, foiRealizado=%b, fkContrato=%d, MetodoPagamento=%d}"
+                .formatted(id, valor, dataPagamento, foiRealizado, fkContrato, MetodoPagamento);
     }
 }

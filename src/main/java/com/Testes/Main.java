@@ -2,6 +2,7 @@ package com.Testes;
 
 import com.DAO.*;
 import com.model.*;
+import com.model.enums.TipoInstituicao;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
