@@ -3,6 +3,7 @@ package com.DAO;
 import com.model.Contrato;
 import com.model.Plano;
 import com.model.SuperAdministrador;
+import com.model.enums.MetodoPagamento;
 import com.model.enums.StatusContrato;
 
 import java.sql.*;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 public class ContratoDAO extends DAO{
     public static final Map<String,String> camposFiltraveis = Map.of(
@@ -27,7 +29,7 @@ public class ContratoDAO extends DAO{
             return switch (campo) {
                 case "id","fkEndereco","fkPlano" -> Integer.parseInt(valor);
                 case "dataInicio","dataVencimento" -> LocalDate.parse(valor);
-                case "status_contrato" -> StatusContrato.getCodigoComBaseNome(valor);
+                case "status_contrato" -> StatusContrato.converterEnum(valor);
                 default -> throw new IllegalArgumentException();
             };
         }catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
@@ -44,9 +46,9 @@ public class ContratoDAO extends DAO{
     public void cadastrar(Contrato contrato) throws SQLException{
         LocalDate dataInicio = contrato.getDataInicio();
         LocalDate dataVencimento = contrato.getDataVencimento();
-        int fkEndereco = contrato.getFkEndereco();
-        int fkPlano = contrato.getFkPlano();
-        StatusContrato statusContrato = contrato.getStatusContrato();
+        Integer fkEndereco = contrato.getFkEndereco();
+        Integer fkPlano = contrato.getFkPlano();
+        Integer statusContrato = contrato.getStatusContrato().getCodigo();
 
         String sql = """
                 INSERT INTO CONTRATO (DATA_VENCIMENTO,FK_PLANO_ID,FK_ENDERECO_ID, STATUS_CONTRATO) 
@@ -104,9 +106,9 @@ public class ContratoDAO extends DAO{
                     LocalDate dataVencimento = (dataVencimentoSQL == null ? null : dataVencimentoSQL.toLocalDate());
                     int fkEndereco = rs.getInt("FK_INSTITUICAO_ID");
                     int fkPlano = rs.getInt("FK_PLANO_ID");
-                    StatusContrato statusContrato = StatusContrato.getNomeComBaseCodigo(rs.getInt("STATUS_CONTRATO"));
+                    int statusContrato = rs.getInt("STATUS_CONTRATO");
 
-                    resultado.add(new Contrato(id,dataInicio, dataVencimento, fkEndereco, fkPlano, statusContrato));
+                    resultado.add(new Contrato(id,dataInicio, dataVencimento, fkEndereco, fkPlano, StatusContrato.converterEnum(statusContrato)));
                 }
             }
         }
@@ -131,9 +133,9 @@ public class ContratoDAO extends DAO{
                 LocalDate dataVencimento = rs.getObject("DATA_VENCIMENTO", LocalDate.class);
                 int fkEndereco = rs.getInt("FK_ENDERECO_ID");
                 int fkPlano = rs.getInt("FK_PLANO_ID");
-                StatusContrato statusContrato = StatusContrato.getNomeComBaseCodigo(rs.getInt("STATUS_CONTRATO"));
+                int statusContrato = rs.getInt("STATUS_CONTRATO");
 
-                contrato = new Contrato(id, dataInicio, dataVencimento, fkPlano, fkEndereco, statusContrato);
+                contrato = new Contrato(id, dataInicio, dataVencimento, fkPlano, fkEndereco, StatusContrato.converterEnum(statusContrato));
             }
         } catch (SQLException e) {
             throw new RuntimeException();
@@ -157,9 +159,9 @@ public class ContratoDAO extends DAO{
                 LocalDate dataInicio = rs.getObject("DATA_INICIO", LocalDate.class);
                 LocalDate dataVencimento = rs.getObject("DATA_VENCIMENTO", LocalDate.class);
                 int fkPlano = rs.getInt("FK_PLANO_ID");
-                StatusContrato statusContrato = StatusContrato.getNomeComBaseCodigo(rs.getInt("STATUS_CONTRATO"));
+                int statusContrato = rs.getInt("STATUS_CONTRATO");
 
-                contrato = new Contrato(id, dataInicio, dataVencimento, fkPlano, fkEndereco, statusContrato);
+                contrato = new Contrato(id, dataInicio, dataVencimento, fkPlano, fkEndereco, StatusContrato.converterEnum(statusContrato));
             }
         } catch (SQLException e) {
             throw new RuntimeException();
@@ -175,7 +177,7 @@ public class ContratoDAO extends DAO{
         // data_inicio pode ser alterada? consideramos que nao
         int fkEndereco = alterado.getFkEndereco();
         int fkPlano = alterado.getFkPlano();
-        StatusContrato statusContrato = alterado.getStatusContrato();
+        Integer statusContrato = alterado.getStatusContrato().getCodigo();
 
         StringBuilder sql = new StringBuilder("UPDATE CONTRATO SET ");
         ArrayList<Object> alteracoes = new ArrayList<>();
@@ -195,9 +197,9 @@ public class ContratoDAO extends DAO{
             alteracoes.add(fkEndereco);
         }
 
-        if (original.getStatusContrato() != statusContrato){
+        if (!Objects.equals(statusContrato, original.getStatusContrato().getCodigo())){
             sql.append("STATUS_CONTRATO = ?, ");
-            alteracoes.add(fkEndereco);
+            alteracoes.add(statusContrato);
         }
 
         if (alteracoes.isEmpty()) {

@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="Fixa-Backend:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/Fixa_Backend_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="Fixa-Backend" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: io.github.cdimascio:dotenv-java:3.0.2" />
+          <element id="library" level="project" name="Maven: org.postgresql:postgresql:42.7.13" />
+        </element>
+      </element>
+      <element id="dir-copy" path="$PROJECT_DIR$/src/main/webapp" />
+    </root>
+  </artifact>
+</component>

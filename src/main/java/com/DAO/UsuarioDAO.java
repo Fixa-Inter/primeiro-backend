@@ -37,7 +37,7 @@ public class UsuarioDAO extends DAO{
                 case "nome", "senha_hash", "email", "cargo", "tipo_de_acesso" -> valor;
                 case "esta_ativo", "primeiro_acesso" -> Boolean.parseBoolean(valor);
                 case "data_criacao" -> LocalDateTime.parse(valor);
-                case "tipoAcesso" -> TipoAcesso.getCodigoComBaseNome(valor);
+                case "tipoAcesso" -> TipoAcesso.converterEnum(valor);
                 case "data_nacimento" -> LocalDate.parse(valor);
                 default -> throw new IllegalArgumentException();
             };
@@ -61,6 +61,7 @@ public class UsuarioDAO extends DAO{
         String cargo = usuario.getCargo();
         int fkEndereco = usuario.getFkEndereco();
         LocalDate dataAniversario = usuario.getDataAniversario();
+        Integer tipoAcesso = usuario.getTipoDeAcesso().getCodigo();
 
         // tira id, data_cricao, esta_ativo e primeiro_acesso pois o default do BD já define eles automáticamente
 
@@ -75,7 +76,7 @@ public class UsuarioDAO extends DAO{
             pstmt.setString(2, senhaHash);
             pstmt.setString(3, email);
             pstmt.setString(4, cargo);
-            pstmt.setInt(5, TipoAcesso.Solicitante.getCodigo());
+            pstmt.setInt(5, tipoAcesso);
             pstmt.setInt(6, fkEndereco);
             pstmt.setDate(7, Date.valueOf(dataAniversario));
 
@@ -126,14 +127,14 @@ public class UsuarioDAO extends DAO{
                     Timestamp dataCriacaoSQL = rs.getTimestamp("data_criacao");
                     LocalDateTime dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDateTime());
                     String cargo = rs.getString("cargo");
-                    TipoAcesso tipoDeAcesso = TipoAcesso.getNomeComBaseCodigo(rs.getInt("tipo_de_acesso"));
+                    int tipoDeAcesso = rs.getInt("tipo_de_acesso");
                     int fkEnderecoID = rs.getInt("fk_endereco_id");
                     Date dataAniversarioAcessoBD =  rs.getDate("data_nascimento");
                     LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
                     Boolean primeiroAcesso = rs.getBoolean("primeiro_acesso");
 
 
-                    usuarios.add(new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkEnderecoID, dataAniversario, primeiroAcesso));
+                    usuarios.add(new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, TipoAcesso.converterEnum(tipoDeAcesso), fkEnderecoID, dataAniversario, primeiroAcesso));
                 }
             }
 
@@ -167,14 +168,14 @@ public class UsuarioDAO extends DAO{
                 Timestamp dataCriacaoSQL = rs.getTimestamp("data_criacao");
                 LocalDateTime dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDateTime());
                 String cargo = rs.getString("cargo");
-                TipoAcesso tipoDeAcesso = TipoAcesso.getNomeComBaseCodigo(rs.getInt("tipo_de_acesso"));
+                int tipoDeAcesso = rs.getInt("tipo_de_acesso");
                 int fkEnderecoID = rs.getInt("fk_endereco_id");
                 Date dataAniversarioAcessoBD =  rs.getDate("data_nascimento");
                 LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
                 Boolean primeiroAcesso = rs.getBoolean("primeiro_acesso");
 
 
-                u = new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkEnderecoID, dataAniversario, primeiroAcesso);
+                u = new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, TipoAcesso.converterEnum(tipoDeAcesso), fkEnderecoID, dataAniversario, primeiroAcesso);
 
             }
 
@@ -208,14 +209,14 @@ public class UsuarioDAO extends DAO{
                 Timestamp dataCriacaoSQL = rs.getTimestamp("data_criacao");
                 LocalDateTime dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDateTime());
                 String cargo = rs.getString("cargo");
-                TipoAcesso tipoDeAcesso = TipoAcesso.getNomeComBaseCodigo(rs.getInt("tipo_de_acesso"));
+                int tipoDeAcesso = rs.getInt("tipo_de_acesso");
                 int fkEnderecoID = rs.getInt("fk_endereco_id");
                 Date dataAniversarioAcessoBD =  rs.getDate("data_nascimento");
                 LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
                 Boolean primeiroAcesso = rs.getBoolean("primeiro_acesso");
 
 
-                u = new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkEnderecoID, dataAniversario, primeiroAcesso);
+                u = new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, TipoAcesso.converterEnum(tipoDeAcesso), fkEnderecoID, dataAniversario, primeiroAcesso);
             }
 
         }
@@ -266,7 +267,7 @@ public class UsuarioDAO extends DAO{
             valores.add(cargo);
         }
 
-        if (!Objects.equals(tipoDeAcesso, original.getTipoDeAcesso())){
+        if (!Objects.equals(tipoDeAcesso, original.getTipoDeAcesso().getCodigo())){
             sql.append("tipo_de_acesso = ?, ");
             valores.add(tipoDeAcesso);
         }
