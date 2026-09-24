@@ -1,5 +1,7 @@
 package com.model;
 
+import com.model.enums.MetodoPagamento;
+
 import java.security.PrivateKey;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -12,7 +14,7 @@ public class Pagamento {
     private LocalDateTime dataPagamento;     // coluna: data_pagamento
     private Boolean foiRealizado;        // coluna: foi_realizado
     private Integer fkContrato;          // coluna: fk_contrato_id
-    private MetodoPagamento MetodoPagamento;   // coluna: metodo_pagamento
+    private MetodoPagamento metodoPagamento;   // coluna: metodo_pagamento
 
     // construtor
 
@@ -22,7 +24,7 @@ public class Pagamento {
         this.dataPagamento = dataPagamento;
         this.foiRealizado = foiRealizado;
         this.fkContrato = fkContrato;
-        MetodoPagamento = metodoPagamento;
+        metodoPagamento = metodoPagamento;
     }
 
 
@@ -69,18 +71,17 @@ public class Pagamento {
     }
 
     public MetodoPagamento getMetodoPagamento() {
-        return MetodoPagamento;
+        return metodoPagamento;
     }
 
     public void setMetodoPagamento(MetodoPagamento metodoPagamento) {
-        MetodoPagamento = metodoPagamento;
+        metodoPagamento = metodoPagamento;
     }
 
     // toString
-
     @Override
     public String toString(){
         return "Pagamento{id=%d, valor=%f, dataPagamento=%s, foiRealizado=%b, fkContrato=%d, MetodoPagamento=%d}"
-                .formatted(id, valor, dataPagamento, foiRealizado, fkContrato, MetodoPagamento);
+                .formatted(id, valor, dataPagamento, foiRealizado, fkContrato, metodoPagamento.getNome());
     }
 }

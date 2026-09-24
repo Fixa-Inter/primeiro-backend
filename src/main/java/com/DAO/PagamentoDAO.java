@@ -2,6 +2,7 @@ package com.DAO;
 
 import com.model.Instituicao;
 import com.model.Pagamento;
+import com.model.enums.MetodoPagamento;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -37,7 +38,7 @@ public class PagamentoDAO extends DAO{
                 case "valor" -> Float.parseFloat(valor);
                 case "foi_realizado" -> Boolean.parseBoolean(valor);
                 case "data_pagamento" -> LocalDate.parse(valor);
-                case "metodo_pagamento" -> MetodoPagamento
+                case "metodo_pagamento" -> MetodoPagamento.converterEnum(valor);
                 default -> throw new IllegalArgumentException();
             };
         }  catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
@@ -59,10 +60,9 @@ public class PagamentoDAO extends DAO{
         LocalDateTime dataPagamento = pagamento.getDataPagamento();
         Boolean foiRealizado = pagamento.getFoiRealizado();
         Integer fkContrato = pagamento.getFkContrato();
-        Integer fkMetodoPagamento = pagamento.getFkMetodoPagamento();
-
+        Integer metodoPagamento = pagamento.getMetodoPagamento().getCodigo();
         String sql = """
-                        INSERT INTO pagamento (VALOR, DATA_PAGAMENTO, FOI_REALIZADO, FK_CONTRATO_ID, FK_METODO_PAGAMENTO_ID)
+                        INSERT INTO pagamento (VALOR, DATA_PAGAMENTO, FOI_REALIZADO, FK_CONTRATO_ID, METODO_PAGAMENTO)
                         VALUES (?, ?, ?, ?, ?)
                      """;
 
@@ -72,7 +72,7 @@ public class PagamentoDAO extends DAO{
             pstmt.setTimestamp(2, (dataPagamento == null ? null : Timestamp.valueOf(dataPagamento)));
             pstmt.setBoolean(3, foiRealizado);
             pstmt.setInt(4, fkContrato);
-            pstmt.setInt(5, fkMetodoPagamento);
+            pstmt.setInt(5, metodoPagamento);
 
             pstmt.execute();
 
@@ -84,7 +84,6 @@ public class PagamentoDAO extends DAO{
     }
 
     // select
-
     public List<Pagamento> listar(String campoFiltro, Object valorFiltro, String campoSequencia, String direcaoSequencia) throws SQLException {
 
         boolean temFiltro = true;
@@ -92,7 +91,7 @@ public class PagamentoDAO extends DAO{
         List<Pagamento> pagamentos = new ArrayList<>();
 
 
-        String sql = "SELECT id, valor, data_pagamento, foi_realizado, fk_contrato_id, fk_metodo_pagamento_id FROM pagamento";
+        String sql = "SELECT ID, VALOR, DATA_PAGAMENTO, FOI_REALIZADO, FK_CONTRATO_ID, METODO_PAGAMENTO FROM pagamento";
 
         if (campoFiltro != null && camposFiltraveis.containsKey(campoFiltro)){
             sql += " WHERE %s = ?".formatted(campoFiltro);
@@ -121,9 +120,9 @@ public class PagamentoDAO extends DAO{
                     LocalDateTime data_pagamento = (data_pagamentoTimestamp == null ? null : data_pagamentoTimestamp.toLocalDateTime());
                     Boolean foiRealizado = rs.getBoolean("foi_realizado");
                     Integer fkContrato = rs.getInt("fk_contrato_id");
-                    Integer fkMetodoPagamento = rs.getInt("fk_metodo_pagamento_id");
+                    Integer metodoPagamento = rs.getInt("metodo_pagamento");
 
-                    pagamentos.add(new Pagamento(id, valor, data_pagamento, foiRealizado, fkContrato, fkMetodoPagamento));
+                    pagamentos.add(new Pagamento(id, valor, data_pagamento, foiRealizado, fkContrato, MetodoPagamento.converterEnum(metodoPagamento)));
                 }
 
             }
@@ -137,7 +136,7 @@ public class PagamentoDAO extends DAO{
     // select id
     public Pagamento pesquisarId(int idPagamento) throws SQLException{
 
-        String sql = "SELECT id, valor, data_pagamento, foi_realizado, fk_contrato_id, fk_metodo_pagamento_id FROM pagamento WHERE id = ?";
+        String sql = "SELECT ID, VALOR, DATA_PAGAMENTO, FOI_REALIZADO, FK_CONTRATO_ID, METODO_PAGAMENTO FROM pagamento WHERE id = ?";
 
         Pagamento p;
 
@@ -157,9 +156,9 @@ public class PagamentoDAO extends DAO{
                 LocalDateTime data_pagamento = (data_pagamentoTimestamp == null ? null : data_pagamentoTimestamp.toLocalDateTime());
                 Boolean foiRealizado = rs.getBoolean("foi_realizado");
                 Integer fkContrato = rs.getInt("fk_contrato_id");
-                Integer fkMetodoPagamento = rs.getInt("fk_metodo_pagamento_id");
+                Integer metodoPagamento = rs.getInt("metodo_pagamento");
 
-                p = new Pagamento(id, valor, data_pagamento, foiRealizado, fkContrato, fkMetodoPagamento);
+                p = new Pagamento(id, valor, data_pagamento, foiRealizado, fkContrato, MetodoPagamento.converterEnum(metodoPagamento));
             }
         }
 
@@ -176,7 +175,7 @@ public class PagamentoDAO extends DAO{
         LocalDateTime dataPagamento = alterado.getDataPagamento();
         Boolean foiRealizado = alterado.getFoiRealizado();
         Integer fkContrato = alterado.getFkContrato();
-        Integer fkMetodoPagamento = alterado.getFkMetodoPagamento();
+        Integer metodoPagamento = alterado.getMetodoPagamento().getCodigo();
 
         StringBuilder sql = new StringBuilder("UPDATE pagamento SET ");
         List<Object> valores = new ArrayList<>();
@@ -202,9 +201,9 @@ public class PagamentoDAO extends DAO{
             valores.add(fkContrato);
         }
 
-        if(!Objects.equals(fkMetodoPagamento, original.getFkMetodoPagamento())){
-            sql.append("fk_metodo_pagamento_id = ?, ");
-            valores.add(fkMetodoPagamento);
+        if(!Objects.equals(metodoPagamento, original.getMetodoPagamento().getCodigo())){
+            sql.append("metodo_pagamento = ?, ");
+            valores.add(metodoPagamento);
         }
 
         if (valores.isEmpty()){
