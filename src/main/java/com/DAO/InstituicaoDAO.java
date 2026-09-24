@@ -40,7 +40,7 @@ public class InstituicaoDAO extends DAO{
                 case "id" -> Integer.parseInt(valor);
                 case "nome", "email_corporativo", "dominio_email" -> valor;
                 case "data_cadastro" -> LocalDate.parse(valor);
-                case "fk_tipo_de_instituicao" -> TipoInstituicao.getCodigoComBaseNome(valor);
+                case "fk_tipo_de_instituicao" -> TipoInstituicao.converterEnum(valor);
                 default -> throw new IllegalArgumentException();
             };
         } catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
@@ -61,7 +61,7 @@ public class InstituicaoDAO extends DAO{
         String nome = instituicao.getNome();
         String emailCorporativo = instituicao.getEmailCorporativo();
         String dominioEmail = instituicao.getDominioEmail();
-        TipoInstituicao tipoInstituicao = instituicao.getTipoDeInstituicao();
+        Integer tipoInstituicao = instituicao.getTipoDeInstituicao().getCodigo();
 
         // tira as coluna id e data_cadastro pois o default do bd já preenche eles automaticamente
 
@@ -75,7 +75,7 @@ public class InstituicaoDAO extends DAO{
             pstmt.setString(1, nome);
             pstmt.setString(2, emailCorporativo);
             pstmt.setString(3, dominioEmail);
-            pstmt.setInt(4, tipoInstituicao.getCodigo());
+            pstmt.setInt(4, tipoInstituicao);
 
             pstmt.execute();
 
@@ -123,10 +123,10 @@ public class InstituicaoDAO extends DAO{
                     Date dataCadastroSQL = rs.getDate("data_cadastro");
                     LocalDate dataCadastro = (dataCadastroSQL == null ? null : dataCadastroSQL.toLocalDate());
                     String dominioEmail = rs.getString("dominio_email");
-                    TipoInstituicao tipoInstituicao = TipoInstituicao.getNomeComBaseCodigo(rs.getInt("fk_tipo_instituicao"));
+                    Integer tipoInstituicao = rs.getInt("tipo_instituicao");
 
 
-                    instituicoes.add(new Instituicao(id, nome, emailCorporativo,dataCadastro, tipoInstituicao, dominioEmail));
+                    instituicoes.add(new Instituicao(id, nome, emailCorporativo,dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail));
                 }
 
             }
@@ -155,13 +155,13 @@ public class InstituicaoDAO extends DAO{
 
                 int id = rs.getInt("id");
                 String nome = rs.getString("nome");
-                String email_corporativo = rs.getString("email_corporativo");
+                String emailCorporativo = rs.getString("email_corporativo");
                 Date dataCadastroSql = rs.getDate("data_cadastro");
-                LocalDate data_cadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
+                LocalDate dataCadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
                 String dominioEmail = rs.getString("dominio_email");
-                TipoInstituicao tipoInstituicao = TipoInstituicao.getNomeComBaseCodigo(rs.getInt("fk_tipo_instituicao"));
+                Integer tipoInstituicao = rs.getInt("tipo_instituicao");
 
-                i = new Instituicao(id, nome, email_corporativo, data_cadastro, tipoInstituicao, dominioEmail);
+                i = new Instituicao(id, nome, emailCorporativo,dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
             }
 
@@ -188,13 +188,13 @@ public class InstituicaoDAO extends DAO{
 
                 int id = rs.getInt("id");
                 String nome = rs.getString("nome");
-                String email_corporativo = rs.getString("email_corporativo");
+                String emailCorporativo = rs.getString("email_corporativo");
                 Date dataCadastroSql = rs.getDate("data_cadastro");
-                LocalDate data_cadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
+                LocalDate dataCadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
                 String dominioEmail = rs.getString("dominio_email");
-                TipoInstituicao tipoInstituicao = TipoInstituicao.getNomeComBaseCodigo(rs.getInt("fk_tipo_instituicao"));
+                Integer tipoInstituicao = rs.getInt("tipo_instituicao");
 
-                i = new Instituicao(id, nome, email_corporativo, data_cadastro, tipoInstituicao, dominioEmail);
+                i = new Instituicao(id, nome, emailCorporativo,dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
             }
 
@@ -224,13 +224,13 @@ public class InstituicaoDAO extends DAO{
 
                 int id = rs.getInt("id");
                 String nome = rs.getString("nome");
-                String email_corporativo = rs.getString("email_corporativo");
+                String emailCorporativo = rs.getString("email_corporativo");
                 Date dataCadastroSql = rs.getDate("data_cadastro");
-                LocalDate data_cadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
+                LocalDate dataCadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
                 String dominioEmail = rs.getString("dominio_email");
-                TipoInstituicao tipoInstituicao = TipoInstituicao.getNomeComBaseCodigo(rs.getInt("fk_tipo_instituicao"));
+                Integer tipoInstituicao = rs.getInt("tipo_instituicao");
 
-                i = new Instituicao(id, nome, email_corporativo, data_cadastro, tipoInstituicao, dominioEmail);
+                i = new Instituicao(id, nome, emailCorporativo,dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
             }
 

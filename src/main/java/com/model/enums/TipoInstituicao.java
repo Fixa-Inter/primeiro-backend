@@ -2,15 +2,21 @@ package com.model.enums;
 
 public enum TipoInstituicao {
 
-    Escola(1),
-    Faculdade(2),
-    Empresa(3),
-    Orgao_Publico(4);
+    ESCOLA("Escola",1),
+    FACULDADE("Faculdade",2),
+    EMPRESA("Empresa",3),
+    ORGAO_PUBLICO("Órgão público",4);
 
+    private final String nome;
     private final int codigo;
 
-    TipoInstituicao(int codigo){
+    TipoInstituicao(String nome,int codigo){
+        this.nome = nome;
         this.codigo = codigo;
+    }
+
+    public String getNome() {
+        return nome;
     }
 
     public int getCodigo() {
@@ -18,25 +24,35 @@ public enum TipoInstituicao {
     }
 
     // metodo para converter o codigo para o valor
-    public static TipoInstituicao getNomeComBaseCodigo(int codigo) {
-        return switch (codigo) {
-            case 1 -> Escola;
-            case 2 -> Faculdade;
-            case 3 -> Empresa;
-            case 4 -> Orgao_Publico;
-            default -> throw new IllegalArgumentException("Tipo de instituicao invalido");
-        };
+    public static String getNomeComBaseCodigo(int codigo) {
+        for (TipoInstituicao tipoInstituicao : TipoInstituicao.values()) {
+            if (codigo == tipoInstituicao.codigo) {
+                return tipoInstituicao.nome;
+            }
+        }
+
+        throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
     }
 
     // metodo para converter o valor para o codigo
-    public static int getCodigoComBaseNome(String campo) {
-        return switch (campo) {
-            case Escola -> 1;
-            case Faculdade -> 2;
-            case Empresa -> 3;
-            case Orgao_Publico -> 4;
-            default -> throw new IllegalArgumentException("Codigo de instituicao invalido");
-        };
+    public static TipoInstituicao converterEnum(String nome) {
+        for (TipoInstituicao tipoInstituicao : TipoInstituicao.values()) {
+            if (nome.toLowerCase().equals(tipoInstituicao.nome.toLowerCase())) {
+                return tipoInstituicao;
+            }
+        }
+
+        throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
+    }
+
+    public static TipoInstituicao converterEnum(int codigo) {
+        for (TipoInstituicao tipoInstituicao : TipoInstituicao.values()) {
+            if (tipoInstituicao.codigo == codigo) {
+                return tipoInstituicao;
+            }
+        }
+
+        throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
     }
 
 }

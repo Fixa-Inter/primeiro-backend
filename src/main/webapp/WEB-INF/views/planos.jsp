@@ -33,6 +33,22 @@
             value="read"
     >
 
+    <!-- BARRA DE PESQUISA -->
+    <label for="pesquisa">
+        Pesquisar:
+    </label>
+
+    <input
+            type="text"
+            id="pesquisa"
+            name="pesquisa"
+            value="${param.pesquisa}"
+            placeholder="Digite o nome do plano"
+    >
+
+    <br><br>
+
+
     <label for="campoFiltro">
         Filtrar por:
     </label>
@@ -145,20 +161,6 @@
         ${param.ordenacao == 'DURACAO_MESES-DESC' ? 'selected' : ''}
         >
             Duração decrescente
-        </option>
-
-        <option
-                value="DESCRICAO-ASC"
-        ${param.ordenacao == 'DESCRICAO-ASC' ? 'selected' : ''}
-        >
-            Descrição crescente
-        </option>
-
-        <option
-                value="DESCRICAO-DESC"
-        ${param.ordenacao == 'DESCRICAO-DESC' ? 'selected' : ''}
-        >
-            Descrição decrescente
         </option>
 
     </select>
