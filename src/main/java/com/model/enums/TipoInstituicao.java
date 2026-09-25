@@ -31,7 +31,7 @@ public enum TipoInstituicao {
             }
         }
 
-        throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
+        throw new IllegalArgumentException("Tipo de instituicao invalido");
     }
 
     // metodo para converter o valor para o codigo
@@ -42,7 +42,7 @@ public enum TipoInstituicao {
             }
         }
 
-        throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
+        throw new IllegalArgumentException("Codigo de tipo de instituicao invalido");
     }
 
     public static TipoInstituicao converterEnum(int codigo) {
@@ -54,5 +54,4 @@ public enum TipoInstituicao {
 
         throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
     }
-
 }

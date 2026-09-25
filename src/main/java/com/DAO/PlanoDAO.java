@@ -1,7 +1,9 @@
 package com.DAO;
 
 import com.model.Contrato;
+import com.model.Filtro;
 import com.model.Plano;
+import com.model.enums.OperacaoFiltro;
 import org.postgresql.util.PGInterval;
 
 import java.sql.PreparedStatement;
@@ -11,6 +13,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class PlanoDAO extends DAO{
@@ -20,6 +23,34 @@ public class PlanoDAO extends DAO{
             "VALOR_MENSAL", "Valor Mensal",
             "DURACAO_MESES", "Duracao meses",
             "DESCRICAO","Descricao"
+    );
+
+    public static final Map<String, List<OperacaoFiltro>> operacoesPorCampo = Map.of(
+            "NOME", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+
+            "VALOR_MENSAL", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.MAIOR_QUE,
+                    OperacaoFiltro.MAIOR_OU_IGUAL,
+                    OperacaoFiltro.MENOR_QUE,
+                    OperacaoFiltro.MENOR_OU_IGUAL
+            ),
+
+            "DURACAO_MESES", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.MAIOR_QUE,
+                    OperacaoFiltro.MAIOR_OU_IGUAL,
+                    OperacaoFiltro.MENOR_QUE,
+                    OperacaoFiltro.MENOR_OU_IGUAL
+            ),
+
+            "DESCRICAO", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            )
     );
 
     // Metodo que converte o valor de acordo com o campo que será filtrado
@@ -67,17 +98,43 @@ public class PlanoDAO extends DAO{
     }
 
     //select
-    public ArrayList<Plano> buscar(String campoFiltro, Object valorFiltro, String campoSequencia, String direcaoSequencia) throws SQLException{
+    public ArrayList<Plano> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException{
         boolean temFiltro = true;
 
         ArrayList<Plano> resultado = new ArrayList<>();
         String sql = "SELECT ID, NOME, VALOR_MENSAL, DURACAO_MESES, DESCRICAO  FROM PLANO";
 
-        // Verificando campo de filtragem
-        if (campoFiltro != null && camposFiltraveis.containsKey(campoFiltro)) {
-            sql += " WHERE %s = ?".formatted(campoFiltro);
-        } else {
-            temFiltro = false;
+        if (filtros != null && !filtros.isEmpty()) {
+
+            sql += " WHERE ";
+
+            for (int i = 0; i < filtros.size(); i++) {
+
+                Filtro filtro = filtros.get(i);
+
+                // Verifica se o campo existe
+                if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
+                    throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
+                }
+
+                // Verifica se a operação é permitida para esse campo
+                if (!operacoesPorCampo
+                        .get(filtro.getCampoFiltravel())
+                        .contains(filtro.getOperacaoFiltro())) {
+
+                    throw new IllegalArgumentException(
+                            "Operação inválida para o campo: " + filtro.getCampoFiltravel()
+                    );
+                }
+
+                // Coloca AND a partir do segundo filtro
+                if (i > 0) {
+                    sql += " AND ";
+                }
+
+                // Adiciona a condição
+                sql += filtro.getCampoFiltravel() + " " +filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+            }
         }
 
         // Verificando campo e direcao da ordenação
@@ -90,7 +147,15 @@ public class PlanoDAO extends DAO{
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             // Verifica se tem filtro, se sim define a variável do comando SQL
             if (temFiltro) {
-                pstmt.setObject(1, valorFiltro);
+                for (int i = 0; i < filtros.size(); i++) {
+                    Filtro filtro = filtros.get(i);
+
+                    if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                        pstmt.setObject(i + 1, "%" + filtro.getValor() + "%");
+                    } else {
+                        pstmt.setObject(i + 1, filtro.getValor());
+                    }
+                }
             }
 
             try (ResultSet rs = pstmt.executeQuery()) {

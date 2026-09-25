@@ -40,7 +40,7 @@ public enum StatusContrato {
                 return statusContrato;
             }
         }
-        throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
+        throw new IllegalArgumentException("Status de contrato invalido");
     }
 
     public static StatusContrato converterEnum(int codigo) {
@@ -49,6 +49,6 @@ public enum StatusContrato {
                 return statusContrato;
             }
         }
-        throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
+        throw new IllegalArgumentException("Codigo de status de contrato invalido");
     }
 }
