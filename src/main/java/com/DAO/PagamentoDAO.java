@@ -1,9 +1,12 @@
 package com.DAO;
 
+import com.model.Filtro;
 import com.model.Instituicao;
 import com.model.Pagamento;
 import com.model.enums.MetodoPagamento;
+import com.model.enums.OperacaoFiltro;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,13 +23,41 @@ public class PagamentoDAO extends DAO{
 
     // map dos campos que sao filtraveis
     public static final Map<String, String> camposFiltraveis = Map.of(
+            "ID", "ID",
+            "VALOR", "Valor",
+            "DATA_PAGAMENTO", "Data Pagamento",
+            "FOI_REALIZADO", "Foi Realizado",
+            "FK_CONTRATO_ID", "FK Contrato",
+            "METODO_PAGAMENTO", "Metodo Pagamento"
+    );
 
-            "id", "ID",
-            "valor", "Valor",
-            "data_pagamento", "Data Pagamento",
-            "foi_realizado", "Foi Realizado",
-            "fk_contrato_id", "FK Contrato",
-            "metodo_pagamento", "Metodo Pagamento"
+    public static final Map<String, List<OperacaoFiltro>> operacoesPorCampo = Map.of(
+            "ID", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
+            "VALOR", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.MAIOR_QUE,
+                    OperacaoFiltro.MAIOR_OU_IGUAL,
+                    OperacaoFiltro.MENOR_QUE,
+                    OperacaoFiltro.MENOR_OU_IGUAL
+            ),
+            "DATA_PAGAMENTO", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.MAIOR_QUE,
+                    OperacaoFiltro.MAIOR_OU_IGUAL,
+                    OperacaoFiltro.MENOR_QUE,
+                    OperacaoFiltro.MENOR_OU_IGUAL
+            ),
+            "FOI_REALIZADO", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
+            "FK_CONTRATO_ID", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
+            "METODO_PAGAMENTO", List.of(
+                    OperacaoFiltro.IGUAL
+            )
     );
 
     // convertendo String recebida do Servlet
@@ -56,7 +87,7 @@ public class PagamentoDAO extends DAO{
 
     public void cadastrar(Pagamento pagamento) throws SQLException {
 
-        float valor = pagamento.getValor();
+        BigDecimal valor = pagamento.getValor();
         LocalDateTime dataPagamento = pagamento.getDataPagamento();
         Boolean foiRealizado = pagamento.getFoiRealizado();
         Integer fkContrato = pagamento.getFkContrato();
@@ -68,7 +99,7 @@ public class PagamentoDAO extends DAO{
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
 
-            pstmt.setFloat(1, valor);
+            pstmt.setBigDecimal(1, valor);
             pstmt.setTimestamp(2, (dataPagamento == null ? null : Timestamp.valueOf(dataPagamento)));
             pstmt.setBoolean(3, foiRealizado);
             pstmt.setInt(4, fkContrato);
@@ -84,19 +115,54 @@ public class PagamentoDAO extends DAO{
     }
 
     // select
-    public List<Pagamento> listar(String campoFiltro, Object valorFiltro, String campoSequencia, String direcaoSequencia) throws SQLException {
+    public List<Pagamento> listarlistar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException {
 
-        boolean temFiltro = true;
-
-        List<Pagamento> pagamentos = new ArrayList<>();
+        List<Pagamento> resultado = new ArrayList<>();
 
 
         String sql = "SELECT ID, VALOR, DATA_PAGAMENTO, FOI_REALIZADO, FK_CONTRATO_ID, METODO_PAGAMENTO FROM pagamento";
 
-        if (campoFiltro != null && camposFiltraveis.containsKey(campoFiltro)){
-            sql += " WHERE %s = ?".formatted(campoFiltro);
-        } else {
-            temFiltro = false;
+        if (filtros != null && !filtros.isEmpty()) {
+
+            sql += " WHERE ";
+
+            for (int i = 0; i < filtros.size(); i++) {
+
+                Filtro filtro = filtros.get(i);
+
+                // Verifica se o campo existe
+                if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
+                    throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
+                }
+
+                // Verifica se a operação é permitida para esse campo
+                if (!operacoesPorCampo
+                        .get(filtro.getCampoFiltravel())
+                        .contains(filtro.getOperacaoFiltro())) {
+
+                    throw new IllegalArgumentException(
+                            "Operação inválida para o campo: " + filtro.getCampoFiltravel()
+                    );
+                }
+
+                // Coloca AND a partir do segundo filtro
+                if (i > 0) {
+                    sql += " AND ";
+                }
+
+                // Adiciona a condição
+                if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+
+                    sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
+                            + filtro.getOperacaoFiltro().getOperadorSQL()
+                            + " REPLACE(unaccent(?), ' ', '')";
+
+                } else {
+
+                    sql += filtro.getCampoFiltravel() + " "
+                            + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+                }
+            }
         }
 
         if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
@@ -105,24 +171,32 @@ public class PagamentoDAO extends DAO{
             sql += " ORDER BY ID ASC";
         }
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)){
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Verifica se tem filtro, se sim define a variável do comando SQL
+            if (filtros != null && !filtros.isEmpty()) {
+                for (int i = 0; i < filtros.size(); i++) {
+                    Filtro filtro = filtros.get(i);
 
-            if (temFiltro){
-                pstmt.setObject(1, valorFiltro);
+                    if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                        pstmt.setObject(i + 1, "%" + filtro.getValor() + "%");
+                    } else {
+                        pstmt.setObject(i + 1, filtro.getValor());
+                    }
+                }
             }
 
             try (ResultSet rs = pstmt.executeQuery()){
                 while (rs.next()){
 
                     int id = rs.getInt("id");
-                    float valor = rs.getFloat("valor");
+                    BigDecimal valor = rs.getBigDecimal("valor");
                     Timestamp data_pagamentoTimestamp = rs.getTimestamp("data_pagamento");
                     LocalDateTime data_pagamento = (data_pagamentoTimestamp == null ? null : data_pagamentoTimestamp.toLocalDateTime());
                     Boolean foiRealizado = rs.getBoolean("foi_realizado");
                     Integer fkContrato = rs.getInt("fk_contrato_id");
                     Integer metodoPagamento = rs.getInt("metodo_pagamento");
 
-                    pagamentos.add(new Pagamento(id, valor, data_pagamento, foiRealizado, fkContrato, MetodoPagamento.converterEnum(metodoPagamento)));
+                    resultado.add(new Pagamento(id, valor, data_pagamento, foiRealizado, fkContrato, MetodoPagamento.converterEnum(metodoPagamento)));
                 }
 
             }
@@ -130,7 +204,7 @@ public class PagamentoDAO extends DAO{
         }
 
         conn.commit();
-        return pagamentos;
+        return resultado;
     }
 
     // select id
@@ -151,7 +225,7 @@ public class PagamentoDAO extends DAO{
                 }
 
                 int id = rs.getInt("id");
-                float valor = rs.getFloat("valor");
+                BigDecimal valor = rs.getBigDecimal("valor");
                 Timestamp data_pagamentoTimestamp = rs.getTimestamp("data_pagamento");
                 LocalDateTime data_pagamento = (data_pagamentoTimestamp == null ? null : data_pagamentoTimestamp.toLocalDateTime());
                 Boolean foiRealizado = rs.getBoolean("foi_realizado");
@@ -171,7 +245,7 @@ public class PagamentoDAO extends DAO{
     public void atualizar(Pagamento original, Pagamento alterado) throws SQLException{
 
         int id = alterado.getId();
-        float valor = alterado.getValor();
+        BigDecimal valor = alterado.getValor();
         LocalDateTime dataPagamento = alterado.getDataPagamento();
         Boolean foiRealizado = alterado.getFoiRealizado();
         Integer fkContrato = alterado.getFkContrato();

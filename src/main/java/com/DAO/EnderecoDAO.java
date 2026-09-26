@@ -1,7 +1,9 @@
 package com.DAO;
 
 import com.model.Endereco;
+import com.model.Filtro;
 import com.model.Instituicao;
+import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoInstituicao;
 import org.postgresql.core.SqlCommand;
 
@@ -11,29 +13,69 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class EnderecoDAO extends DAO{
+
+    public static final Map<String, String> camposFiltraveis = Map.of(
+            "RUA", "Rua",
+            "BAIRRO", "Bairro",
+            "CIDADE", "Cidade",
+            "ESTADO", "Estado",
+            "CEP", "CEP",
+            "CNPJ", "CNPJ",
+            "FK_INSTITUICAO_ID", "Instituição"
+    );
+
+    public static final Map<String, List<OperacaoFiltro>> operacoesPorCampo = Map.of(
+            "RUA", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "BAIRRO", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "CIDADE", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "ESTADO", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "CEP", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "CNPJ", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "FK_INSTITUICAO_ID", List.of(
+                    OperacaoFiltro.IGUAL
+            )
+    );
+
 
     // construtor de DAO
     public EnderecoDAO() throws SQLException, ClassNotFoundException {
         super();
     }
 
-        // insert
-        public void cadastrar(Endereco endereco) throws SQLException {
+    // insert
+    public void cadastrar(Endereco endereco) throws SQLException {
 
-            String rua = endereco.getRua();
-            String bairro = endereco.getBairro();
-            String complemento = endereco.getComplemento();
-            String cidade = endereco.getCidade();
-            String estado = endereco.getEstado();
-            String numero = endereco.getNumero();
-            String cep = endereco.getCep();
-            Integer fkInstituicao = endereco.getFkInstituicao();
-            String cnpj = endereco.getCnpj();
-
-            // tira data_criacao pois o default do BD já preenche ele automáticamente
+        String rua = endereco.getRua();
+        String bairro = endereco.getBairro();
+        String complemento = endereco.getComplemento();
+        String cidade = endereco.getCidade();
+        String estado = endereco.getEstado();
+        String numero = endereco.getNumero();
+        String cep = endereco.getCep();
+        Integer fkInstituicao = endereco.getFkInstituicao();
+        String cnpj = endereco.getCnpj();
 
 
         if (complemento == null || complemento.isBlank()){
@@ -70,6 +112,106 @@ public class EnderecoDAO extends DAO{
     }
 
     // select
+    public List<Endereco> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException{
+
+        List<Endereco> resultado =  new ArrayList<Endereco>();
+
+        String sql = "SELECT id, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id, cnpj, data_criacao FROM endereco";
+
+        if (filtros != null && !filtros.isEmpty()) {
+
+            sql += " WHERE ";
+
+            for (int i = 0; i < filtros.size(); i++) {
+
+                Filtro filtro = filtros.get(i);
+
+                // Verifica se o campo existe
+                if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
+                    throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
+                }
+
+                // Verifica se a operação é permitida para esse campo
+                if (!operacoesPorCampo
+                        .get(filtro.getCampoFiltravel())
+                        .contains(filtro.getOperacaoFiltro())) {
+
+                    throw new IllegalArgumentException(
+                            "Operação inválida para o campo: " + filtro.getCampoFiltravel()
+                    );
+                }
+
+                // Coloca AND a partir do segundo filtro
+                if (i > 0) {
+                    sql += " AND ";
+                }
+
+                // Adiciona a condição
+                if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+
+                    sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
+                            + filtro.getOperacaoFiltro().getOperadorSQL()
+                            + " REPLACE(unaccent(?), ' ', '')";
+
+                } else {
+
+                    sql += filtro.getCampoFiltravel() + " "
+                            + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+                }
+            }
+        }
+
+        if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
+            sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
+        } else {
+            sql += " ORDER BY ID ASC";
+        }
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Verifica se tem filtro, se sim define a variável do comando SQL
+            if (filtros != null && !filtros.isEmpty()) {
+                for (int i = 0; i < filtros.size(); i++) {
+                    Filtro filtro = filtros.get(i);
+
+                    if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                        pstmt.setObject(i + 1, "%" + filtro.getValor() + "%");
+                    } else {
+                        pstmt.setObject(i + 1, filtro.getValor());
+                    }
+                }
+            }
+
+            try (ResultSet rs = pstmt.executeQuery()){
+                while (rs.next()){
+                    int id = rs.getInt("id");
+                    String rua = rs.getString("rua");
+                    String bairro = rs.getString("bairro");
+                    String complemento = rs.getString("complemento");
+                    String cidade = rs.getString("cidade");
+                    String estado = rs.getString("estado");
+                    String numero = rs.getString("numero");
+                    String cep = rs.getString("cep");
+                    Integer fkInstituicao = rs.getInt("fk_instituicao_id");
+                    String cnpj = rs.getString("cnpj");
+
+                    Timestamp dataCriacaoSQL = rs.getTimestamp("data_criacao");
+                    LocalDateTime dataCriacao = (dataCriacaoSQL == null
+                            ? null
+                            : dataCriacaoSQL.toLocalDateTime());
+
+
+                    resultado.add(new Endereco(id, rua, bairro, complemento, cidade, estado, numero, cep, cnpj, dataCriacao, fkInstituicao));                }
+
+            }
+
+        }
+
+        conn.commit();
+        return resultado;
+
+    }
+
+
     public Endereco pesquisarId(int idInstituicao) throws SQLException {
 
 

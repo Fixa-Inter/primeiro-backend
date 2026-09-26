@@ -13,12 +13,20 @@ public class Plano {
 
     // construtor
 
-    public Plano(Integer id, String nome, Double valorMensal, Integer duracaoMeses, String descricao) {
+    public Plano(String nome, Double valorMensal, Integer duracaoMeses, String descricao) {
+        this.nome = nome;
+        this.valorMensal = valorMensal;
+        this.duracaoMeses = duracaoMeses;
+        this.descricao = descricao;
+    }
+
+    public Plano(Integer id, String nome, Double valorMensal, Integer duracaoMeses, String descricao, LocalDateTime dataCriacao) {
         this.id = id;
         this.nome = nome;
         this.valorMensal = valorMensal;
         this.duracaoMeses = duracaoMeses;
         this.descricao = descricao;
+        this.dataCriacao = dataCriacao;
     }
 
     // getters e setters
@@ -61,6 +69,14 @@ public class Plano {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 
     // toString

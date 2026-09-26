@@ -1,6 +1,8 @@
 package com.DAO;
 
+import com.model.Filtro;
 import com.model.Usuario;
+import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
 
 import java.sql.*;
@@ -16,29 +18,72 @@ public class UsuarioDAO extends DAO{
 
     // map dos campos que sao filtraveis
     public static final Map<String, String> camposFiltraveis = Map.of(
+            "ID","ID",
+            "NOME", "Nome",
+            "ESTA_ATIVO", "Esta Ativo",
+            "EMAIL", "Email",
+            "DATA_CRIACAO", "Data Criacao",
+            "CARGO", "Cargo",
+            "FK_ENDERECO_ID", "Fk endereco ID",
+            "TIPO_ACESSO", "Tipo De Acesso",
+            "DATA_NASCIMENTO", "Data de nascimento",
+            "PRIMEIRO_ACESSO", "Data acesso"
+    );
 
-            "id", "ID",
-            "nome", "Nome",
-            "esta_ativo", "Esta Ativo",
-            "email", "Email",
-            "data_criacao", "Data Criacao",
-            "cargo", "Cargo",
-            "fk_endereco_id", "Fk endereco ID",
-            "tipo_de_acesso", "Tipo De Acesso",
-            "data_nascimento", "Data de nascimento",
-            "primeiro_acesso", "Data acesso"
+    public static final Map<String, List<OperacaoFiltro>> operacoesPorCampo = Map.of(
+            "ID", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
+            "NOME", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "ESTA_ATIVO", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
+            "EMAIL", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "DATA_CRIACAO", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.MAIOR_QUE,
+                    OperacaoFiltro.MAIOR_OU_IGUAL,
+                    OperacaoFiltro.MENOR_QUE,
+                    OperacaoFiltro.MENOR_OU_IGUAL
+            ),
+            "CARGO", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "FK_ENDERECO_ID", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
+            "TIPO_ACESSO", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
+            "DATA_NASCIMENTO", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.MAIOR_QUE,
+                    OperacaoFiltro.MAIOR_OU_IGUAL,
+                    OperacaoFiltro.MENOR_QUE,
+                    OperacaoFiltro.MENOR_OU_IGUAL
+            ),
+            "PRIMEIRO_ACESSO", List.of(
+                    OperacaoFiltro.IGUAL
+            )
     );
 
     // convertendo String recebida do Servlet
     public Object converterValor(String campo, String valor){
         try {
             return switch (campo) {
-                case "id", "fkEndereco" -> Integer.parseInt(valor);
-                case "nome", "senha_hash", "email", "cargo", "tipo_de_acesso" -> valor;
+                case "id", "fk_endereco_id" -> Integer.parseInt(valor);
+                case "nome", "senha_hash", "email", "cargo" -> valor;
                 case "esta_ativo", "primeiro_acesso" -> Boolean.parseBoolean(valor);
                 case "data_criacao" -> LocalDateTime.parse(valor);
                 case "tipoAcesso" -> TipoAcesso.converterEnum(valor);
-                case "data_nacimento" -> LocalDate.parse(valor);
+                case "data_nascimento" -> LocalDate.parse(valor);
                 default -> throw new IllegalArgumentException();
             };
         } catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
@@ -66,8 +111,8 @@ public class UsuarioDAO extends DAO{
         // tira id, data_cricao, esta_ativo e primeiro_acesso pois o default do BD já define eles automáticamente
 
         String sql = """
-                     INSERT INTO usuario (nome, senha_hash, email, cargo, tipo_de_acesso, fk_endereco_id, data_nacimento)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                     INSERT INTO usuario (nome, senha_hash, email, cargo, tipo_acesso, fk_endereco_id, data_nascimento)
+                     VALUES (?, ?, ?, ?, ?, ?, ?)
                      """;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -90,30 +135,73 @@ public class UsuarioDAO extends DAO{
     }
 
     // select
-    public List<Usuario> listar(String campoFiltro, Object valorFiltro, String campoSequencia, String direcaoSequencia) throws SQLException {
+    public List<Usuario> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException {
 
-        boolean temFiltro = true;
+        List<Usuario> resultado = new ArrayList<>();
 
-        List<Usuario> usuarios = new ArrayList<>();
+        String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario";
 
-        String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_de_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario";
+        if (filtros != null && !filtros.isEmpty()) {
 
-        if (campoFiltro != null && camposFiltraveis.containsKey(campoFiltro)){
-            sql += " WHERE %s = ?".formatted(campoFiltro);
-        } else {
-            temFiltro = false;
+            sql += " WHERE ";
+
+            for (int i = 0; i < filtros.size(); i++) {
+
+                Filtro filtro = filtros.get(i);
+
+                // Verifica se o campo existe
+                if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
+                    throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
+                }
+
+                // Verifica se a operação é permitida para esse campo
+                if (!operacoesPorCampo
+                        .get(filtro.getCampoFiltravel())
+                        .contains(filtro.getOperacaoFiltro())) {
+
+                    throw new IllegalArgumentException(
+                            "Operação inválida para o campo: " + filtro.getCampoFiltravel()
+                    );
+                }
+
+                // Coloca AND a partir do segundo filtro
+                if (i > 0) {
+                    sql += " AND ";
+                }
+
+                // Adiciona a condição
+                if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+
+                    sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
+                            + filtro.getOperacaoFiltro().getOperadorSQL()
+                            + " REPLACE(unaccent(?), ' ', '')";
+
+                } else {
+
+                    sql += filtro.getCampoFiltravel() + " "
+                            + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+                }
+            }
         }
 
         if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
-            sql += "ORDER BY ID ASC";
+            sql += " ORDER BY ID ASC";
         }
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)){
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Verifica se tem filtro, se sim define a variável do comando SQL
+            if (filtros != null && !filtros.isEmpty()) {
+                for (int i = 0; i < filtros.size(); i++) {
+                    Filtro filtro = filtros.get(i);
 
-            if (temFiltro){
-                pstmt.setObject(1, valorFiltro);
+                    if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                        pstmt.setObject(i + 1, "%" + filtro.getValor() + "%");
+                    } else {
+                        pstmt.setObject(i + 1, filtro.getValor());
+                    }
+                }
             }
 
             try (ResultSet rs = pstmt.executeQuery()){
@@ -127,27 +215,27 @@ public class UsuarioDAO extends DAO{
                     Timestamp dataCriacaoSQL = rs.getTimestamp("data_criacao");
                     LocalDateTime dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDateTime());
                     String cargo = rs.getString("cargo");
-                    int tipoDeAcesso = rs.getInt("tipo_de_acesso");
+                    int tipoDeAcesso = rs.getInt("tipo_acesso");
                     int fkEnderecoID = rs.getInt("fk_endereco_id");
                     Date dataAniversarioAcessoBD =  rs.getDate("data_nascimento");
                     LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
                     Boolean primeiroAcesso = rs.getBoolean("primeiro_acesso");
 
 
-                    usuarios.add(new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, TipoAcesso.converterEnum(tipoDeAcesso), fkEnderecoID, dataAniversario, primeiroAcesso));
+                    resultado.add(new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, TipoAcesso.converterEnum(tipoDeAcesso), fkEnderecoID, dataAniversario, primeiroAcesso));
                 }
             }
 
         }
         conn.commit();
-        return usuarios;
+        return resultado;
     }
 
     // select id
     public Usuario pesquisarPorId(int idUsuario) throws SQLException{
 
 
-        String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_de_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario WHERE id = ?";
+        String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario WHERE id = ?";
 
         Usuario u;
 
@@ -168,7 +256,7 @@ public class UsuarioDAO extends DAO{
                 Timestamp dataCriacaoSQL = rs.getTimestamp("data_criacao");
                 LocalDateTime dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDateTime());
                 String cargo = rs.getString("cargo");
-                int tipoDeAcesso = rs.getInt("tipo_de_acesso");
+                int tipoDeAcesso = rs.getInt("tipo_acesso");
                 int fkEnderecoID = rs.getInt("fk_endereco_id");
                 Date dataAniversarioAcessoBD =  rs.getDate("data_nascimento");
                 LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
@@ -188,7 +276,7 @@ public class UsuarioDAO extends DAO{
     // select nome
     public Usuario pesquisarPorNome(String nomeUsuario) throws SQLException{
 
-        String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_de_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario WHERE nome = ?";
+        String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario WHERE nome = ?";
 
         Usuario u;
 
@@ -209,7 +297,7 @@ public class UsuarioDAO extends DAO{
                 Timestamp dataCriacaoSQL = rs.getTimestamp("data_criacao");
                 LocalDateTime dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDateTime());
                 String cargo = rs.getString("cargo");
-                int tipoDeAcesso = rs.getInt("tipo_de_acesso");
+                int tipoDeAcesso = rs.getInt("tipo_acesso");
                 int fkEnderecoID = rs.getInt("fk_endereco_id");
                 Date dataAniversarioAcessoBD =  rs.getDate("data_nascimento");
                 LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
@@ -268,7 +356,7 @@ public class UsuarioDAO extends DAO{
         }
 
         if (!Objects.equals(tipoDeAcesso, original.getTipoDeAcesso().getCodigo())){
-            sql.append("tipo_de_acesso = ?, ");
+            sql.append("tipo_acesso = ?, ");
             valores.add(tipoDeAcesso);
         }
 

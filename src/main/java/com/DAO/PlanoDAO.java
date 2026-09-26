@@ -6,11 +6,9 @@ import com.model.Plano;
 import com.model.enums.OperacaoFiltro;
 import org.postgresql.util.PGInterval;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +17,7 @@ import java.util.Map;
 public class PlanoDAO extends DAO{
 
     public static final Map<String,String> camposFiltraveis = Map.of(
+            "ID", "ID",
             "NOME", "Nome",
             "VALOR_MENSAL", "Valor Mensal",
             "DURACAO_MESES", "Duracao meses",
@@ -26,6 +25,9 @@ public class PlanoDAO extends DAO{
     );
 
     public static final Map<String, List<OperacaoFiltro>> operacoesPorCampo = Map.of(
+            "ID", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
             "NOME", List.of(
                     OperacaoFiltro.IGUAL,
                     OperacaoFiltro.CONTEM
@@ -57,9 +59,9 @@ public class PlanoDAO extends DAO{
     public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
-                case "id","duracaoMeses" -> Integer.parseInt(valor);
-                case "nome", "descricao" -> valor;
-                case "valorMensal" -> Double.parseDouble(valor);
+                case "ID","DURACAO_MESES" -> Integer.parseInt(valor);
+                case "NOME", "DESCRICAO" -> valor;
+                case "VALOR_MENSAL" -> Double.parseDouble(valor);
                 default -> throw new IllegalArgumentException();
             };
         }catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
@@ -98,11 +100,10 @@ public class PlanoDAO extends DAO{
     }
 
     //select
-    public ArrayList<Plano> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException{
-        boolean temFiltro = true;
+    public List<Plano> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException{
 
         ArrayList<Plano> resultado = new ArrayList<>();
-        String sql = "SELECT ID, NOME, VALOR_MENSAL, DURACAO_MESES, DESCRICAO  FROM PLANO";
+        String sql = "SELECT ID, NOME, VALOR_MENSAL, DURACAO_MESES, DESCRICAO, DATA_CRIACAO FROM PLANO";
 
         if (filtros != null && !filtros.isEmpty()) {
 
@@ -133,7 +134,17 @@ public class PlanoDAO extends DAO{
                 }
 
                 // Adiciona a condição
-                sql += filtro.getCampoFiltravel() + " " +filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+                if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+
+                    sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
+                            + filtro.getOperacaoFiltro().getOperadorSQL()
+                            + " REPLACE(unaccent(?), ' ', '')";
+
+                } else {
+
+                    sql += filtro.getCampoFiltravel() + " "
+                            + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+                }
             }
         }
 
@@ -146,7 +157,7 @@ public class PlanoDAO extends DAO{
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             // Verifica se tem filtro, se sim define a variável do comando SQL
-            if (temFiltro) {
+            if (filtros != null && !filtros.isEmpty()) {
                 for (int i = 0; i < filtros.size(); i++) {
                     Filtro filtro = filtros.get(i);
 
@@ -165,8 +176,13 @@ public class PlanoDAO extends DAO{
                     double valorMensal = rs.getDouble("VALOR_MENSAL");
                     int duracaoMeses = rs.getInt("DURACAO_MESES");
                     String descricao = rs.getString("DESCRICAO");
+                    Timestamp dataCriacaoSQL = rs.getTimestamp("data_criacao");
+                    LocalDateTime dataCriacao = (dataCriacaoSQL == null
+                            ? null
+                            : dataCriacaoSQL.toLocalDateTime());
 
-                    resultado.add(new Plano(id,nome, valorMensal, duracaoMeses, descricao));
+
+                    resultado.add(new Plano(id,nome, valorMensal, duracaoMeses, descricao, dataCriacao));
                 }
             }
         }
@@ -177,7 +193,7 @@ public class PlanoDAO extends DAO{
 
     //pesquisar por id
     public Plano pesquisarPorId(int id) throws SQLException{
-        String sql = "SELECT NOME, VALOR_MENSAL, DESCRICAO, DURACAO_MESES FROM PLANO WHERE id = ?";
+        String sql = "SELECT NOME, VALOR_MENSAL, DESCRICAO, DURACAO_MESES, DATA_CRIACAO FROM PLANO WHERE id = ?";
 
         Plano plano;
 
@@ -194,8 +210,12 @@ public class PlanoDAO extends DAO{
                 double valorMensal = rs.getDouble("VALOR_MENSAL");
                 String descricao = rs.getString("DESCRICAO");
                 int duracaoMeses = rs.getInt("DURACAO_MESES");
+                Timestamp dataCriacaoSQL = rs.getTimestamp("DATA_CRIACAO");
+                LocalDateTime dataCriacao = (dataCriacaoSQL == null
+                        ? null
+                        : dataCriacaoSQL.toLocalDateTime());
 
-                plano = new Plano(id, nome, valorMensal, duracaoMeses, descricao);
+                plano = new Plano(id, nome, valorMensal, duracaoMeses, descricao, dataCriacao);
             }
         } catch (SQLException e) {
             throw new RuntimeException();
@@ -208,7 +228,7 @@ public class PlanoDAO extends DAO{
     //pesquisar por nome
     public Plano pesquisarPorNome(String nome) throws SQLException{
 
-        String sql = "SELECT ID, VALOR_MENSAL, DESCRICAO, DURACAO FROM PLANO WHERE NOME = ?";
+        String sql = "SELECT NOME, VALOR_MENSAL, DESCRICAO, DURACAO_MESES, DATA_CRIACAO FROM PLANO WHERE id = ?";
 
         Plano plano;
 
@@ -222,11 +242,15 @@ public class PlanoDAO extends DAO{
                 }
 
                 int id = rs.getInt("ID");
-                double valorMensal = rs.getDouble("VALOR");
+                double valorMensal = rs.getDouble("VALOR_MENSAL");
                 String descricao = rs.getString("DESCRICAO");
                 int duracaoMeses = rs.getInt("DURACAO_MESES");
+                Timestamp dataCriacaoSQL = rs.getTimestamp("DATA_CRIACAO");
+                LocalDateTime dataCriacao = (dataCriacaoSQL == null
+                        ? null
+                        : dataCriacaoSQL.toLocalDateTime());
 
-                plano = new Plano(id, nome, valorMensal, duracaoMeses, descricao);
+                plano = new Plano(id, nome, valorMensal, duracaoMeses, descricao, dataCriacao);
             }
         }
 

@@ -3,16 +3,20 @@ package com.model;
 public class SuperAdministrador {
 
     private Integer id;                // coluna: id
-    private String funcao;             // coluna: funcao
     private String nome;               // coluna: nome
     private String senhaHash;          // coluna: senha_hash
     private String email;              // coluna: email
 
     // construtor
 
-    public SuperAdministrador(Integer id, String funcao, String nome, String senhaHash, String email) {
+    public SuperAdministrador(Integer id, String nome, String senhaHash, String email) {
         this.id = id;
-        this.funcao = funcao;
+        this.nome = nome;
+        this.senhaHash = senhaHash;
+        this.email = email;
+    }
+
+    public SuperAdministrador(String nome, String senhaHash, String email) {
         this.nome = nome;
         this.senhaHash = senhaHash;
         this.email = email;
@@ -27,14 +31,6 @@ public class SuperAdministrador {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getFuncao() {
-        return funcao;
-    }
-
-    public void setFuncao(String funcao) {
-        this.funcao = funcao;
     }
 
     public String getNome() {
@@ -67,6 +63,6 @@ public class SuperAdministrador {
     @Override
     public String toString(){
         return "SuperAdministrador{id=%d, funcao='%s', nome='%s', senhaHash='%s', email='%s'}"
-                .formatted(id, funcao, nome, senhaHash, email);
+                .formatted(id, nome, senhaHash, email);
     }
 }

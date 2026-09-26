@@ -1,12 +1,12 @@
 package com.model.enums;
 
 public enum OperacaoFiltro {
-    IGUAL("igual","="),
-    MAIOR_QUE("maior_que",">"),
-    MAIOR_OU_IGUAL("maior_ou_igual",">="),
-    MENOR_QUE("menor_que","<"),
-    MENOR_OU_IGUAL("menor_ou_igual","<="),
-    CONTEM("contem","ILIKE");
+    IGUAL("Igual","="),
+    MAIOR_QUE("Maior que",">"),
+    MAIOR_OU_IGUAL("Maior ou igual",">="),
+    MENOR_QUE("Menor que","<"),
+    MENOR_OU_IGUAL("Menor ou igual","<="),
+    CONTEM("Contêm","ILIKE");
 
     private final String nome;
     private final String operadorSQL;
