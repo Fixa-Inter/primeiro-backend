@@ -43,7 +43,7 @@ public enum TipoAcesso {
             }
         }
 
-        throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
+        throw new IllegalArgumentException("Tipo de acesso invalido");
     }
 
     public static TipoAcesso converterEnum(int codigo) {
@@ -53,7 +53,7 @@ public enum TipoAcesso {
             }
         }
 
-        throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
+        throw new IllegalArgumentException("Codigo de tipo de acesso invalido");
     }
 
 }

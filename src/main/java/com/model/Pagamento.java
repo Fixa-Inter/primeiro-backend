@@ -2,6 +2,7 @@ package com.model;
 
 import com.model.enums.MetodoPagamento;
 
+import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 public class Pagamento {
 
     private Integer id;                  // coluna: id
-    private Float valor;                 // coluna: valor
+    private BigDecimal valor;                 // coluna: valor
     private LocalDateTime dataPagamento;     // coluna: data_pagamento
     private Boolean foiRealizado;        // coluna: foi_realizado
     private Integer fkContrato;          // coluna: fk_contrato_id
@@ -18,7 +19,7 @@ public class Pagamento {
 
     // construtor
 
-    public Pagamento(Integer id, Float valor, LocalDateTime dataPagamento, Boolean foiRealizado, Integer fkContrato, MetodoPagamento metodoPagamento) {
+    public Pagamento(Integer id, BigDecimal valor, LocalDateTime dataPagamento, Boolean foiRealizado, Integer fkContrato, MetodoPagamento metodoPagamento) {
         this.id = id;
         this.valor = valor;
         this.dataPagamento = dataPagamento;
@@ -38,11 +39,11 @@ public class Pagamento {
         this.id = id;
     }
 
-    public Float getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 
-    public void setValor(Float valor) {
+    public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
 

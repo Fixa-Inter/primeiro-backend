@@ -1,11 +1,10 @@
 package com.DAO;
 
+import com.model.Filtro;
 import com.model.Instituicao;
+import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoInstituicao;
-import org.postgresql.core.SqlCommand;
 
-import javax.print.attribute.standard.JobKOctets;
-import java.io.ObjectStreamException;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,13 +20,41 @@ public class InstituicaoDAO extends DAO{
 
     // map dos campos que sao filtraveis
     public static final Map<String, String> camposFiltraveis = Map.of(
+            "ID", "ID",
+            "NOME", "Nome",
+            "EMAIL_CORPORATIVO", "Email Corporativo",
+            "DATA_CADASTRO", "Data Cadastro",
+            "TIPO_INSTITUICAO", "Tipo de Instiuicao",
+            "DOMINIO_EMAIL", "Dominio Email"
 
-            "id", "ID",
-            "nome", "Nome",
-            "email_corporativo", "Email Corporativo",
-            "data_cadastro", "Data Cadastro",
-            "fk_tipo_de_instituicao", "Tipo de Instiuicao",
-            "dominio_email", "Dominio Email"
+    );
+
+    public static final Map<String, List<OperacaoFiltro>> operacoesPorCampo = Map.of(
+            "ID", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
+            "NOME", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "EMAIL_CORPORATIVO", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "DATA_CADASTRO", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.MAIOR_QUE,
+                    OperacaoFiltro.MAIOR_OU_IGUAL,
+                    OperacaoFiltro.MENOR_QUE,
+                    OperacaoFiltro.MENOR_OU_IGUAL
+            ),
+            "TIPO_INSTITUICAO", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
+            "DOMINIO_EMAIL", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            )
 
     );
 
@@ -40,7 +67,7 @@ public class InstituicaoDAO extends DAO{
                 case "id" -> Integer.parseInt(valor);
                 case "nome", "email_corporativo", "dominio_email" -> valor;
                 case "data_cadastro" -> LocalDate.parse(valor);
-                case "fk_tipo_de_instituicao" -> TipoInstituicao.converterEnum(valor);
+                case "tipo_instituicao" -> TipoInstituicao.converterEnum(valor);
                 default -> throw new IllegalArgumentException();
             };
         } catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
@@ -67,7 +94,7 @@ public class InstituicaoDAO extends DAO{
 
 
         String sql = """
-                     INSERT INTO instituicao (NOME, EMAIL_CORPORATIVO, DOMINIO_EMAIL, FK_TIPO_INSTITUICAO)
+                     INSERT INTO instituicao (NOME, EMAIL_CORPORATIVO, DOMINIO_EMAIL, TIPO_INSTITUICAO)
                      VALUES (?, ?, ?, ?)
                      """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -88,19 +115,54 @@ public class InstituicaoDAO extends DAO{
     }
 
     // select
-    public List<Instituicao> listar(String campoFiltro, Object valorFiltro, String campoSequencia, String direcaoSequencia) throws SQLException {
+    public List<Instituicao> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException {
 
-        boolean temFiltro = true;
-
-        List<Instituicao> instituicoes = new ArrayList<>();
+        List<Instituicao> resultado = new ArrayList<>();
 
 
-        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, fk_tipo_instituicao FROM instituicao";
+        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao FROM instituicao";
 
-        if (campoFiltro != null && camposFiltraveis.containsKey(campoFiltro)){
-            sql += " WHERE %s = ?".formatted(campoFiltro);
-        } else {
-            temFiltro = false;
+        if (filtros != null && !filtros.isEmpty()) {
+
+            sql += " WHERE ";
+
+            for (int i = 0; i < filtros.size(); i++) {
+
+                Filtro filtro = filtros.get(i);
+
+                // Verifica se o campo existe
+                if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
+                    throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
+                }
+
+                // Verifica se a operação é permitida para esse campo
+                if (!operacoesPorCampo
+                        .get(filtro.getCampoFiltravel())
+                        .contains(filtro.getOperacaoFiltro())) {
+
+                    throw new IllegalArgumentException(
+                            "Operação inválida para o campo: " + filtro.getCampoFiltravel()
+                    );
+                }
+
+                // Coloca AND a partir do segundo filtro
+                if (i > 0) {
+                    sql += " AND ";
+                }
+
+                // Adiciona a condição
+                if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+
+                    sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
+                            + filtro.getOperacaoFiltro().getOperadorSQL()
+                            + " REPLACE(unaccent(?), ' ', '')";
+
+                } else {
+
+                    sql += filtro.getCampoFiltravel() + " "
+                            + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+                }
+            }
         }
 
         if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
@@ -109,10 +171,18 @@ public class InstituicaoDAO extends DAO{
             sql += " ORDER BY ID ASC";
         }
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)){
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Verifica se tem filtro, se sim define a variável do comando SQL
+            if (filtros != null && !filtros.isEmpty()) {
+                for (int i = 0; i < filtros.size(); i++) {
+                    Filtro filtro = filtros.get(i);
 
-            if (temFiltro){
-                pstmt.setObject(1, valorFiltro);
+                    if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                        pstmt.setObject(i + 1, "%" + filtro.getValor() + "%");
+                    } else {
+                        pstmt.setObject(i + 1, filtro.getValor());
+                    }
+                }
             }
 
             try (ResultSet rs = pstmt.executeQuery()){
@@ -126,7 +196,7 @@ public class InstituicaoDAO extends DAO{
                     Integer tipoInstituicao = rs.getInt("tipo_instituicao");
 
 
-                    instituicoes.add(new Instituicao(id, nome, emailCorporativo,dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail));
+                    resultado.add(new Instituicao(id, nome, emailCorporativo,dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail));
                 }
 
             }
@@ -134,13 +204,13 @@ public class InstituicaoDAO extends DAO{
         }
 
         conn.commit();
-        return instituicoes;
+        return resultado;
     }
 
     // select id
     public Instituicao pesquisarId(int idInstituicao) throws SQLException{
 
-        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, fk_tipo_instituicao FROM instituicao WHERE id = ?";
+        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao FROM instituicao WHERE id = ?";
 
         Instituicao i;
 
@@ -173,7 +243,7 @@ public class InstituicaoDAO extends DAO{
     // select nome
     public Instituicao pesquisarNome(String nomeInstituicao) throws SQLException{
 
-        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, fk_tipo_instituicao FROM instituicao WHERE nome = ?";
+        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao FROM instituicao WHERE nome = ?";
 
         Instituicao i;
 
@@ -209,7 +279,7 @@ public class InstituicaoDAO extends DAO{
 
     public Instituicao pesquisarDominioEmail(String dominioEmailInsert) throws SQLException{
 
-        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, fk_tipo_instituicao FROM instituicao WHERE dominio_email = ?";
+        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao FROM instituicao WHERE dominio_email = ?";
 
         Instituicao i;
 
@@ -271,7 +341,7 @@ public class InstituicaoDAO extends DAO{
         }
 
         if (!Objects.equals(tipoInstituicao, original.getTipoDeInstituicao().getCodigo())){
-            sql.append("fk_tipo_instituicao = ?, ");
+            sql.append("tipo_instituicao = ?, ");
             valores.add(tipoInstituicao);
         }
 

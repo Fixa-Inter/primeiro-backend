@@ -1,19 +1,36 @@
 package com.DAO;
 
+import com.model.Filtro;
 import com.model.SuperAdministrador;
+import com.model.enums.OperacaoFiltro;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class SuperAdministradorDAO extends DAO{
     public static final Map<String,String> camposFiltraveis = Map.of(
-            "nome", "Nome",
-            "funcao", "Funcao",
-            "email", "Email"
+            "ID", "ID",
+            "NOME", "Nome",
+            "EMAIL", "Email"
+    );
+
+    public static final Map<String, List<OperacaoFiltro>> operacoesPorCampo = Map.of(
+            "ID", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
+            "NOME", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "EMAIL", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            )
     );
 
     // Metodo que converte o valor de acordo com o campo que será filtrado
@@ -21,7 +38,7 @@ public class SuperAdministradorDAO extends DAO{
         try {
             return switch (campo) {
                 case "id" -> Integer.parseInt(valor);
-                case "nome", "funcao", "email" -> valor;
+                case "nome", "email" -> valor;
                 default -> throw new IllegalArgumentException();
             };
         }catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
@@ -36,21 +53,18 @@ public class SuperAdministradorDAO extends DAO{
 
     //insert
     public void cadastrar(SuperAdministrador superAdministrador) throws SQLException{
-        Integer id = superAdministrador.getId();
-        String funcao = superAdministrador.getFuncao();
         String nome = superAdministrador.getNome();
         String senhaHash = superAdministrador.getSenhaHash();
         String email = superAdministrador.getEmail();
 
         String sql = """
-                INSERT INTO SUPER_ADMINISTRADOR (FUNCAO,NOME,SENHA_HASH,EMAIL) 
-                VALUES(?,?,?,?)
+                INSERT INTO SUPER_ADMINISTRADOR (NOME,SENHA_HASH,EMAIL) 
+                VALUES(?,?,?)
                 """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1,funcao);
-            pstmt.setString(2,nome);
-            pstmt.setString(3,senhaHash);
-            pstmt.setString(4,email);
+            pstmt.setString(1,nome);
+            pstmt.setString(2,senhaHash);
+            pstmt.setString(3,email);
 
             pstmt.execute();
             conn.commit();
@@ -61,17 +75,52 @@ public class SuperAdministradorDAO extends DAO{
     }
 
     //select
-    public ArrayList<SuperAdministrador> buscar(String campoFiltro, Object valorFiltro, String campoSequencia, String direcaoSequencia) throws SQLException{
-        boolean temFiltro = true;
+    public List<SuperAdministrador> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException{
 
         ArrayList<SuperAdministrador> resultado = new ArrayList<>();
-        String sql = "SELECT ID, NOME, FUNCAO, EMAIL FROM SUPER_ADMINISTRADOR";
+        String sql = "SELECT ID, NOME, EMAIL FROM SUPER_ADMINISTRADOR";
 
-        // Verificando campo de filtragem
-        if (campoFiltro != null && camposFiltraveis.containsKey(campoFiltro)) {
-            sql += " WHERE %s = ?".formatted(campoFiltro);
-        } else {
-            temFiltro = false;
+        if (filtros != null && !filtros.isEmpty()) {
+
+            sql += " WHERE ";
+
+            for (int i = 0; i < filtros.size(); i++) {
+
+                Filtro filtro = filtros.get(i);
+
+                // Verifica se o campo existe
+                if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
+                    throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
+                }
+
+                // Verifica se a operação é permitida para esse campo
+                if (!operacoesPorCampo
+                        .get(filtro.getCampoFiltravel())
+                        .contains(filtro.getOperacaoFiltro())) {
+
+                    throw new IllegalArgumentException(
+                            "Operação inválida para o campo: " + filtro.getCampoFiltravel()
+                    );
+                }
+
+                // Coloca AND a partir do segundo filtro
+                if (i > 0) {
+                    sql += " AND ";
+                }
+
+                // Adiciona a condição
+                if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+
+                    sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
+                            + filtro.getOperacaoFiltro().getOperadorSQL()
+                            + " REPLACE(unaccent(?), ' ', '')";
+
+                } else {
+
+                    sql += filtro.getCampoFiltravel() + " "
+                            + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+                }
+            }
         }
 
         // Verificando campo e direcao da ordenação
@@ -83,18 +132,25 @@ public class SuperAdministradorDAO extends DAO{
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             // Verifica se tem filtro, se sim define a variável do comando SQL
-            if (temFiltro) {
-                pstmt.setObject(1, valorFiltro);
+            if (filtros != null && !filtros.isEmpty()) {
+                for (int i = 0; i < filtros.size(); i++) {
+                    Filtro filtro = filtros.get(i);
+
+                    if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                        pstmt.setObject(i + 1, "%" + filtro.getValor() + "%");
+                    } else {
+                        pstmt.setObject(i + 1, filtro.getValor());
+                    }
+                }
             }
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     int id = rs.getInt("ID");
                     String nome = rs.getString("NOME");
-                    String funcao = rs.getString("FUNCAO");
                     String email = rs.getString("EMAIL");
 
-                    resultado.add(new SuperAdministrador(id, nome, funcao, null,email));
+                    resultado.add(new SuperAdministrador(id, nome, null, email));
                 }
             }
         }
@@ -105,7 +161,7 @@ public class SuperAdministradorDAO extends DAO{
 
     //pesquisar por id
     public SuperAdministrador pesquisarPorId(int id) throws SQLException {
-        String sql = "SELECT NOME, FUNCA0, EMAIL FROM SUPER_ADMINISTRADOR WHERE id = ?";
+        String sql = "SELECT NOME, EMAIL FROM SUPER_ADMINISTRADOR WHERE id = ?";
         SuperAdministrador superAdministrador;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -116,11 +172,10 @@ public class SuperAdministradorDAO extends DAO{
                 }
 
                 String nome = rs.getString("NOME");
-                String funcao = rs.getString("FUNCAO");
                 String email = rs.getString("EMAIL");
                 String senhaHash = rs.getString("SENHA_HASH");
 
-                superAdministrador = new SuperAdministrador(id, funcao, nome, senhaHash, email);
+                superAdministrador = new SuperAdministrador(id, nome, senhaHash, email);
             }
         }catch (SQLException e) {
             throw new RuntimeException();
@@ -131,7 +186,7 @@ public class SuperAdministradorDAO extends DAO{
     //pesquisar por email
     public SuperAdministrador pesquisarPorEmail(String email){
         {
-            String sql = "SELECT NOME, FUNCA0, EMAIL FROM SUPER_ADMINISTRADOR WHERE EMAIL = ?";
+            String sql = "SELECT NOME, EMAIL FROM SUPER_ADMINISTRADOR WHERE EMAIL = ?";
             SuperAdministrador superAdministrador;
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, email);
@@ -142,11 +197,10 @@ public class SuperAdministradorDAO extends DAO{
                     }
 
                     int id = rs.getInt("ID");
-                    String funcao = rs.getString("FUNCAO");
                     String nome = rs.getString("NOME");
                     String senhaHash = rs.getString("SENHA_HASH");
 
-                    superAdministrador = new SuperAdministrador(id, funcao, nome, senhaHash, email);
+                    superAdministrador = new SuperAdministrador(id, nome, senhaHash, email);
                 }
             }catch (SQLException e) {
                 throw new RuntimeException();
@@ -159,7 +213,6 @@ public class SuperAdministradorDAO extends DAO{
     public void atualizar(SuperAdministrador original, SuperAdministrador alterado) throws SQLException{
         String nome = alterado.getNome();
         String email = alterado.getEmail();
-        String funcao = alterado.getFuncao();
         String senhaHash = alterado.getSenhaHash();
 
         StringBuilder sql = new StringBuilder("UPDATE SUPER_ADMINISTRADOR SET ");
@@ -173,11 +226,6 @@ public class SuperAdministradorDAO extends DAO{
         if (!original.getEmail().equals(email)){
             sql.append("EMAIL = ?, ");
             alteracoes.add(email);
-        }
-
-        if (!original.getFuncao().equals(funcao)){
-            sql.append("FUNCAO = ?, ");
-            alteracoes.add(funcao);
         }
 
         if (!original.getSenhaHash().equals(senhaHash)){

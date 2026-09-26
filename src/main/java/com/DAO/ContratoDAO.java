@@ -1,38 +1,73 @@
 package com.DAO;
 
 import com.model.Contrato;
+import com.model.Filtro;
 import com.model.Plano;
 import com.model.SuperAdministrador;
 import com.model.enums.MetodoPagamento;
+import com.model.enums.OperacaoFiltro;
 import com.model.enums.StatusContrato;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class ContratoDAO extends DAO{
     public static final Map<String,String> camposFiltraveis = Map.of(
+            "ID", "ID",
             "DATA_INICIO", "Data de inicio",
             "DATA_VENCIMENTO", "Data de vencimento",
-            "FK_INSTITUICAO_ID", "fkInstituicao",
+            "FK_ENDERECO_ID", "fkEndereco",
             "FK_PLANO_ID","fkPlano",
-            "STATUS_CONTRATO","statusContrato",
-            "FK_ENDERECO_ID", "fkEndereco"
+            "STATUS_CONTRATO","statusContrato"
+    );
+
+    public static final Map<String, List<OperacaoFiltro>> operacoesPorCampo = Map.of(
+            "ID", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "DATA_INICIO", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.MAIOR_QUE,
+                    OperacaoFiltro.MAIOR_OU_IGUAL,
+                    OperacaoFiltro.MENOR_QUE,
+                    OperacaoFiltro.MENOR_OU_IGUAL
+            ),
+            "DATA_VENCIMENTO", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.MAIOR_QUE,
+                    OperacaoFiltro.MAIOR_OU_IGUAL,
+                    OperacaoFiltro.MENOR_QUE,
+                    OperacaoFiltro.MENOR_OU_IGUAL
+            ),
+            "FK_ENDERECO_ID", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
+            "FK_PLANO_ID", List.of(
+                    OperacaoFiltro.IGUAL
+            ),
+            "STATUS_CONTRATO",List.of(
+                    OperacaoFiltro.IGUAL
+            )
     );
 
     // Metodo que converte o valor de acordo com o campo que será filtrado
     public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
-                case "id","fkEndereco","fkPlano" -> Integer.parseInt(valor);
-                case "dataInicio","dataVencimento" -> LocalDate.parse(valor);
-                case "status_contrato" -> StatusContrato.converterEnum(valor);
+                case "FK_ENDERECO_ID", "FK_PLANO_ID" -> Integer.parseInt(valor);
+                case "DATA_INICIO", "DATA_VENCIMENTO" -> LocalDate.parse(valor);
+                case "STATUS_CONTRATO" -> StatusContrato.converterEnum(valor);
                 default -> throw new IllegalArgumentException();
             };
-        }catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
+        } catch (DateTimeParseException |
+                 IllegalArgumentException |
+                 NullPointerException e) {
             return null;
         }
     }
@@ -52,7 +87,7 @@ public class ContratoDAO extends DAO{
 
         String sql = """
                 INSERT INTO CONTRATO (DATA_VENCIMENTO,FK_PLANO_ID,FK_ENDERECO_ID, STATUS_CONTRATO) 
-                VALUES(?,?,?,?,?)
+                VALUES(?,?,?,?)
                 """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setObject(1,dataVencimento, Types.DATE);
@@ -71,17 +106,42 @@ public class ContratoDAO extends DAO{
     }
 
     //select
-    public ArrayList<Contrato> buscar(String campoFiltro, Object valorFiltro, String campoSequencia, String direcaoSequencia) throws SQLException{
-        boolean temFiltro = true;
+    public List<Contrato> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException{
 
         ArrayList<Contrato> resultado = new ArrayList<>();
-        String sql = "SELECT ID, DATA_INICIO, DATA_VENCIMENTO, FK_INSTITUICAO_ID, FK_PLANO_ID, ESTA_VIGENTE FROM CONTRATO";
+        String sql = "SELECT ID, DATA_INICIO, DATA_VENCIMENTO, FK_ENDERECO_ID, FK_PLANO_ID, STATUS_CONTRATO FROM CONTRATO";
 
-        // Verificando campo de filtragem
-        if (campoFiltro != null && camposFiltraveis.containsKey(campoFiltro)) {
-            sql += " WHERE %s = ?".formatted(campoFiltro);
-        } else {
-            temFiltro = false;
+        if (filtros != null && !filtros.isEmpty()) {
+
+            sql += " WHERE ";
+
+            for (int i = 0; i < filtros.size(); i++) {
+
+                Filtro filtro = filtros.get(i);
+
+                // Verifica se o campo existe
+                if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
+                    throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
+                }
+
+                // Verifica se a operação é permitida para esse campo
+                if (!operacoesPorCampo
+                        .get(filtro.getCampoFiltravel())
+                        .contains(filtro.getOperacaoFiltro())) {
+
+                    throw new IllegalArgumentException(
+                            "Operação inválida para o campo: " + filtro.getCampoFiltravel()
+                    );
+                }
+
+                // Coloca AND a partir do segundo filtro
+                if (i > 0) {
+                    sql += " AND ";
+                }
+
+                // Adiciona a condição
+                sql += filtro.getCampoFiltravel() + " " +filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+            }
         }
 
         // Verificando campo e direcao da ordenação
@@ -93,8 +153,16 @@ public class ContratoDAO extends DAO{
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             // Verifica se tem filtro, se sim define a variável do comando SQL
-            if (temFiltro) {
-                pstmt.setObject(1, valorFiltro);
+            if (filtros != null && !filtros.isEmpty()) {
+                for (int i = 0; i < filtros.size(); i++) {
+                    Filtro filtro = filtros.get(i);
+
+                    if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                        pstmt.setObject(i + 1, "%" + filtro.getValor() + "%");
+                    } else {
+                        pstmt.setObject(i + 1, filtro.getValor());
+                    }
+                }
             }
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -104,7 +172,7 @@ public class ContratoDAO extends DAO{
                     LocalDate dataInicio = (dataInicioSQL == null ? null : dataInicioSQL.toLocalDate());
                     Date dataVencimentoSQL = rs.getDate("data_vencimento");
                     LocalDate dataVencimento = (dataVencimentoSQL == null ? null : dataVencimentoSQL.toLocalDate());
-                    int fkEndereco = rs.getInt("FK_INSTITUICAO_ID");
+                    int fkEndereco = rs.getInt("FK_ENDERECO_ID");
                     int fkPlano = rs.getInt("FK_PLANO_ID");
                     int statusContrato = rs.getInt("STATUS_CONTRATO");
 
@@ -144,7 +212,7 @@ public class ContratoDAO extends DAO{
     }
 
     //pesquisar por fkEndereco
-    public Contrato pesquisarPorFkInstituicao(int fkEndereco) throws SQLException {
+    public Contrato pesquisarPorFkEndereco(int fkEndereco) throws SQLException {
         String sql = "SELECT DATA_INICIO,DATA_VENCIMENTO,FK_ENDERECO_ID,FK_PLANO_ID,STATUS_CONTRATO FROM CONTRATO WHERE FK_ENDERECO_ID = ?";
         Contrato contrato;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
