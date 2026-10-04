@@ -1,8 +1,8 @@
 package com.servlet;
 
-import com.DAO.PlanoDAO;
+import com.DAO.SuperAdministradorDAO;
 import com.model.Filtro;
-import com.model.Plano;
+import com.model.SuperAdministrador;
 import com.model.enums.OperacaoFiltro;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,8 +15,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "PlanoServlet", value = "/planos")
-public class PlanoServlet extends HttpServlet {
+@WebServlet(name = "SuperAdministradorServlet", value = "/superAdmin")
+public class SuperAdministradorServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -29,11 +29,11 @@ public class PlanoServlet extends HttpServlet {
         }
 
         if (action.equals("read")){
-            listarPlanos(request, response);
+            listarAdmins(request, response);
         } else if (action.equals("create")) {
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-plano.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/cadastro-superAdmin.jsp")
                     .forward(request, response);
 
         } else if (action.equals("update")) {
@@ -42,14 +42,14 @@ public class PlanoServlet extends HttpServlet {
                     request.getParameter("id")
             );
 
-            try (PlanoDAO dao = new PlanoDAO()) {
+            try (SuperAdministradorDAO dao = new SuperAdministradorDAO()) {
 
-                Plano plano = dao.pesquisarPorId(id);
+                SuperAdministrador superAdministrador = dao.pesquisarPorId(id);
 
-                request.setAttribute("plano", plano);
+                request.setAttribute("superAdmin", superAdministrador);
 
                 request
-                        .getRequestDispatcher("/WEB-INF/views/editar-plano.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/editar-superAdmin.jsp")
                         .forward(request, response);
 
             } catch (SQLException | ClassNotFoundException e) {
@@ -67,20 +67,20 @@ public class PlanoServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("create".equals(action)) {
-            cadastrarPlano(request, response);
+            cadastrarAdmin(request, response);
         } else if ("update".equals(action)) {
-            atualizarPlano(request, response);
+            atualizarAdmin(request, response);
         } else if ("delete".equals(action)){
-            deletarPlano(request, response);
+            deletarAdmin(request, response);
         }
     }
 
-    private void listarPlanos(
+    private void listarAdmins(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (SuperAdministradorDAO dao = new SuperAdministradorDAO()) {
 
             List<Filtro> filtros = new ArrayList<>();
 
@@ -147,17 +147,17 @@ public class PlanoServlet extends HttpServlet {
                 direcaoSequencia = null;
             }
 
-            List<Plano> planos = dao.buscar(
+            List<SuperAdministrador> superAdmins = dao.buscar(
                     filtros,
                     campoSequencia,
                     direcaoSequencia
             );
 
-            request.setAttribute("planos", planos);
+            request.setAttribute("superAdmins", superAdmins);
             request.setAttribute("filtros", filtros);
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/planos.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/superAdmin.jsp")
                     .forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -165,36 +165,30 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
-    private void cadastrarPlano(
+    private void cadastrarAdmin(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
         String nome = request.getParameter("nome");
 
-        double valor = Double.parseDouble(
-                request.getParameter("valor")
-        );
+        String email = request.getParameter("email");
 
-        int duracao = Integer.parseInt(
-                request.getParameter("duracao")
-        );
+        String senha = request.getParameter("senha");
 
-        String descricao = request.getParameter("descricao");
 
-        Plano plano = new Plano(
+        SuperAdministrador superAdministrador = new SuperAdministrador(
                 nome,
-                valor,
-                duracao,
-                descricao
+                senha,
+                email
         );
 
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (SuperAdministradorDAO dao = new SuperAdministradorDAO()) {
 
-            dao.cadastrar(plano);
+            dao.cadastrar(superAdministrador);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/superAdmin"
             );
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -202,17 +196,17 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
-    private void deletarPlano(
+    private void deletarAdmin(
             HttpServletRequest request,
             HttpServletResponse response
     ){
         int id = Integer.parseInt(request.getParameter("id"));
 
-        try (PlanoDAO planoDAO = new PlanoDAO()){
-            planoDAO.remover(id);
+        try (SuperAdministradorDAO dao = new SuperAdministradorDAO()){
+            dao.remover(id);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/superAdmin"
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -224,7 +218,7 @@ public class PlanoServlet extends HttpServlet {
 
     }
 
-    private void atualizarPlano(
+    private void atualizarAdmin(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
@@ -235,35 +229,30 @@ public class PlanoServlet extends HttpServlet {
 
         String nome = request.getParameter("nome");
 
-        double valorMensal = Double.parseDouble(
-                request.getParameter("valorMensal")
-        );
+        String email = request.getParameter("email");
 
-        int duracaoMeses = Integer.parseInt(
-                request.getParameter("duracaoMeses")
-        );
+        String senha = request.getParameter("senha");
 
-        String descricao = request.getParameter("descricao");
+        if (senha != null && senha.isBlank()) {
+            senha = null;
+        }
 
-
-
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (SuperAdministradorDAO dao = new SuperAdministradorDAO()) {
 
             // Busca como está atualmente no banco
-            Plano original = dao.pesquisarPorId(id);
+            SuperAdministrador original = dao.pesquisarPorId(id);
 
             // Monta o objeto com os novos dados
-            Plano alterado = new Plano(
+            SuperAdministrador alterado = new SuperAdministrador(
                     nome,
-                    valorMensal,
-                    duracaoMeses,
-                    descricao
+                    senha,
+                    email
             );
 
             dao.atualizar(original, alterado);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/superAdmin"
             );
 
         } catch (SQLException | ClassNotFoundException e) {

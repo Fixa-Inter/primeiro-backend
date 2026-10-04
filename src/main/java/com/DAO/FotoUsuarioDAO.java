@@ -1,11 +1,13 @@
 package com.DAO;
 
 import com.model.FotoUsuario;
+import com.model.SuperAdministrador;
 import org.postgresql.core.SqlCommand;
 
 import javax.print.URIException;
 import javax.print.attribute.standard.JobKOctets;
 import java.security.DrbgParameters;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,15 +32,14 @@ public class FotoUsuarioDAO extends DAO{
         Integer fk_usuario_id = fotoUsuario.getFkUsuario();
 
         String sql = """
-                     INSERT INTO foto_usuario (DATA_REGISTRO, URL, FK_USUARIO_ID)
-                     VALUES (?, ?, ?)
+                     INSERT INTO foto_usuario (URL, FK_USUARIO_ID)
+                     VALUES (?, ?)
                      """;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
 
-            pstmt.setObject(1, data_registro);
-            pstmt.setString(2, url);
-            pstmt.setInt(3, fk_usuario_id);
+            pstmt.setString(1, url);
+            pstmt.setInt(2, fk_usuario_id);
 
             pstmt.execute();
 
@@ -49,7 +50,57 @@ public class FotoUsuarioDAO extends DAO{
         }
     }
 
-    // select pelo fk_usuario_id
+    // select
+
+    public List<FotoUsuario> listar() throws SQLException {
+
+        List<FotoUsuario> fotos = new ArrayList<>();
+
+        String sql = """
+            SELECT id, data_registro, url, fk_usuario_id
+            FROM foto_usuario
+            ORDER BY id ASC
+            """;
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+
+                int id =
+                        rs.getInt("id");
+
+                Date dataRegistroSQL =
+                        rs.getDate("data_registro");
+
+                LocalDate dataRegistro =
+                        dataRegistroSQL == null
+                                ? null
+                                : dataRegistroSQL.toLocalDate();
+
+                String url =
+                        rs.getString("url");
+
+                int fkUsuario =
+                        rs.getInt("fk_usuario_id");
+
+                FotoUsuario foto =
+                        new FotoUsuario(
+                                id,
+                                dataRegistro,
+                                url,
+                                fkUsuario
+                        );
+
+                fotos.add(foto);
+            }
+        }
+
+        conn.commit();
+
+        return fotos;
+    }
+
     public FotoUsuario pesquisarFkID(int fkId) throws SQLException {
 
         String sql = "SELECT id, data_registro, url, fk_usuario_id FROM foto_usuario WHERE fk_usuario_id = ?";
@@ -79,23 +130,40 @@ public class FotoUsuarioDAO extends DAO{
         return fu;
     }
 
+    public FotoUsuario pesquisarPorId(int id) {
+        String sql = "SELECT URL, DATA_REGISTRO, fk_usuario_id FROM foto_usuario WHERE id = ?";
+        FotoUsuario fotoUsuario;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+
+                String url = rs.getString("URL");
+                Date dataRegistroSQL = rs.getDate("data_registro");
+                LocalDate dataRegistro = (dataRegistroSQL == null ? null : dataRegistroSQL.toLocalDate());
+                Integer fkUsuario = rs.getInt("fk_usuario_id");
+
+                fotoUsuario = new FotoUsuario(id, dataRegistro, url, fkUsuario);
+            }
+        }catch (SQLException e) {
+            throw new RuntimeException();
+        }
+        return fotoUsuario;
+    }
+
     // update
     public void atualizar(FotoUsuario original, FotoUsuario alterado) throws SQLException {
 
         Integer id = alterado.getId();
-        LocalDate data_registro = alterado.getDataRegistro();
         String url = alterado.getUrl();
         Integer fk_usuario_id = alterado.getFkUsuario();
 
 
         StringBuilder sql = new StringBuilder("UPDATE foto_usuario SET ");
         List<Object> valores = new ArrayList<>();
-
-
-        if (!Objects.equals(data_registro, original.getDataRegistro())){
-            sql.append("data_registro = ?, ");
-            valores.add(data_registro);
-        }
 
         if (!Objects.equals(url, original.getUrl())){
             sql.append("url = ?, ");
@@ -150,5 +218,6 @@ public class FotoUsuarioDAO extends DAO{
             throw e;
         }
     }
+
 
 }

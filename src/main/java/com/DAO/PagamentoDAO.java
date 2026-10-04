@@ -65,11 +65,11 @@ public class PagamentoDAO extends DAO{
 
         try {
             return switch (campo) {
-                case "id", "fk_contrato_id"-> Integer.parseInt(valor);
-                case "valor" -> Float.parseFloat(valor);
-                case "foi_realizado" -> Boolean.parseBoolean(valor);
-                case "data_pagamento" -> LocalDate.parse(valor);
-                case "metodo_pagamento" -> MetodoPagamento.converterEnum(valor);
+                case "ID", "FK_CONTRATO_ID"-> Integer.parseInt(valor);
+                case "VALOR" -> Float.parseFloat(valor);
+                case "FOI_REALIZADO" -> Boolean.parseBoolean(valor);
+                case "DATA_PAGAMENTO" -> LocalDate.parse(valor);
+                case "METODO_PAGAMENTO" -> MetodoPagamento.converterEnum(valor).getCodigo();
                 default -> throw new IllegalArgumentException();
             };
         }  catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {

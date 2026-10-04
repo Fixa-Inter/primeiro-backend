@@ -38,6 +38,16 @@ public class Usuario {
         this.primeiroAcesso = primeiroAcesso;
     }
 
+    public Usuario(String nome, String senhaHash, String email, String cargo, TipoAcesso tipoDeAcesso, Integer fkEndereco, LocalDate dataAniversario) {
+        this.nome = nome;
+        this.senhaHash = senhaHash;
+        this.email = email;
+        this.cargo = cargo;
+        this.tipoDeAcesso = tipoDeAcesso;
+        this.fkEndereco = fkEndereco;
+        this.dataAniversario = dataAniversario;
+    }
+
 
     // getters e setters
 

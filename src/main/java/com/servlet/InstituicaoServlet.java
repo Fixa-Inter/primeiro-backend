@@ -1,9 +1,10 @@
 package com.servlet;
 
-import com.DAO.PlanoDAO;
+import com.DAO.InstituicaoDAO;
 import com.model.Filtro;
-import com.model.Plano;
+import com.model.Instituicao;
 import com.model.enums.OperacaoFiltro;
+import com.model.enums.TipoInstituicao;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,12 +12,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "PlanoServlet", value = "/planos")
-public class PlanoServlet extends HttpServlet {
+@WebServlet(name = "InstituicaoServlet", value = "/instituicoes")
+public class InstituicaoServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -29,11 +32,11 @@ public class PlanoServlet extends HttpServlet {
         }
 
         if (action.equals("read")){
-            listarPlanos(request, response);
+            listarInstituicoes(request, response);
         } else if (action.equals("create")) {
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-plano.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/cadastro-instituicao.jsp")
                     .forward(request, response);
 
         } else if (action.equals("update")) {
@@ -42,14 +45,14 @@ public class PlanoServlet extends HttpServlet {
                     request.getParameter("id")
             );
 
-            try (PlanoDAO dao = new PlanoDAO()) {
+            try (InstituicaoDAO dao = new InstituicaoDAO()) {
 
-                Plano plano = dao.pesquisarPorId(id);
+                Instituicao instituicao = dao.pesquisarPorId(id);
 
-                request.setAttribute("plano", plano);
+                request.setAttribute("instituicao", instituicao);
 
                 request
-                        .getRequestDispatcher("/WEB-INF/views/editar-plano.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/editar-instituicao.jsp")
                         .forward(request, response);
 
             } catch (SQLException | ClassNotFoundException e) {
@@ -67,20 +70,20 @@ public class PlanoServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("create".equals(action)) {
-            cadastrarPlano(request, response);
+            cadastrarInstituicao(request, response);
         } else if ("update".equals(action)) {
-            atualizarPlano(request, response);
+            atualizarInstituicao(request, response);
         } else if ("delete".equals(action)){
-            deletarPlano(request, response);
+            deletarInstituicao(request, response);
         }
     }
 
-    private void listarPlanos(
+    private void listarInstituicoes(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (InstituicaoDAO dao = new InstituicaoDAO()) {
 
             List<Filtro> filtros = new ArrayList<>();
 
@@ -147,17 +150,17 @@ public class PlanoServlet extends HttpServlet {
                 direcaoSequencia = null;
             }
 
-            List<Plano> planos = dao.buscar(
+            List<Instituicao> instituicoes = dao.listar(
                     filtros,
                     campoSequencia,
                     direcaoSequencia
             );
 
-            request.setAttribute("planos", planos);
+            request.setAttribute("instituicoes", instituicoes);
             request.setAttribute("filtros", filtros);
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/planos.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/instituicoes.jsp")
                     .forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -165,36 +168,37 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
-    private void cadastrarPlano(
+    private void cadastrarInstituicao(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
+        int id = Integer.parseInt(
+                request.getParameter("id")
+        );
+
         String nome = request.getParameter("nome");
+        String emailCorporativo = request.getParameter("email_corporativo");
 
-        double valor = Double.parseDouble(
-                request.getParameter("valor")
+        Date dataCadastroSql = Date.valueOf(
+                request.getParameter("data_cadastro")
         );
 
-        int duracao = Integer.parseInt(
-                request.getParameter("duracao")
+        LocalDate dataCadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
+        String dominioEmail = request.getParameter("dominio_email");
+
+        Integer tipoInstituicao = Integer.parseInt(
+                request.getParameter("tipo_instituicao")
         );
 
-        String descricao = request.getParameter("descricao");
+        Instituicao instituicao = new Instituicao(id, nome, emailCorporativo, dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
-        Plano plano = new Plano(
-                nome,
-                valor,
-                duracao,
-                descricao
-        );
+        try (InstituicaoDAO dao = new InstituicaoDAO()) {
 
-        try (PlanoDAO dao = new PlanoDAO()) {
-
-            dao.cadastrar(plano);
+            dao.cadastrar(instituicao);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/instituicoes"
             );
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -202,17 +206,17 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
-    private void deletarPlano(
+    private void deletarInstituicao(
             HttpServletRequest request,
             HttpServletResponse response
     ){
         int id = Integer.parseInt(request.getParameter("id"));
 
-        try (PlanoDAO planoDAO = new PlanoDAO()){
-            planoDAO.remover(id);
+        try (InstituicaoDAO dao = new InstituicaoDAO()){
+            dao.remover(id);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/instituicoes"
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -224,7 +228,7 @@ public class PlanoServlet extends HttpServlet {
 
     }
 
-    private void atualizarPlano(
+    private void atualizarInstituicao(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
@@ -234,40 +238,41 @@ public class PlanoServlet extends HttpServlet {
         );
 
         String nome = request.getParameter("nome");
+        String emailCorporativo = request.getParameter("email_corporativo");
 
-        double valorMensal = Double.parseDouble(
-                request.getParameter("valorMensal")
+        Date dataCadastroSql = Date.valueOf(
+                request.getParameter("data_cadastro")
         );
 
-        int duracaoMeses = Integer.parseInt(
-                request.getParameter("duracaoMeses")
+        LocalDate dataCadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
+        String dominioEmail = request.getParameter("dominio_email");
+
+        Integer tipoInstituicao = Integer.parseInt(
+                request.getParameter("tipo_instituicao")
         );
 
-        String descricao = request.getParameter("descricao");
+        Instituicao instituicao = new Instituicao(id, nome, emailCorporativo, dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
 
 
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (InstituicaoDAO dao = new InstituicaoDAO()) {
 
             // Busca como está atualmente no banco
-            Plano original = dao.pesquisarPorId(id);
+            Instituicao original = dao.pesquisarPorId(id);
 
             // Monta o objeto com os novos dados
-            Plano alterado = new Plano(
-                    nome,
-                    valorMensal,
-                    duracaoMeses,
-                    descricao
-            );
+            Instituicao alterado = new Instituicao(id, nome, emailCorporativo, dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
+
 
             dao.atualizar(original, alterado);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/instituicoes"
             );
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);
         }
     }
+
 }

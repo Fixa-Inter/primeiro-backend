@@ -1,9 +1,10 @@
 package com.servlet;
 
-import com.DAO.PlanoDAO;
+import com.DAO.ContratoDAO;
+import com.model.Contrato;
 import com.model.Filtro;
-import com.model.Plano;
 import com.model.enums.OperacaoFiltro;
+import com.model.enums.StatusContrato;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,15 +12,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "PlanoServlet", value = "/planos")
-public class PlanoServlet extends HttpServlet {
+@WebServlet(name="ContratoServlet", value = "/contratos")
+public class ContratoServlet extends HttpServlet{
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
@@ -29,11 +33,11 @@ public class PlanoServlet extends HttpServlet {
         }
 
         if (action.equals("read")){
-            listarPlanos(request, response);
+            listarContratos(request, response);
         } else if (action.equals("create")) {
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-plano.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/cadastro-contrato.jsp")
                     .forward(request, response);
 
         } else if (action.equals("update")) {
@@ -42,14 +46,14 @@ public class PlanoServlet extends HttpServlet {
                     request.getParameter("id")
             );
 
-            try (PlanoDAO dao = new PlanoDAO()) {
+            try (ContratoDAO dao = new ContratoDAO()) {
 
-                Plano plano = dao.pesquisarPorId(id);
+                Contrato contrato = dao.pesquisarPorId(id);
 
-                request.setAttribute("plano", plano);
+                request.setAttribute("contrato", contrato);
 
                 request
-                        .getRequestDispatcher("/WEB-INF/views/editar-plano.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/editar-contrato.jsp")
                         .forward(request, response);
 
             } catch (SQLException | ClassNotFoundException e) {
@@ -67,20 +71,20 @@ public class PlanoServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("create".equals(action)) {
-            cadastrarPlano(request, response);
+            cadastrarContrato(request, response);
         } else if ("update".equals(action)) {
-            atualizarPlano(request, response);
+            atualizarContrato(request, response);
         } else if ("delete".equals(action)){
-            deletarPlano(request, response);
+            deletarContrato(request, response);
         }
     }
 
-    private void listarPlanos(
+    private void listarContratos(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (ContratoDAO dao = new ContratoDAO()) {
 
             List<Filtro> filtros = new ArrayList<>();
 
@@ -147,17 +151,17 @@ public class PlanoServlet extends HttpServlet {
                 direcaoSequencia = null;
             }
 
-            List<Plano> planos = dao.buscar(
+            List<Contrato> contratos = dao.buscar(
                     filtros,
                     campoSequencia,
                     direcaoSequencia
             );
 
-            request.setAttribute("planos", planos);
+            request.setAttribute("contratos", contratos);
             request.setAttribute("filtros", filtros);
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/planos.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/contratos.jsp")
                     .forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -165,36 +169,37 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
-    private void cadastrarPlano(
+    private void cadastrarContrato(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
+        Date dataVencimentoSQL = Date.valueOf(
+                request.getParameter("DATA_VENCIMENTO")
+        );
+        LocalDate dataVencimento = (dataVencimentoSQL == null ? null : dataVencimentoSQL.toLocalDate());
 
-        String nome = request.getParameter("nome");
-
-        double valor = Double.parseDouble(
-                request.getParameter("valor")
+        int fkEndereco = Integer.parseInt(
+                request.getParameter("FK_ENDERECO_ID")
+        );
+        int fkPlano = Integer.parseInt(
+                request.getParameter("FK_PLANO_ID")
+        );
+        int statusContrato = Integer.parseInt(
+                request.getParameter("STATUS_CONTRATO")
         );
 
-        int duracao = Integer.parseInt(
-                request.getParameter("duracao")
+        Contrato contrato = new Contrato(
+                dataVencimento,
+                fkPlano,
+                fkEndereco,
+                StatusContrato.converterEnum(statusContrato)
         );
+        try (ContratoDAO dao = new ContratoDAO()) {
 
-        String descricao = request.getParameter("descricao");
-
-        Plano plano = new Plano(
-                nome,
-                valor,
-                duracao,
-                descricao
-        );
-
-        try (PlanoDAO dao = new PlanoDAO()) {
-
-            dao.cadastrar(plano);
+            dao.cadastrar(contrato);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/contratos"
             );
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -202,17 +207,17 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
-    private void deletarPlano(
+    private void deletarContrato(
             HttpServletRequest request,
             HttpServletResponse response
     ){
         int id = Integer.parseInt(request.getParameter("id"));
 
-        try (PlanoDAO planoDAO = new PlanoDAO()){
-            planoDAO.remover(id);
+        try (ContratoDAO dao = new ContratoDAO()){
+            dao.remover(id);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/contratos"
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -224,50 +229,57 @@ public class PlanoServlet extends HttpServlet {
 
     }
 
-    private void atualizarPlano(
+    private void atualizarContrato(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
         int id = Integer.parseInt(
-                request.getParameter("id")
+                request.getParameter("ID")
         );
 
-        String nome = request.getParameter("nome");
+        Date dataVencimentoSQL = Date.valueOf(
+                request.getParameter("DATA_VENCIMENTO")
+        );
+        LocalDate dataVencimento = (dataVencimentoSQL == null ? null : dataVencimentoSQL.toLocalDate());
 
-        double valorMensal = Double.parseDouble(
-                request.getParameter("valorMensal")
+        int fkEndereco = Integer.parseInt(
+                request.getParameter("FK_ENDERECO_ID")
+        );
+        int fkPlano = Integer.parseInt(
+                request.getParameter("FK_PLANO_ID")
+        );
+        int statusContrato = Integer.parseInt(
+                request.getParameter("STATUS_CONTRATO")
         );
 
-        int duracaoMeses = Integer.parseInt(
-                request.getParameter("duracaoMeses")
-        );
-
-        String descricao = request.getParameter("descricao");
 
 
-
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (ContratoDAO dao = new ContratoDAO()) {
 
             // Busca como está atualmente no banco
-            Plano original = dao.pesquisarPorId(id);
+            Contrato original = dao.pesquisarPorId(id);
 
             // Monta o objeto com os novos dados
-            Plano alterado = new Plano(
-                    nome,
-                    valorMensal,
-                    duracaoMeses,
-                    descricao
+            Contrato alterado = new Contrato(
+                    id,
+                    original.getDataInicio(),
+                    dataVencimento,
+                    fkEndereco,
+                    fkPlano,
+                    StatusContrato.converterEnum(statusContrato)
             );
+
 
             dao.atualizar(original, alterado);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/contratos"
             );
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);
         }
     }
+
 }

@@ -4,6 +4,7 @@ import com.model.Endereco;
 import com.model.Filtro;
 import com.model.Instituicao;
 import com.model.enums.OperacaoFiltro;
+import com.model.enums.StatusContrato;
 import com.model.enums.TipoInstituicao;
 import org.postgresql.core.SqlCommand;
 
@@ -11,6 +12,7 @@ import javax.print.attribute.standard.JobKOctets;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import java.util.Objects;
 public class EnderecoDAO extends DAO{
 
     public static final Map<String, String> camposFiltraveis = Map.of(
+            "ID", "Id",
             "RUA", "Rua",
             "BAIRRO", "Bairro",
             "CIDADE", "Cidade",
@@ -29,6 +32,10 @@ public class EnderecoDAO extends DAO{
     );
 
     public static final Map<String, List<OperacaoFiltro>> operacoesPorCampo = Map.of(
+            "ID", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
             "RUA", List.of(
                     OperacaoFiltro.IGUAL,
                     OperacaoFiltro.CONTEM
@@ -58,6 +65,19 @@ public class EnderecoDAO extends DAO{
             )
     );
 
+    public Object converterValor(String campo, String valor) {
+        try {
+            return switch (campo) {
+                case "ID", "FK_INSTITUICAO_ID" -> Integer.parseInt(valor);
+                case "RUA","BAIRRO", "CIDADE", "ESTADO", "CEP", "CNPJ" -> valor;
+                default -> throw new IllegalArgumentException();
+            };
+        } catch (DateTimeParseException |
+                 IllegalArgumentException |
+                 NullPointerException e) {
+            return null;
+        }
+    }
 
     // construtor de DAO
     public EnderecoDAO() throws SQLException, ClassNotFoundException {
