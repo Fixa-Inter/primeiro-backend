@@ -37,8 +37,8 @@ public class SuperAdministradorDAO extends DAO{
     public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
-                case "id" -> Integer.parseInt(valor);
-                case "nome", "email" -> valor;
+                case "ID" -> Integer.parseInt(valor);
+                case "NOME", "EMAIL" -> valor;
                 default -> throw new IllegalArgumentException();
             };
         }catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
@@ -161,7 +161,7 @@ public class SuperAdministradorDAO extends DAO{
 
     //pesquisar por id
     public SuperAdministrador pesquisarPorId(int id) throws SQLException {
-        String sql = "SELECT NOME, EMAIL FROM SUPER_ADMINISTRADOR WHERE id = ?";
+        String sql = "SELECT NOME, EMAIL, SENHA_HASH FROM SUPER_ADMINISTRADOR WHERE id = ?";
         SuperAdministrador superAdministrador;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -228,7 +228,7 @@ public class SuperAdministradorDAO extends DAO{
             alteracoes.add(email);
         }
 
-        if (!original.getSenhaHash().equals(senhaHash)){
+        if (senhaHash != null && !senhaHash.equals(original.getSenhaHash())){
             sql.append("SENHA_HASH = ?, ");
             alteracoes.add(senhaHash);
         }

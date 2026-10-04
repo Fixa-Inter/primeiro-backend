@@ -11,6 +11,12 @@ public class FotoUsuario {
 
     // construtor
 
+    public FotoUsuario(String url, Integer fkUsuario) {
+
+        this.url = url;
+        this.fkUsuario = fkUsuario;
+    }
+
     public FotoUsuario(Integer id, LocalDate dataRegistro, String url, Integer fkUsuario) {
         this.id = id;
         this.dataRegistro = dataRegistro;

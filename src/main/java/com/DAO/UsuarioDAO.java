@@ -78,12 +78,12 @@ public class UsuarioDAO extends DAO{
     public Object converterValor(String campo, String valor){
         try {
             return switch (campo) {
-                case "id", "fk_endereco_id" -> Integer.parseInt(valor);
-                case "nome", "senha_hash", "email", "cargo" -> valor;
-                case "esta_ativo", "primeiro_acesso" -> Boolean.parseBoolean(valor);
-                case "data_criacao" -> LocalDateTime.parse(valor);
-                case "tipoAcesso" -> TipoAcesso.converterEnum(valor);
-                case "data_nascimento" -> LocalDate.parse(valor);
+                case "ID", "FK_ENDERECO_ID" -> Integer.parseInt(valor);
+                case "NOME", "SENHA_HASH", "EMAIL", "CARGO" -> valor;
+                case "ESTA_ATIVO", "PRIMEIRO_ACESSO" -> Boolean.parseBoolean(valor);
+                case "DATA_CRIACAO" -> LocalDateTime.parse(valor);
+                case "TIPO_ACESSO" -> TipoAcesso.converterEnum(valor).getCodigo();
+                case "DATA_NASCIMENTO" -> LocalDate.parse(valor);
                 default -> throw new IllegalArgumentException();
             };
         } catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {

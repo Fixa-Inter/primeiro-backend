@@ -264,6 +264,7 @@ public class PlanoDAO extends DAO{
         double valorMensal = alterado.getValorMensal();
         String descricao = alterado.getDescricao();
         Integer duracaoMeses = alterado.getDuracaoMeses();
+        LocalDateTime dataCriacao = alterado.getDataCriacao();
 
         StringBuilder sql = new StringBuilder("UPDATE PLANO SET ");
         ArrayList<Object> alteracoes = new ArrayList<>();

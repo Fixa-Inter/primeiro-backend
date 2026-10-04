@@ -24,6 +24,13 @@ public class Contrato {
         this.statusContrato = statusContrato;
     }
 
+    public Contrato(LocalDate dataVencimento, Integer fkPlano, Integer fkEndereco, StatusContrato statusContrato) {
+        this.dataVencimento = dataVencimento;
+        this.fkPlano = fkPlano;
+        this.fkEndereco = fkEndereco;
+        this.statusContrato = statusContrato;
+    }
+
 
     // getters e setters
 

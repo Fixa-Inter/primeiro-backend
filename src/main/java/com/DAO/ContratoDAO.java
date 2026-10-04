@@ -60,9 +60,17 @@ public class ContratoDAO extends DAO{
     public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
-                case "FK_ENDERECO_ID", "FK_PLANO_ID" -> Integer.parseInt(valor);
+                case "ID", "FK_ENDERECO_ID", "FK_PLANO_ID" -> Integer.parseInt(valor);
                 case "DATA_INICIO", "DATA_VENCIMENTO" -> LocalDate.parse(valor);
-                case "STATUS_CONTRATO" -> StatusContrato.converterEnum(valor);
+                case "STATUS_CONTRATO" -> {
+                    try {
+                        yield StatusContrato
+                                .converterEnum(valor)
+                                .getCodigo();
+                    } catch (IllegalArgumentException e) {
+                        yield StatusContrato.converterEnum(Integer.parseInt(valor)).getCodigo();
+                    }
+                }
                 default -> throw new IllegalArgumentException();
             };
         } catch (DateTimeParseException |
@@ -176,7 +184,7 @@ public class ContratoDAO extends DAO{
                     int fkPlano = rs.getInt("FK_PLANO_ID");
                     int statusContrato = rs.getInt("STATUS_CONTRATO");
 
-                    resultado.add(new Contrato(id,dataInicio, dataVencimento, fkEndereco, fkPlano, StatusContrato.converterEnum(statusContrato)));
+                    resultado.add(new Contrato(id,dataInicio, dataVencimento, fkPlano, fkEndereco, StatusContrato.converterEnum(statusContrato)));
                 }
             }
         }

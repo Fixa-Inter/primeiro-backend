@@ -64,10 +64,10 @@ public class InstituicaoDAO extends DAO{
 
         try {
             return switch (campo){
-                case "id" -> Integer.parseInt(valor);
-                case "nome", "email_corporativo", "dominio_email" -> valor;
-                case "data_cadastro" -> LocalDate.parse(valor);
-                case "tipo_instituicao" -> TipoInstituicao.converterEnum(valor);
+                case "ID" -> Integer.parseInt(valor);
+                case "NOME", "EMAIL_CORPORATIVO", "DOMINIO_EMAIL" -> valor;
+                case "DATA_CADASTRO" -> LocalDate.parse(valor);
+                case "TIPO_INSTITUICAO" -> TipoInstituicao.converterEnum(valor).getCodigo();
                 default -> throw new IllegalArgumentException();
             };
         } catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
@@ -208,7 +208,7 @@ public class InstituicaoDAO extends DAO{
     }
 
     // select id
-    public Instituicao pesquisarId(int idInstituicao) throws SQLException{
+    public Instituicao pesquisarPorId(int idInstituicao) throws SQLException{
 
         String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao FROM instituicao WHERE id = ?";
 

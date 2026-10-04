@@ -1,9 +1,9 @@
 package com.servlet;
 
-import com.DAO.PlanoDAO;
-import com.model.Filtro;
-import com.model.Plano;
+import com.DAO.UsuarioDAO;
+import com.model.*;
 import com.model.enums.OperacaoFiltro;
+import com.model.enums.TipoAcesso;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,11 +12,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "PlanoServlet", value = "/planos")
-public class PlanoServlet extends HttpServlet {
+@WebServlet(name = "UsuarioServlet", value = "/usuarios")
+public class UsuarioServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -29,11 +31,11 @@ public class PlanoServlet extends HttpServlet {
         }
 
         if (action.equals("read")){
-            listarPlanos(request, response);
+            listarUsuarios(request, response);
         } else if (action.equals("create")) {
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-plano.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/cadastro-usuario.jsp")
                     .forward(request, response);
 
         } else if (action.equals("update")) {
@@ -42,14 +44,14 @@ public class PlanoServlet extends HttpServlet {
                     request.getParameter("id")
             );
 
-            try (PlanoDAO dao = new PlanoDAO()) {
+            try (UsuarioDAO dao = new UsuarioDAO()) {
 
-                Plano plano = dao.pesquisarPorId(id);
+                Usuario usuario = dao.pesquisarPorId(id);
 
-                request.setAttribute("plano", plano);
+                request.setAttribute("usuario", usuario);
 
                 request
-                        .getRequestDispatcher("/WEB-INF/views/editar-plano.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/editar-usuario.jsp")
                         .forward(request, response);
 
             } catch (SQLException | ClassNotFoundException e) {
@@ -67,20 +69,20 @@ public class PlanoServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("create".equals(action)) {
-            cadastrarPlano(request, response);
+            cadastrarUsuario(request, response);
         } else if ("update".equals(action)) {
-            atualizarPlano(request, response);
+            atualizarUsuario(request, response);
         } else if ("delete".equals(action)){
-            deletarPlano(request, response);
+            deletarUsuario(request, response);
         }
     }
 
-    private void listarPlanos(
+    private void listarUsuarios(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (UsuarioDAO dao = new UsuarioDAO()) {
 
             List<Filtro> filtros = new ArrayList<>();
 
@@ -147,17 +149,18 @@ public class PlanoServlet extends HttpServlet {
                 direcaoSequencia = null;
             }
 
-            List<Plano> planos = dao.buscar(
+            List<Usuario> usuarios = dao.listar(
                     filtros,
                     campoSequencia,
                     direcaoSequencia
             );
 
-            request.setAttribute("planos", planos);
+            request.setAttribute("usuarios",
+                    usuarios);
             request.setAttribute("filtros", filtros);
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/planos.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/usuarios.jsp")
                     .forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -165,36 +168,47 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
-    private void cadastrarPlano(
+    private void cadastrarUsuario(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
         String nome = request.getParameter("nome");
 
-        double valor = Double.parseDouble(
-                request.getParameter("valor")
+        String senhaHash = request.getParameter("senhaHash");
+
+        String email = request.getParameter("email");
+
+        String cargo = request.getParameter("cargo");
+
+        TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
+                request.getParameter("tipoDeAcesso")
         );
 
-        int duracao = Integer.parseInt(
-                request.getParameter("duracao")
+        int fkEndereco = Integer.parseInt(
+                request.getParameter("fkEndereco")
         );
 
-        String descricao = request.getParameter("descricao");
+        LocalDate dataAniversario = LocalDate.parse(
+                request.getParameter("dataAniversario")
+        );
 
-        Plano plano = new Plano(
+        Usuario usuario = new Usuario(
                 nome,
-                valor,
-                duracao,
-                descricao
+                senhaHash,
+                email,
+                cargo,
+                tipoDeAcesso,
+                fkEndereco,
+                dataAniversario
         );
 
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (UsuarioDAO dao = new UsuarioDAO()) {
 
-            dao.cadastrar(plano);
+            dao.cadastrar(usuario);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/usuarios"
             );
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -202,17 +216,17 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
-    private void deletarPlano(
+    private void deletarUsuario(
             HttpServletRequest request,
             HttpServletResponse response
     ){
         int id = Integer.parseInt(request.getParameter("id"));
 
-        try (PlanoDAO planoDAO = new PlanoDAO()){
-            planoDAO.remover(id);
+        try (UsuarioDAO usuarioDAO = new UsuarioDAO()){
+            usuarioDAO.remover(id);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/usuarios"
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -224,7 +238,7 @@ public class PlanoServlet extends HttpServlet {
 
     }
 
-    private void atualizarPlano(
+    private void atualizarUsuario(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
@@ -235,39 +249,65 @@ public class PlanoServlet extends HttpServlet {
 
         String nome = request.getParameter("nome");
 
-        double valorMensal = Double.parseDouble(
-                request.getParameter("valorMensal")
+        String senhaHash = request.getParameter("senhaHash");
+
+        boolean estaAtivo = Boolean.parseBoolean(
+                request.getParameter("estaAtivo")
         );
 
-        int duracaoMeses = Integer.parseInt(
-                request.getParameter("duracaoMeses")
+        String email = request.getParameter("email");
+
+        String cargo = request.getParameter("cargo");
+
+        TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
+                request.getParameter("tipoDeAcesso")
         );
 
-        String descricao = request.getParameter("descricao");
+        int fkEndereco = Integer.parseInt(
+                request.getParameter("fkEndereco")
+        );
 
+        String dataAniversarioParam = request.getParameter("dataAniversario");
 
+        LocalDate dataAniversario = null;
 
-        try (PlanoDAO dao = new PlanoDAO()) {
+        if (dataAniversarioParam != null && !dataAniversarioParam.isBlank()) {
+            dataAniversario = LocalDate.parse(dataAniversarioParam);
+        }
+
+        boolean primeiroAcesso = Boolean.parseBoolean(
+                request.getParameter("primeiroAcesso")
+        );
+
+        try (UsuarioDAO dao = new UsuarioDAO()) {
 
             // Busca como está atualmente no banco
-            Plano original = dao.pesquisarPorId(id);
+            Usuario original = dao.pesquisarPorId(id);
 
             // Monta o objeto com os novos dados
-            Plano alterado = new Plano(
+            Usuario alterado = new Usuario(
+                    id,
                     nome,
-                    valorMensal,
-                    duracaoMeses,
-                    descricao
+                    senhaHash,
+                    estaAtivo,
+                    email,
+                    original.getDataCriacao(),
+                    cargo,
+                    tipoDeAcesso,
+                    fkEndereco,
+                    dataAniversario,
+                    primeiroAcesso
             );
 
             dao.atualizar(original, alterado);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/usuarios"
             );
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);
         }
     }
+
 }
