@@ -237,9 +237,6 @@ public class InstituicaoServlet extends HttpServlet{
                 request.getParameter("tipoInstituicao")
         );
 
-
-
-
         try (InstituicaoDAO dao = new InstituicaoDAO()) {
 
             // Busca como está atualmente no banco
@@ -259,5 +256,4 @@ public class InstituicaoServlet extends HttpServlet{
             throw new ServletException(e);
         }
     }
-
 }
