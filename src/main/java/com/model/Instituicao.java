@@ -24,6 +24,13 @@ public class Instituicao {
         this.dominioEmail = dominioEmail;
     }
 
+    public Instituicao(String nome, String emailCorporativo, TipoInstituicao tipoDeInstituicao, String dominioEmail) {
+        this.nome = nome;
+        this.emailCorporativo = emailCorporativo;
+        this.tipoDeInstituicao = tipoDeInstituicao;
+        this.dominioEmail = dominioEmail;
+    }
+
     // Getters e setters
 
     public Integer getId() {
@@ -58,11 +65,11 @@ public class Instituicao {
         this.dataCadastro = dataCadastro;
     }
 
-    public TipoInstituicao getTipoDeInstituicao() {
+    public TipoInstituicao getTipoInstituicao() {
         return tipoDeInstituicao;
     }
 
-    public void setTipoDeInstituicao(TipoInstituicao tipoDeInstituicao) {
+    public void setTipoInstituicao(TipoInstituicao tipoDeInstituicao) {
         this.tipoDeInstituicao = tipoDeInstituicao;
     }
 

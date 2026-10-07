@@ -1,17 +1,20 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.model.Plano" %>
+<%@ page import="com.model.SuperAdministrador" %>
 <%@ page import="com.model.Filtro" %>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    List<Plano> planos =
-            (List<Plano>) request.getAttribute("planos");
+    List<SuperAdministrador> superAdmins =
+            (List<SuperAdministrador>) request.getAttribute("superAdmins");
 
     List<Filtro> filtros =
             (List<Filtro>) request.getAttribute("filtros");
 
     String ordenacaoAtual =
             request.getParameter("ordenacao");
+
+    String contexto = request.getContextPath();
 %>
 
 <!DOCTYPE html>
@@ -19,21 +22,18 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Planos</title>
+    <title>Super Administradores</title>
 </head>
 
 <body>
 
-<h1>Planos</h1>
+<h1>Super Administradores</h1>
 
-
-<a href="${pageContext.request.contextPath}/planos?action=create">
-    Cadastrar novo plano
+<a href="<%= contexto %>/superAdmin?action=create">
+    Cadastrar Super Administrador
 </a>
 
-
 <hr>
-
 
 <h2>Filtros aplicados</h2>
 
@@ -61,9 +61,8 @@
 
     <%= filtro.getValor() %>
 
-
     <form
-            action="${pageContext.request.contextPath}/planos"
+            action="<%= contexto %>/superAdmin"
             method="get"
             style="display:inline"
     >
@@ -80,11 +79,7 @@
                 value="<%= i %>"
         >
 
-
-        <%
-            if (ordenacaoAtual != null
-                    && !ordenacaoAtual.isBlank()) {
-        %>
+        <% if (ordenacaoAtual != null && !ordenacaoAtual.isBlank()) { %>
 
         <input
                 type="hidden"
@@ -92,10 +87,7 @@
                 value="<%= ordenacaoAtual %>"
         >
 
-        <%
-            }
-        %>
-
+        <% } %>
 
         <%
             for (Filtro filtroAtual : filtros) {
@@ -123,7 +115,6 @@
             }
         %>
 
-
         <button type="submit">
             Excluir filtro
         </button>
@@ -137,22 +128,12 @@
     }
 %>
 
-
-<br>
-
-
-<a href="${pageContext.request.contextPath}/planos?action=read">
-    Limpar filtros
-</a>
-
-
 <hr>
-
 
 <h2>Adicionar filtro</h2>
 
 <form
-        action="${pageContext.request.contextPath}/planos"
+        action="<%= contexto %>/superAdmin"
         method="get"
 >
 
@@ -162,11 +143,7 @@
             value="read"
     >
 
-
-    <%
-        if (ordenacaoAtual != null
-                && !ordenacaoAtual.isBlank()) {
-    %>
+    <% if (ordenacaoAtual != null && !ordenacaoAtual.isBlank()) { %>
 
     <input
             type="hidden"
@@ -174,10 +151,7 @@
             value="<%= ordenacaoAtual %>"
     >
 
-    <%
-        }
-    %>
-
+    <% } %>
 
     <%
         if (filtros != null) {
@@ -207,7 +181,6 @@
             }
         }
     %>
-
 
     <label for="campoFiltro">
         Campo:
@@ -226,20 +199,11 @@
             Nome
         </option>
 
-        <option value="VALOR_MENSAL">
-            Valor Mensal
-        </option>
-
-        <option value="DURACAO_MESES">
-            Duração meses
-        </option>
-
-        <option value="DESCRICAO">
-            Descrição
+        <option value="EMAIL">
+            Email
         </option>
 
     </select>
-
 
     <label for="operacaoFiltro">
         Operação:
@@ -258,24 +222,7 @@
             Contém
         </option>
 
-        <option value="MAIOR_QUE">
-            Maior que
-        </option>
-
-        <option value="MAIOR_OU_IGUAL">
-            Maior ou igual
-        </option>
-
-        <option value="MENOR_QUE">
-            Menor que
-        </option>
-
-        <option value="MENOR_OU_IGUAL">
-            Menor ou igual
-        </option>
-
     </select>
-
 
     <label for="valorFiltro">
         Valor:
@@ -288,21 +235,18 @@
             required
     >
 
-
     <button type="submit">
-        Adicionar filtro
+        Filtrar
     </button>
 
 </form>
 
-
 <hr>
-
 
 <h2>Ordenação</h2>
 
 <form
-        action="${pageContext.request.contextPath}/planos"
+        action="<%= contexto %>/superAdmin"
         method="get"
 >
 
@@ -311,7 +255,6 @@
             name="action"
             value="read"
     >
-
 
     <%
         if (filtros != null) {
@@ -342,117 +285,43 @@
         }
     %>
 
-
-    <label for="ordenacao">
-        Ordenar por:
-    </label>
-
-    <select
-            id="ordenacao"
-            name="ordenacao"
-    >
+    <select name="ordenacao">
 
         <option value="">
             Padrão
         </option>
 
-
-        <option
-                value="ID-ASC"
-                <%= "ID-ASC".equals(ordenacaoAtual)
-                        ? "selected"
-                        : "" %>
-        >
-            ID - Crescente
+        <option value="ID-ASC"
+                <%= "ID-ASC".equals(ordenacaoAtual) ? "selected" : "" %>>
+            ID crescente
         </option>
 
-        <option
-                value="ID-DESC"
-                <%= "ID-DESC".equals(ordenacaoAtual)
-                        ? "selected"
-                        : "" %>
-        >
-            ID - Decrescente
+        <option value="ID-DESC"
+                <%= "ID-DESC".equals(ordenacaoAtual) ? "selected" : "" %>>
+            ID decrescente
         </option>
 
-
-        <option
-                value="NOME-ASC"
-                <%= "NOME-ASC".equals(ordenacaoAtual)
-                        ? "selected"
-                        : "" %>
-        >
-            Nome - Crescente
+        <option value="NOME-ASC"
+                <%= "NOME-ASC".equals(ordenacaoAtual) ? "selected" : "" %>>
+            Nome crescente
         </option>
 
-        <option
-                value="NOME-DESC"
-                <%= "NOME-DESC".equals(ordenacaoAtual)
-                        ? "selected"
-                        : "" %>
-        >
-            Nome - Decrescente
+        <option value="NOME-DESC"
+                <%= "NOME-DESC".equals(ordenacaoAtual) ? "selected" : "" %>>
+            Nome decrescente
         </option>
 
-
-        <option
-                value="VALOR_MENSAL-ASC"
-                <%= "VALOR_MENSAL-ASC".equals(ordenacaoAtual)
-                        ? "selected"
-                        : "" %>
-        >
-            Valor Mensal - Crescente
+        <option value="EMAIL-ASC"
+                <%= "EMAIL-ASC".equals(ordenacaoAtual) ? "selected" : "" %>>
+            Email crescente
         </option>
 
-        <option
-                value="VALOR_MENSAL-DESC"
-                <%= "VALOR_MENSAL-DESC".equals(ordenacaoAtual)
-                        ? "selected"
-                        : "" %>
-        >
-            Valor Mensal - Decrescente
-        </option>
-
-
-        <option
-                value="DURACAO_MESES-ASC"
-                <%= "DURACAO_MESES-ASC".equals(ordenacaoAtual)
-                        ? "selected"
-                        : "" %>
-        >
-            Duração meses - Crescente
-        </option>
-
-        <option
-                value="DURACAO_MESES-DESC"
-                <%= "DURACAO_MESES-DESC".equals(ordenacaoAtual)
-                        ? "selected"
-                        : "" %>
-        >
-            Duração meses - Decrescente
-        </option>
-
-
-        <option
-                value="DESCRICAO-ASC"
-                <%= "DESCRICAO-ASC".equals(ordenacaoAtual)
-                        ? "selected"
-                        : "" %>
-        >
-            Descrição - Crescente
-        </option>
-
-        <option
-                value="DESCRICAO-DESC"
-                <%= "DESCRICAO-DESC".equals(ordenacaoAtual)
-                        ? "selected"
-                        : "" %>
-        >
-            Descrição - Decrescente
+        <option value="EMAIL-DESC"
+                <%= "EMAIL-DESC".equals(ordenacaoAtual) ? "selected" : "" %>>
+            Email decrescente
         </option>
 
     </select>
-
 
     <button type="submit">
         Ordenar
@@ -460,84 +329,73 @@
 
 </form>
 
+<form
+        action="<%= contexto %>/superAdmin"
+        method="get"
+        style="display:inline"
+>
+
+    <input
+            type="hidden"
+            name="action"
+            value="read"
+    >
+
+    <button type="submit">
+        Limpar filtros
+    </button>
+
+</form>
 
 <hr>
 
-
-<h2>Planos encontrados</h2>
-
+<h2>Lista de Super Administradores</h2>
 
 <%
-    if (planos == null || planos.isEmpty()) {
+    if (superAdmins != null && !superAdmins.isEmpty()) {
 %>
-
-<p>Nenhum plano cadastrado.</p>
-
-<%
-} else {
-%>
-
 
 <table border="1">
 
+    <thead>
+
     <tr>
-
         <th>ID</th>
-
         <th>Nome</th>
-
-        <th>Valor Mensal</th>
-
-        <th>Duração</th>
-
-        <th>Descrição</th>
-
-        <th>Data de criação</th>
-
+        <th>Email</th>
         <th>Ações</th>
-
     </tr>
 
+    </thead>
+
+    <tbody>
 
     <%
-        for (Plano plano : planos) {
+        for (SuperAdministrador adm : superAdmins) {
     %>
 
     <tr>
 
         <td>
-            <%= plano.getId() %>
+            <%= adm.getId() %>
         </td>
 
         <td>
-            <%= plano.getNome() %>
+            <%= adm.getNome() %>
         </td>
 
         <td>
-            <%= plano.getValorMensal() %>
-        </td>
-
-        <td>
-            <%= plano.getDuracaoMeses() %>
-        </td>
-
-        <td>
-            <%= plano.getDescricao() %>
-        </td>
-
-        <td>
-            <%= plano.getDataCriacao() %>
+            <%= adm.getEmail() %>
         </td>
 
         <td>
 
-            <a href="${pageContext.request.contextPath}/planos?action=update&id=<%= plano.getId() %>">
+            <a href="<%= contexto %>/superAdmin?action=update&id=<%= adm.getId() %>">
                 Editar
             </a>
 
-
             <form
-                    action="${pageContext.request.contextPath}/planos"
+                    action="<%= contexto %>/superAdmin"
                     method="post"
                     style="display:inline"
             >
@@ -551,7 +409,7 @@
                 <input
                         type="hidden"
                         name="id"
-                        value="<%= plano.getId() %>"
+                        value="<%= adm.getId() %>"
                 >
 
                 <button type="submit">
@@ -568,8 +426,15 @@
         }
     %>
 
+    </tbody>
+
 </table>
 
+<%
+} else {
+%>
+
+<p>Nenhum Super Administrador encontrado.</p>
 
 <%
     }

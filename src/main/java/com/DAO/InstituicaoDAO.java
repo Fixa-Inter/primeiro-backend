@@ -88,7 +88,7 @@ public class InstituicaoDAO extends DAO{
         String nome = instituicao.getNome();
         String emailCorporativo = instituicao.getEmailCorporativo();
         String dominioEmail = instituicao.getDominioEmail();
-        Integer tipoInstituicao = instituicao.getTipoDeInstituicao().getCodigo();
+        Integer tipoInstituicao = instituicao.getTipoInstituicao().getCodigo();
 
         // tira as coluna id e data_cadastro pois o default do bd já preenche eles automaticamente
 
@@ -317,7 +317,7 @@ public class InstituicaoDAO extends DAO{
         Integer id = alterada.getId();
         String nome = alterada.getNome();
         String emailCorpoartivo = alterada.getEmailCorporativo();
-        Integer tipoInstituicao = alterada.getTipoDeInstituicao().getCodigo();
+        Integer tipoInstituicao = alterada.getTipoInstituicao().getCodigo();
         String dominioEmail = alterada.getDominioEmail();
 
         StringBuilder sql = new StringBuilder("UPDATE instituicao SET ");
@@ -340,7 +340,7 @@ public class InstituicaoDAO extends DAO{
             valores.add(dominioEmail);
         }
 
-        if (!Objects.equals(tipoInstituicao, original.getTipoDeInstituicao().getCodigo())){
+        if (!Objects.equals(tipoInstituicao, original.getTipoInstituicao().getCodigo())){
             sql.append("tipo_instituicao = ?, ");
             valores.add(tipoInstituicao);
         }
