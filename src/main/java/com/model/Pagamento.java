@@ -25,7 +25,16 @@ public class Pagamento {
         this.dataPagamento = dataPagamento;
         this.foiRealizado = foiRealizado;
         this.fkContrato = fkContrato;
-        metodoPagamento = metodoPagamento;
+        this.metodoPagamento = metodoPagamento;
+    }
+
+    // construtor sem os valores que sao default, ou seja: data_pagamento, foi_realizado e data_criacao
+
+    public Pagamento(BigDecimal valor, LocalDateTime dataPagamento, Integer fkContrato, MetodoPagamento metodoPagamento) {
+        this.valor = valor;
+        this.dataPagamento = dataPagamento;
+        this.fkContrato = fkContrato;
+        this.metodoPagamento = metodoPagamento;
     }
 
 

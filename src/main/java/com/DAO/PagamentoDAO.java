@@ -115,7 +115,7 @@ public class PagamentoDAO extends DAO{
     }
 
     // select
-    public List<Pagamento> listarlistar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException {
+    public List<Pagamento> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException {
 
         List<Pagamento> resultado = new ArrayList<>();
 
