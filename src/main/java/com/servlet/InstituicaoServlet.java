@@ -173,25 +173,16 @@ public class InstituicaoServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        int id = Integer.parseInt(
-                request.getParameter("id")
-        );
 
         String nome = request.getParameter("nome");
-        String emailCorporativo = request.getParameter("email_corporativo");
-
-        Date dataCadastroSql = Date.valueOf(
-                request.getParameter("data_cadastro")
-        );
-
-        LocalDate dataCadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
-        String dominioEmail = request.getParameter("dominio_email");
+        String emailCorporativo = request.getParameter("emailCorporativo");
+        String dominioEmail = request.getParameter("dominioEmail");
 
         Integer tipoInstituicao = Integer.parseInt(
-                request.getParameter("tipo_instituicao")
+                request.getParameter("tipoInstituicao")
         );
 
-        Instituicao instituicao = new Instituicao(id, nome, emailCorporativo, dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
+        Instituicao instituicao = new Instituicao(nome, emailCorporativo, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
         try (InstituicaoDAO dao = new InstituicaoDAO()) {
 
@@ -238,22 +229,13 @@ public class InstituicaoServlet extends HttpServlet{
         );
 
         String nome = request.getParameter("nome");
-        String emailCorporativo = request.getParameter("email_corporativo");
+        String emailCorporativo = request.getParameter("emailCorporativo");
 
-        Date dataCadastroSql = Date.valueOf(
-                request.getParameter("data_cadastro")
-        );
-
-        LocalDate dataCadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
-        String dominioEmail = request.getParameter("dominio_email");
+        String dominioEmail = request.getParameter("dominioEmail");
 
         Integer tipoInstituicao = Integer.parseInt(
-                request.getParameter("tipo_instituicao")
+                request.getParameter("tipoInstituicao")
         );
-
-        Instituicao instituicao = new Instituicao(id, nome, emailCorporativo, dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
-
-
 
         try (InstituicaoDAO dao = new InstituicaoDAO()) {
 
@@ -261,7 +243,7 @@ public class InstituicaoServlet extends HttpServlet{
             Instituicao original = dao.pesquisarPorId(id);
 
             // Monta o objeto com os novos dados
-            Instituicao alterado = new Instituicao(id, nome, emailCorporativo, dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
+            Instituicao alterado = new Instituicao(id, nome, emailCorporativo, original.getDataCadastro(), TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
 
             dao.atualizar(original, alterado);
@@ -274,5 +256,4 @@ public class InstituicaoServlet extends HttpServlet{
             throw new ServletException(e);
         }
     }
-
 }

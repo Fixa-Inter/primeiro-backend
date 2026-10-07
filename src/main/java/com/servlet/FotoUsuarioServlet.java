@@ -106,10 +106,6 @@ public class FotoUsuarioServlet extends HttpServlet{
         String fkUsuarioParam = request.getParameter("fkUsuario");
         String url = request.getParameter("url");
 
-        System.out.println("action: " + request.getParameter("action"));
-        System.out.println("fkUsuario: " + fkUsuarioParam);
-        System.out.println("url: " + url);
-
         int fkUsuario = Integer.parseInt(fkUsuarioParam);
 
 
