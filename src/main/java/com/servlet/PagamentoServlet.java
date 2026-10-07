@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.channels.ScatteringByteChannel;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -53,7 +52,7 @@ public class PagamentoServlet extends HttpServlet{
                 request.setAttribute("pagamentos", pagamento);
 
                 request
-                        .getRequestDispatcher("WEB-INF/views/editar-pagamentos.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/editar-pagamentos.jsp")
                         .forward(request, response);
 
             } catch (SQLException e) {
@@ -252,8 +251,10 @@ public class PagamentoServlet extends HttpServlet{
 
             // Monta o objeto com os novos dados
             Pagamento alterado = new Pagamento(
+                    id,
                     valor,
                     dataPagamento,
+                    foiRealizado,
                     fkContrato,
                     MetodoPagamento.converterEnum(metodoPagamento)
             );

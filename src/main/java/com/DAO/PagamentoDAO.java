@@ -66,7 +66,7 @@ public class PagamentoDAO extends DAO{
         try {
             return switch (campo) {
                 case "ID", "FK_CONTRATO_ID"-> Integer.parseInt(valor);
-                case "VALOR" -> Float.parseFloat(valor);
+                case "VALOR" -> new BigDecimal(valor);
                 case "FOI_REALIZADO" -> Boolean.parseBoolean(valor);
                 case "DATA_PAGAMENTO" -> LocalDate.parse(valor);
                 case "METODO_PAGAMENTO" -> MetodoPagamento.converterEnum(valor).getCodigo();
@@ -221,7 +221,7 @@ public class PagamentoDAO extends DAO{
             try (ResultSet rs = pstmt.executeQuery()){
 
                 if (!rs.next()){
-                    throw new SQLException("Erro ao procurar instituicao");
+                    throw new SQLException("Erro ao procurar Pagamento");
                 }
 
                 int id = rs.getInt("id");

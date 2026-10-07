@@ -33,21 +33,6 @@
             value="read"
     >
 
-    <!-- BARRA DE PESQUISA -->
-    <label for="pesquisa">
-        Pesquisar:
-    </label>
-
-    <input
-            type="text"
-            id="pesquisa"
-            name="pesquisa"
-            value="${param.pesquisa}"
-            placeholder="Digite o nome do pagamentos"
-    >
-
-    <br><br>
-
 
     <label for="campoFiltro">
         Filtrar por:
@@ -205,6 +190,10 @@
 
         <td>
             <%= pagamento.getFoiRealizado() %> meses
+        </td>
+
+        <td>
+            <%= pagamento.getFoiRealizado() ? "sim" : "não" %>
         </td>
 
         <td>
