@@ -96,6 +96,8 @@ public class InstituicaoServlet extends HttpServlet{
 
             String ordenacao = request.getParameter("ordenacao");
 
+            String pesquisa = request.getParameter("pesquisa");
+
             String removerFiltroParam = request.getParameter("removerFiltro");
             Integer indiceRemover = null;
             if (removerFiltroParam != null
@@ -153,7 +155,8 @@ public class InstituicaoServlet extends HttpServlet{
             List<Instituicao> instituicoes = dao.listar(
                     filtros,
                     campoSequencia,
-                    direcaoSequencia
+                    direcaoSequencia,
+                    pesquisa
             );
 
             request.setAttribute("instituicoes", instituicoes);

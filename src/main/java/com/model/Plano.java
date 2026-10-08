@@ -83,7 +83,7 @@ public class Plano {
 
     @Override
     public String toString(){
-        return "Plano{id=%d, nome='%s', valorMensal=%f, duracaoMeses=%d, descricao='%s'}"
-                .formatted(id, nome, valorMensal, duracaoMeses, descricao);
+        return "%s %s %s %s %s %s"
+                .formatted(id, nome, valorMensal, duracaoMeses, descricao, dataCriacao);
     }
 }

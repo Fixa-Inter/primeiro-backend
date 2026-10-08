@@ -97,6 +97,8 @@ public class ContratoServlet extends HttpServlet{
 
             String ordenacao = request.getParameter("ordenacao");
 
+            String pesquisa = request.getParameter("pesquisa");
+
             String removerFiltroParam = request.getParameter("removerFiltro");
             Integer indiceRemover = null;
             if (removerFiltroParam != null
@@ -154,7 +156,8 @@ public class ContratoServlet extends HttpServlet{
             List<Contrato> contratos = dao.buscar(
                     filtros,
                     campoSequencia,
-                    direcaoSequencia
+                    direcaoSequencia,
+                    pesquisa
             );
 
             request.setAttribute("contratos", contratos);

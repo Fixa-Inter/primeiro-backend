@@ -75,7 +75,7 @@ public class SuperAdministradorDAO extends DAO{
     }
 
     //select
-    public List<SuperAdministrador> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException{
+    public List<SuperAdministrador> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException{
 
         ArrayList<SuperAdministrador> resultado = new ArrayList<>();
         String sql = "SELECT ID, NOME, EMAIL FROM SUPER_ADMINISTRADOR";
@@ -153,6 +153,13 @@ public class SuperAdministradorDAO extends DAO{
                     resultado.add(new SuperAdministrador(id, nome, null, email));
                 }
             }
+        }
+
+        if (pesquisa != null && !pesquisa.isEmpty()) {
+            String pesquisaNormalizada = pesquisa.toLowerCase().trim().replace(" ", "");
+            resultado.removeIf(superAdministrador -> !superAdministrador.toString()
+                    .toLowerCase().trim().replace(" ", "")
+                    .contains(pesquisaNormalizada));
         }
 
         conn.commit();

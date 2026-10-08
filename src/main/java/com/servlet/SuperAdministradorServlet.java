@@ -150,7 +150,8 @@ public class SuperAdministradorServlet extends HttpServlet{
             List<SuperAdministrador> superAdmins = dao.buscar(
                     filtros,
                     campoSequencia,
-                    direcaoSequencia
+                    direcaoSequencia,
+                    request.getParameter("pesquisa")
             );
 
             request.setAttribute("superAdmins", superAdmins);

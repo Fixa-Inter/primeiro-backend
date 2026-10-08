@@ -94,6 +94,8 @@ public class UsuarioServlet extends HttpServlet{
 
             String ordenacao = request.getParameter("ordenacao");
 
+            String pesquisa = request.getParameter("pesquisa");
+
             String removerFiltroParam = request.getParameter("removerFiltro");
             Integer indiceRemover = null;
             if (removerFiltroParam != null
@@ -151,7 +153,8 @@ public class UsuarioServlet extends HttpServlet{
             List<Usuario> usuarios = dao.listar(
                     filtros,
                     campoSequencia,
-                    direcaoSequencia
+                    direcaoSequencia,
+                    pesquisa
             );
 
             request.setAttribute("usuarios",

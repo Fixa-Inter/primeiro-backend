@@ -1,8 +1,9 @@
 package com.servlet;
 
-import com.DAO.PlanoDAO;
+import com.DAO.PagamentoDAO;
 import com.model.Filtro;
-import com.model.Plano;
+import com.model.Pagamento;
+import com.model.enums.MetodoPagamento;
 import com.model.enums.OperacaoFiltro;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,12 +12,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "PlanoServlet", value = "/planos")
-public class PlanoServlet extends HttpServlet {
+@WebServlet(name = "PagamentoServlet", value = "/pagamentos")
+public class PagamentoServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -29,11 +33,11 @@ public class PlanoServlet extends HttpServlet {
         }
 
         if (action.equals("read")){
-            listarPlanos(request, response);
+            listarPagamentos(request, response);
         } else if (action.equals("create")) {
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-plano.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/cadastro-pagamento.jsp")
                     .forward(request, response);
 
         } else if (action.equals("update")) {
@@ -42,14 +46,14 @@ public class PlanoServlet extends HttpServlet {
                     request.getParameter("id")
             );
 
-            try (PlanoDAO dao = new PlanoDAO()) {
+            try (PagamentoDAO dao = new PagamentoDAO()) {
 
-                Plano plano = dao.pesquisarPorId(id);
+                Pagamento pagamento = dao.pesquisarPorId(id);
 
-                request.setAttribute("plano", plano);
+                request.setAttribute("pagamento", pagamento);
 
                 request
-                        .getRequestDispatcher("/WEB-INF/views/editar-plano.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/editar-pagamento.jsp")
                         .forward(request, response);
 
             } catch (SQLException | ClassNotFoundException e) {
@@ -67,20 +71,20 @@ public class PlanoServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("create".equals(action)) {
-            cadastrarPlano(request, response);
+            cadastrarPagamento(request, response);
         } else if ("update".equals(action)) {
-            atualizarPlano(request, response);
+            atualizarPagamento(request, response);
         } else if ("delete".equals(action)){
-            deletarPlano(request, response);
+            deletarPagamento(request, response);
         }
     }
 
-    private void listarPlanos(
+    private void listarPagamentos(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (PagamentoDAO dao = new PagamentoDAO()) {
 
             List<Filtro> filtros = new ArrayList<>();
 
@@ -149,18 +153,18 @@ public class PlanoServlet extends HttpServlet {
                 direcaoSequencia = null;
             }
 
-            List<Plano> planos = dao.buscar(
+            List<Pagamento> pagamentos = dao.listar(
                     filtros,
                     campoSequencia,
                     direcaoSequencia,
                     pesquisa
             );
 
-            request.setAttribute("planos", planos);
+            request.setAttribute("pagamentos", pagamentos);
             request.setAttribute("filtros", filtros);
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/planos.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/pagamentos.jsp")
                     .forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -168,36 +172,35 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
-    private void cadastrarPlano(
+    private void cadastrarPagamento(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        String nome = request.getParameter("nome");
+        MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(
+                request.getParameter("metodoPagamento")
+        );
 
-        double valor = Double.parseDouble(
+        Integer fkContrato = Integer.parseInt(
+                request.getParameter("fkContrato")
+        );
+
+        BigDecimal valor = new BigDecimal(
                 request.getParameter("valor")
         );
 
-        int duracao = Integer.parseInt(
-                request.getParameter("duracao")
+        Pagamento pagamento = new Pagamento(
+          metodoPagamento,
+          fkContrato,
+          valor
         );
 
-        String descricao = request.getParameter("descricao");
+        try (PagamentoDAO dao = new PagamentoDAO()) {
 
-        Plano plano = new Plano(
-                nome,
-                valor,
-                duracao,
-                descricao
-        );
-
-        try (PlanoDAO dao = new PlanoDAO()) {
-
-            dao.cadastrar(plano);
+            dao.cadastrar(pagamento);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/pagamentos"
             );
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -205,17 +208,17 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
-    private void deletarPlano(
+    private void deletarPagamento(
             HttpServletRequest request,
             HttpServletResponse response
     ){
         int id = Integer.parseInt(request.getParameter("id"));
 
-        try (PlanoDAO planoDAO = new PlanoDAO()){
-            planoDAO.remover(id);
+        try (PagamentoDAO pagamentoDAO = new PagamentoDAO()){
+            pagamentoDAO.remover(id);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/pagamentos"
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -227,7 +230,7 @@ public class PlanoServlet extends HttpServlet {
 
     }
 
-    private void atualizarPlano(
+    private void atualizarPagamento(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
@@ -236,37 +239,44 @@ public class PlanoServlet extends HttpServlet {
                 request.getParameter("id")
         );
 
-        String nome = request.getParameter("nome");
-
-        double valorMensal = Double.parseDouble(
-                request.getParameter("valorMensal")
+        MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(
+                request.getParameter("metodoPagamento")
         );
 
-        int duracaoMeses = Integer.parseInt(
-                request.getParameter("duracaoMeses")
+        Integer fkContrato = Integer.parseInt(
+                request.getParameter("fkContrato")
         );
 
-        String descricao = request.getParameter("descricao");
+        BigDecimal valor = new BigDecimal(
+                request.getParameter("valor")
+        );
+
+
+        boolean foiRealizado = Boolean.parseBoolean(
+                request.getParameter("foiRealizado")
+        );
 
 
 
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (PagamentoDAO dao = new PagamentoDAO()) {
 
             // Busca como está atualmente no banco
-            Plano original = dao.pesquisarPorId(id);
+            Pagamento original = dao.pesquisarPorId(id);
 
             // Monta o objeto com os novos dados
-            Plano alterado = new Plano(
-                    nome,
-                    valorMensal,
-                    duracaoMeses,
-                    descricao
+            Pagamento alterado = new Pagamento(
+                    id,
+                    valor,
+                    original.getDataPagamento(),
+                    foiRealizado,
+                    fkContrato,
+                    metodoPagamento
             );
 
             dao.atualizar(original, alterado);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/pagamentos"
             );
 
         } catch (SQLException | ClassNotFoundException e) {

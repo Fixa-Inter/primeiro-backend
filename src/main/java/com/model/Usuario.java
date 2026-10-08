@@ -143,7 +143,7 @@ public class Usuario {
 
     @Override
     public String toString(){
-        return "Usuario{id=%d, nome='%s', senhaHash='%s', estaAtivo=%b, email='%s', dataCriacao=%s, cargo='%s', tipoDeAcesso='%s', fkTipoDeAcesso='%d', data_nascimento='%s', primeiro_acesso='%b'"
-                .formatted(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkEndereco,dataAniversario, primeiroAcesso);
+        return "%s %s %s %s %s %s %s %s %s %s %s"
+                .formatted(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkEndereco, dataAniversario, primeiroAcesso);
         }
 }

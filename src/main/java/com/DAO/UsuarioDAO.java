@@ -2,6 +2,7 @@ package com.DAO;
 
 import com.model.Filtro;
 import com.model.Usuario;
+import com.model.enums.MetodoPagamento;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
 
@@ -82,7 +83,15 @@ public class UsuarioDAO extends DAO{
                 case "NOME", "SENHA_HASH", "EMAIL", "CARGO" -> valor;
                 case "ESTA_ATIVO", "PRIMEIRO_ACESSO" -> Boolean.parseBoolean(valor);
                 case "DATA_CRIACAO" -> LocalDateTime.parse(valor);
-                case "TIPO_ACESSO" -> TipoAcesso.converterEnum(valor).getCodigo();
+                case "TIPO_ACESSO" -> {
+                    try {
+                        yield TipoAcesso.converterEnum(valor).getCodigo();
+                    } catch (IllegalArgumentException e) {
+                        yield TipoAcesso.converterEnum(
+                                Integer.parseInt(valor)
+                        ).getCodigo();
+                    }
+                }
                 case "DATA_NASCIMENTO" -> LocalDate.parse(valor);
                 default -> throw new IllegalArgumentException();
             };
@@ -135,7 +144,7 @@ public class UsuarioDAO extends DAO{
     }
 
     // select
-    public List<Usuario> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException {
+    public List<Usuario> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
 
         List<Usuario> resultado = new ArrayList<>();
 
@@ -226,6 +235,13 @@ public class UsuarioDAO extends DAO{
                 }
             }
 
+            if (pesquisa != null && !pesquisa.isEmpty()) {
+                String pesquisaNormalizada = pesquisa.toLowerCase().trim().replace(" ", "");
+                resultado.removeIf(usuario -> !usuario.toString()
+                        .toLowerCase().trim().replace(" ", "")
+                        .contains(pesquisaNormalizada));
+            }
+
         }
         conn.commit();
         return resultado;
@@ -274,14 +290,14 @@ public class UsuarioDAO extends DAO{
 
 
     // select nome
-    public Usuario pesquisarPorNome(String nomeUsuario) throws SQLException{
+    public Usuario pesquisarPorEmail(String email) throws SQLException{
 
-        String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario WHERE nome = ?";
+        String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario WHERE email = ?";
 
         Usuario u;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
-            pstmt.setString(1, nomeUsuario);
+            pstmt.setString(1, email);
 
             try (ResultSet rs = pstmt.executeQuery()){
 
@@ -293,7 +309,6 @@ public class UsuarioDAO extends DAO{
                 String nome = rs.getString("nome");
                 String senhaHash = rs.getString("senha_hash");
                 boolean estaAtivo = rs.getBoolean("esta_ativo");
-                String email = rs.getString("email");
                 Timestamp dataCriacaoSQL = rs.getTimestamp("data_criacao");
                 LocalDateTime dataCriacao = (dataCriacaoSQL == null ? null : dataCriacaoSQL.toLocalDateTime());
                 String cargo = rs.getString("cargo");

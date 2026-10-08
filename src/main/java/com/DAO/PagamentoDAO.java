@@ -61,21 +61,38 @@ public class PagamentoDAO extends DAO{
     );
 
     // convertendo String recebida do Servlet
-    public Object converterValor(String campo, String valor){
-
+    public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
-                case "ID", "FK_CONTRATO_ID"-> Integer.parseInt(valor);
-                case "VALOR" -> Float.parseFloat(valor);
-                case "FOI_REALIZADO" -> Boolean.parseBoolean(valor);
-                case "DATA_PAGAMENTO" -> LocalDate.parse(valor);
-                case "METODO_PAGAMENTO" -> MetodoPagamento.converterEnum(valor).getCodigo();
-                default -> throw new IllegalArgumentException();
+                case "ID", "FK_CONTRATO_ID" ->
+                        Integer.parseInt(valor);
+
+                case "VALOR" ->
+                        Float.parseFloat(valor);
+
+                case "FOI_REALIZADO" ->
+                        Boolean.parseBoolean(valor);
+
+                case "DATA_PAGAMENTO" ->
+                        LocalDate.parse(valor);
+
+                case "METODO_PAGAMENTO" -> {
+                    try {
+                        yield MetodoPagamento.converterEnum(valor).getCodigo();
+                    } catch (IllegalArgumentException e) {
+                        yield MetodoPagamento.converterEnum(
+                                Integer.parseInt(valor)
+                        ).getCodigo();
+                    }
+                }
+
+                default ->
+                        throw new IllegalArgumentException();
             };
-        }  catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
+
+        } catch (Exception e) {
             return null;
         }
-
     }
 
     // construtor
@@ -88,22 +105,18 @@ public class PagamentoDAO extends DAO{
     public void cadastrar(Pagamento pagamento) throws SQLException {
 
         BigDecimal valor = pagamento.getValor();
-        LocalDateTime dataPagamento = pagamento.getDataPagamento();
-        Boolean foiRealizado = pagamento.getFoiRealizado();
         Integer fkContrato = pagamento.getFkContrato();
         Integer metodoPagamento = pagamento.getMetodoPagamento().getCodigo();
         String sql = """
-                        INSERT INTO pagamento (VALOR, DATA_PAGAMENTO, FOI_REALIZADO, FK_CONTRATO_ID, METODO_PAGAMENTO)
-                        VALUES (?, ?, ?, ?, ?)
+                        INSERT INTO pagamento (VALOR, FK_CONTRATO_ID, METODO_PAGAMENTO)
+                        VALUES (?, ?, ?)
                      """;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
 
             pstmt.setBigDecimal(1, valor);
-            pstmt.setTimestamp(2, (dataPagamento == null ? null : Timestamp.valueOf(dataPagamento)));
-            pstmt.setBoolean(3, foiRealizado);
-            pstmt.setInt(4, fkContrato);
-            pstmt.setInt(5, metodoPagamento);
+            pstmt.setInt(2, fkContrato);
+            pstmt.setInt(3, metodoPagamento);
 
             pstmt.execute();
 
@@ -115,7 +128,7 @@ public class PagamentoDAO extends DAO{
     }
 
     // select
-    public List<Pagamento> listarlistar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException {
+    public List<Pagamento> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
 
         List<Pagamento> resultado = new ArrayList<>();
 
@@ -201,6 +214,13 @@ public class PagamentoDAO extends DAO{
 
             }
 
+            if (pesquisa != null && !pesquisa.isEmpty()) {
+                String pesquisaNormalizada = pesquisa.toLowerCase().trim().replace(" ", "");
+                resultado.removeIf(pagamento -> !pagamento.toString()
+                        .toLowerCase().trim().replace(" ", "")
+                        .contains(pesquisaNormalizada));
+            }
+
         }
 
         conn.commit();
@@ -208,7 +228,7 @@ public class PagamentoDAO extends DAO{
     }
 
     // select id
-    public Pagamento pesquisarId(int idPagamento) throws SQLException{
+    public Pagamento pesquisarPorId(int idPagamento) throws SQLException{
 
         String sql = "SELECT ID, VALOR, DATA_PAGAMENTO, FOI_REALIZADO, FK_CONTRATO_ID, METODO_PAGAMENTO FROM pagamento WHERE id = ?";
 

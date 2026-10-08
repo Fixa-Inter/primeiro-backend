@@ -2,6 +2,7 @@ package com.DAO;
 
 import com.model.Filtro;
 import com.model.Instituicao;
+import com.model.enums.MetodoPagamento;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoInstituicao;
 
@@ -67,7 +68,15 @@ public class InstituicaoDAO extends DAO{
                 case "ID" -> Integer.parseInt(valor);
                 case "NOME", "EMAIL_CORPORATIVO", "DOMINIO_EMAIL" -> valor;
                 case "DATA_CADASTRO" -> LocalDate.parse(valor);
-                case "TIPO_INSTITUICAO" -> TipoInstituicao.converterEnum(valor).getCodigo();
+                case "TIPO_INSTITUICAO" -> {
+                    try {
+                        yield TipoInstituicao.converterEnum(valor).getCodigo();
+                    } catch (IllegalArgumentException e) {
+                        yield TipoInstituicao.converterEnum(
+                                Integer.parseInt(valor)
+                        ).getCodigo();
+                    }
+                }
                 default -> throw new IllegalArgumentException();
             };
         } catch (DateTimeParseException | IllegalArgumentException | NullPointerException e) {
@@ -115,7 +124,7 @@ public class InstituicaoDAO extends DAO{
     }
 
     // select
-    public List<Instituicao> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException {
+    public List<Instituicao> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
 
         List<Instituicao> resultado = new ArrayList<>();
 
@@ -201,6 +210,13 @@ public class InstituicaoDAO extends DAO{
 
             }
 
+            if (pesquisa != null && !pesquisa.isEmpty()) {
+                String pesquisaNormalizada = pesquisa.toLowerCase().trim().replace(" ", "");
+                resultado.removeIf(instituicao -> !instituicao.toString()
+                        .toLowerCase().trim().replace(" ", "")
+                        .contains(pesquisaNormalizada));
+            }
+
         }
 
         conn.commit();
@@ -240,15 +256,16 @@ public class InstituicaoDAO extends DAO{
         return i;
     }
 
-    // select nome
-    public Instituicao pesquisarNome(String nomeInstituicao) throws SQLException{
+    // select dominio email para o servlet, pois como a tabela dominio email e unique, precisa de um metodo para verificar se já existe um dominio email igual e mostrar
+    // uma excecao com mensagem pra isso, e retorna null caso n tenha esse dominio de email registrado, liberando para o registro no sistema
+    public Instituicao pesquisarPorEmailCorporativo(String emailCorporativo) throws SQLException{
 
-        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao FROM instituicao WHERE nome = ?";
+        String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao FROM instituicao WHERE email_corporativo = ?";
 
         Instituicao i;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
-            pstmt.setString(1, nomeInstituicao);
+            pstmt.setString(1, emailCorporativo);
 
             try (ResultSet rs = pstmt.executeQuery()){
 
@@ -258,13 +275,12 @@ public class InstituicaoDAO extends DAO{
 
                 int id = rs.getInt("id");
                 String nome = rs.getString("nome");
-                String emailCorporativo = rs.getString("email_corporativo");
                 Date dataCadastroSql = rs.getDate("data_cadastro");
                 LocalDate dataCadastro = (dataCadastroSql == null ? null : dataCadastroSql.toLocalDate());
                 String dominioEmail = rs.getString("dominio_email");
                 Integer tipoInstituicao = rs.getInt("tipo_instituicao");
 
-                i = new Instituicao(id, nome, emailCorporativo,dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
+                i = new Instituicao(id, nome, emailCorporativo, dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
             }
 
@@ -276,8 +292,7 @@ public class InstituicaoDAO extends DAO{
 
     // select dominio email para o servlet, pois como a tabela dominio email e unique, precisa de um metodo para verificar se já existe um dominio email igual e mostrar
     // uma excecao com mensagem pra isso, e retorna null caso n tenha esse dominio de email registrado, liberando para o registro no sistema
-
-    public Instituicao pesquisarDominioEmail(String dominioEmailInsert) throws SQLException{
+    public Instituicao pesquisarPorDominioEmail(String dominioEmailInsert) throws SQLException{
 
         String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao FROM instituicao WHERE dominio_email = ?";
 

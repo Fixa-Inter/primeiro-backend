@@ -52,7 +52,7 @@ public class FotoUsuarioDAO extends DAO{
 
     // select
 
-    public List<FotoUsuario> listar() throws SQLException {
+    public List<FotoUsuario> listar(String pesquisa) throws SQLException {
 
         List<FotoUsuario> fotos = new ArrayList<>();
 
@@ -94,6 +94,13 @@ public class FotoUsuarioDAO extends DAO{
 
                 fotos.add(foto);
             }
+        }
+
+        if (pesquisa != null && !pesquisa.isEmpty()) {
+            String pesquisaNormalizada = pesquisa.toLowerCase().trim().replace(" ", "");
+            fotos.removeIf(foto -> !foto.toString()
+                    .toLowerCase().trim().replace(" ", "")
+                    .contains(pesquisaNormalizada));
         }
 
         conn.commit();

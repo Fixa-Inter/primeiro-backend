@@ -100,7 +100,7 @@ public class PlanoDAO extends DAO{
     }
 
     //select
-    public List<Plano> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException{
+    public List<Plano> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException{
 
         ArrayList<Plano> resultado = new ArrayList<>();
         String sql = "SELECT ID, NOME, VALOR_MENSAL, DURACAO_MESES, DESCRICAO, DATA_CRIACAO FROM PLANO";
@@ -185,6 +185,13 @@ public class PlanoDAO extends DAO{
                     resultado.add(new Plano(id,nome, valorMensal, duracaoMeses, descricao, dataCriacao));
                 }
             }
+        }
+
+        if (pesquisa != null && !pesquisa.isEmpty()) {
+            String pesquisaNormalizada = pesquisa.toLowerCase().trim().replace(" ", "");
+            resultado.removeIf(plano -> !plano.toString()
+                    .toLowerCase().trim().replace(" ", "")
+                    .contains(pesquisaNormalizada));
         }
 
         conn.commit();
