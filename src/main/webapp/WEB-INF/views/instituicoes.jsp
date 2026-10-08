@@ -111,6 +111,19 @@
     </a>
 </div>
 
+<form method="get" action="${pageContext.request.contextPath}/instituicoes">
+    <input type="hidden" name="action" value="read">
+    <input type="search" name="pesquisa" value="${param.pesquisa}" placeholder="Pesquisar...">
+    <% if (filtros != null) for (Filtro filtro : filtros) { %>
+    <input type="hidden" name="campoFiltro" value="<%= filtro.getCampoFiltravel() %>">
+    <input type="hidden" name="valorFiltro" value="<%= filtro.getValor() %>">
+    <input type="hidden" name="operacaoFiltro" value="<%= filtro.getOperacaoFiltro().name() %>">
+    <% } %>
+    <% if (request.getParameter("ordenacao") != null) { %>
+    <input type="hidden" name="ordenacao" value="<%= request.getParameter("ordenacao") %>">
+    <% } %>
+    <button type="submit">Pesquisar</button>
+</form>
 
 <!-- ========================= -->
 <!-- FILTRO -->
