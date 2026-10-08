@@ -207,6 +207,10 @@ public class UsuarioServlet extends HttpServlet{
 
         try (UsuarioDAO dao = new UsuarioDAO()) {
 
+            if (dao.pesquisarPorEmail(email) != null){
+                throw new ServletException();
+            }
+
             dao.cadastrar(usuario);
 
             response.sendRedirect(
@@ -300,6 +304,12 @@ public class UsuarioServlet extends HttpServlet{
                     dataAniversario,
                     primeiroAcesso
             );
+
+            Usuario usuarioApoioEmail = dao.pesquisarPorEmail(email);
+
+            if (usuarioApoioEmail != null && usuarioApoioEmail.getId() != id){
+                throw new ServletException();
+            }
 
             dao.atualizar(original, alterado);
 

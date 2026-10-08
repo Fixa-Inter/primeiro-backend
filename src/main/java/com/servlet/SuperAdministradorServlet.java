@@ -186,6 +186,10 @@ public class SuperAdministradorServlet extends HttpServlet{
 
         try (SuperAdministradorDAO dao = new SuperAdministradorDAO()) {
 
+            if (dao.pesquisarPorEmail(email) != null){
+                throw new ServletException();
+            }
+
             dao.cadastrar(superAdministrador);
 
             response.sendRedirect(
@@ -249,6 +253,12 @@ public class SuperAdministradorServlet extends HttpServlet{
                     senha,
                     email
             );
+
+            SuperAdministrador superAdministradorApoioEmail = dao.pesquisarPorEmail(email);
+
+            if (superAdministradorApoioEmail != null && superAdministradorApoioEmail.getId() != id){
+                throw new ServletException();
+            }
 
             dao.atualizar(original, alterado);
 

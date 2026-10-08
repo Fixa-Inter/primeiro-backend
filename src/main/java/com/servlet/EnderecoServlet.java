@@ -210,6 +210,10 @@ public class EnderecoServlet extends HttpServlet{
 
         try (EnderecoDAO dao = new EnderecoDAO()) {
 
+            if (dao.pesquisarPorCnpj(cnpj) != null){
+                throw new ServletException();
+            }
+
             dao.cadastrar(endereco);
 
             response.sendRedirect(
@@ -300,6 +304,12 @@ public class EnderecoServlet extends HttpServlet{
                     original.getDataCriacao(),
                     fkInstituicao
             );
+
+            Endereco enderecoApoioCnpj = dao.pesquisarPorCnpj(cnpj);
+
+            if (enderecoApoioCnpj != null && enderecoApoioCnpj.getId() != id){
+                throw new ServletException();
+            }
 
             dao.atualizar(original, alterado);
 
