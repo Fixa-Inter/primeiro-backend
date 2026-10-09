@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.SuperAdministradorDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.SuperAdministrador;
 import com.model.enums.OperacaoFiltro;
@@ -187,7 +188,7 @@ public class SuperAdministradorServlet extends HttpServlet{
         try (SuperAdministradorDAO dao = new SuperAdministradorDAO()) {
 
             if (dao.pesquisarPorEmail(email) != null){
-                throw new ServletException();
+                throw ExcecaoDeJSP.emailDuplicado();
             }
 
             dao.cadastrar(superAdministrador);
@@ -257,7 +258,7 @@ public class SuperAdministradorServlet extends HttpServlet{
             SuperAdministrador superAdministradorApoioEmail = dao.pesquisarPorEmail(email);
 
             if (superAdministradorApoioEmail != null && superAdministradorApoioEmail.getId() != id){
-                throw new ServletException();
+                throw ExcecaoDeJSP.emailDuplicado();
             }
 
             dao.atualizar(original, alterado);

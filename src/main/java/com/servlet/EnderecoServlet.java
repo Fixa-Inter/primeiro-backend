@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.EnderecoDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Endereco;
 import com.model.Filtro;
 import com.model.enums.OperacaoFiltro;
@@ -211,7 +212,7 @@ public class EnderecoServlet extends HttpServlet{
         try (EnderecoDAO dao = new EnderecoDAO()) {
 
             if (dao.pesquisarPorCnpj(cnpj) != null){
-                throw new ServletException();
+                throw ExcecaoDeJSP.cnpjDuplicado();
             }
 
             dao.cadastrar(endereco);
@@ -308,7 +309,7 @@ public class EnderecoServlet extends HttpServlet{
             Endereco enderecoApoioCnpj = dao.pesquisarPorCnpj(cnpj);
 
             if (enderecoApoioCnpj != null && enderecoApoioCnpj.getId() != id){
-                throw new ServletException();
+                throw ExcecaoDeJSP.cnpjDuplicado();
             }
 
             dao.atualizar(original, alterado);

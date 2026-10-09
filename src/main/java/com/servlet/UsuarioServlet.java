@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.UsuarioDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.*;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
@@ -208,7 +209,7 @@ public class UsuarioServlet extends HttpServlet{
         try (UsuarioDAO dao = new UsuarioDAO()) {
 
             if (dao.pesquisarPorEmail(email) != null){
-                throw new ServletException();
+                throw ExcecaoDeJSP.emailDuplicado();
             }
 
             dao.cadastrar(usuario);
@@ -308,7 +309,7 @@ public class UsuarioServlet extends HttpServlet{
             Usuario usuarioApoioEmail = dao.pesquisarPorEmail(email);
 
             if (usuarioApoioEmail != null && usuarioApoioEmail.getId() != id){
-                throw new ServletException();
+                throw ExcecaoDeJSP.emailDuplicado();
             }
 
             dao.atualizar(original, alterado);

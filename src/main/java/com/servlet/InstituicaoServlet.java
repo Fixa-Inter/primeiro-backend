@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.InstituicaoDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.Instituicao;
 import com.model.enums.OperacaoFiltro;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @WebServlet(name = "InstituicaoServlet", value = "/instituicoes")
 public class InstituicaoServlet extends HttpServlet{
@@ -63,7 +65,7 @@ public class InstituicaoServlet extends HttpServlet{
     protected void doPost(
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws ServletException, IOException {
+    ) throws ServletException, IOException, ExcecaoDeJSP{
 
         String action = request.getParameter("action");
 
@@ -172,7 +174,7 @@ public class InstituicaoServlet extends HttpServlet{
     private void cadastrarInstituicao(
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws ServletException, IOException{
+    ) throws ServletException, IOException, ExcecaoDeJSP{
 
 
         String nome = request.getParameter("nome");
@@ -192,7 +194,7 @@ public class InstituicaoServlet extends HttpServlet{
             }
 
             if (dao.pesquisarPorEmailCorporativo(emailCorporativo) != null){
-                throw new ServletException();
+                throw ExcecaoDeJSP.emailDuplicado();
             }
 
             dao.cadastrar(instituicao);
@@ -231,7 +233,7 @@ public class InstituicaoServlet extends HttpServlet{
     private void atualizarInstituicao(
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws ServletException, IOException {
+    ) throws ServletException, IOException, ExcecaoDeJSP{
 
         int id = Integer.parseInt(
                 request.getParameter("id")
@@ -258,11 +260,11 @@ public class InstituicaoServlet extends HttpServlet{
             Instituicao instituicaoApoioEmail = dao.pesquisarPorEmailCorporativo(emailCorporativo);
 
             if (instituicaoApoioDominio != null && instituicaoApoioDominio.getId() != id){
-                throw new ServletException();
+                throw ExcecaoDeJSP.dominioDuplicado();
             }
 
             if (instituicaoApoioEmail != null && instituicaoApoioEmail.getEmailCorporativo() != emailCorporativo){
-                throw new ServletException();
+                throw ExcecaoDeJSP.emailDuplicado();
             }
 
             dao.atualizar(original, alterado);
