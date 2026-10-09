@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.PlanoDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.Plano;
 import com.model.enums.OperacaoFiltro;
@@ -184,6 +185,15 @@ public class PlanoServlet extends HttpServlet {
         );
 
         String descricao = request.getParameter("descricao");
+
+        //verificacoes necessarias
+        if (request.getParameter("valor").isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("valor");
+        }
+
+        if (request.getParameter("duracao").isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("duracao");
+        }
 
         Plano plano = new Plano(
                 nome,

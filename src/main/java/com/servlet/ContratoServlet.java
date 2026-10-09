@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.ContratoDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Contrato;
 import com.model.Filtro;
 import com.model.enums.OperacaoFiltro;
@@ -190,6 +191,11 @@ public class ContratoServlet extends HttpServlet{
         int statusContrato = Integer.parseInt(
                 request.getParameter("STATUS_CONTRATO")
         );
+
+        //verificacoes necessarias
+        if (request.getParameter("statusContrato").isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("statusContrato");
+        }
 
         Contrato contrato = new Contrato(
                 dataVencimento,

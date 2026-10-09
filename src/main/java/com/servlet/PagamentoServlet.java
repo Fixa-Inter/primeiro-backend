@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.PagamentoDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.Pagamento;
 import com.model.enums.MetodoPagamento;
@@ -188,6 +189,11 @@ public class PagamentoServlet extends HttpServlet {
         BigDecimal valor = new BigDecimal(
                 request.getParameter("valor")
         );
+
+        //verificacoes necessarias
+        if (request.getParameter("metodoPagamento").isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("metodoPagamento");
+        }
 
         Pagamento pagamento = new Pagamento(
           metodoPagamento,

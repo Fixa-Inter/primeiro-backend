@@ -185,12 +185,25 @@ public class InstituicaoServlet extends HttpServlet{
                 request.getParameter("tipoInstituicao")
         );
 
+        //verificações
+        if (nome.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("nome");
+        }
+
+        if (emailCorporativo.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("email corporativo");
+        }
+
+        if (request.getParameter("tipoInstituicao").isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("tipo de instituicao");
+        }
+
         Instituicao instituicao = new Instituicao(nome, emailCorporativo, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
         try (InstituicaoDAO dao = new InstituicaoDAO()) {
 
             if (dao.pesquisarPorDominioEmail(dominioEmail) != null){
-                throw new ServletException();
+                throw ExcecaoDeJSP.dominioDuplicado();
             }
 
             if (dao.pesquisarPorEmailCorporativo(emailCorporativo) != null){

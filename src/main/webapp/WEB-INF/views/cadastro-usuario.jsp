@@ -29,13 +29,13 @@
 
     <br><br>
 
-    <label for="senhaHash">
+    <label for="senha">
         Senha:
     </label>
 
     <input type="password"
-           id="senhaHash"
-           name="senhaHash"
+           id="senha"
+           name="senha"
            required>
 
     <br><br>

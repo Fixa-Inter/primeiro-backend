@@ -178,6 +178,19 @@ public class SuperAdministradorServlet extends HttpServlet{
 
         String senha = request.getParameter("senha");
 
+        //verificacoes necessarias
+
+        if (email.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("email");
+        }
+
+        if (senha.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("senha");
+        }
+
+        if (nome.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("nome");
+        }
 
         SuperAdministrador superAdministrador = new SuperAdministrador(
                 nome,

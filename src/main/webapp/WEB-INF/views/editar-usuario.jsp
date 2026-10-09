@@ -47,8 +47,8 @@
     </label>
 
     <input type="password"
-           id="senhaHash"
-           name="senhaHash"
+           id="senha"
+           name="senha"
            value="<%= usuario.getSenhaHash() %>"
            required>
 

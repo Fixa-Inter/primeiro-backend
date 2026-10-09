@@ -178,7 +178,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String nome = request.getParameter("nome");
 
-        String senhaHash = request.getParameter("senhaHash");
+        String senha = request.getParameter("senha");
 
         String email = request.getParameter("email");
 
@@ -196,9 +196,26 @@ public class UsuarioServlet extends HttpServlet{
                 request.getParameter("dataAniversario")
         );
 
+        //verificacoes necessarias
+        if (email.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("email");
+        }
+
+        if (senha.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("senha");
+        }
+
+        if (nome.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("nome");
+        }
+
+        if (request.getParameter("tipoDeAcesso").isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("tipoDeAcesso");
+        }
+
         Usuario usuario = new Usuario(
                 nome,
-                senhaHash,
+                senha,
                 email,
                 cargo,
                 tipoDeAcesso,
@@ -256,7 +273,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String nome = request.getParameter("nome");
 
-        String senhaHash = request.getParameter("senhaHash");
+        String senhaHash = request.getParameter("senha");
 
         boolean estaAtivo = Boolean.parseBoolean(
                 request.getParameter("estaAtivo")
