@@ -21,44 +21,49 @@ import java.util.concurrent.ExecutionException;
 @WebServlet(name = "InstituicaoServlet", value = "/instituicoes")
 public class InstituicaoServlet extends HttpServlet{
 
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/instituicoes.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-instituicao.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-instituicao.jsp";
+    private static final String PAGINA_ERRO = "/html/erro.html";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
 
-        if (action == null){
-            action = "read";
-        }
+        boolean erro = true;
+        String destino = null;
 
-        if (action.equals("read")){
-            listarInstituicoes(request, response);
-        } else if (action.equals("create")) {
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-instituicao.jsp")
-                    .forward(request, response);
-
-        } else if (action.equals("update")) {
-
-            int id = Integer.parseInt(
-                    request.getParameter("id")
-            );
-
-            try (InstituicaoDAO dao = new InstituicaoDAO()) {
-
-                Instituicao instituicao = dao.pesquisarPorId(id);
-
-                request.setAttribute("instituicao", instituicao);
-
-                request
-                        .getRequestDispatcher("/WEB-INF/views/editar-instituicao.jsp")
-                        .forward(request, response);
-
-            } catch (SQLException | ClassNotFoundException e) {
-                throw new ServletException(e);
+        if (action == null) action = "read";
+        try {
+            if (action.equals("read")) {
+                listarInstituicoes(request, response);
+                destino = PAGINA_PRINCIPAL;
+            } else if (action.equals("create")) {
+                destino = PAGINA_CADASTRO;
+            } else if (action.equals("update")) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                try (InstituicaoDAO dao = new InstituicaoDAO()) {
+                    Instituicao instituicao = dao.pesquisarPorId(id);
+                    request.setAttribute("instituicao", instituicao);
+                }
+                destino = PAGINA_EDICAO;
             }
+            erro = false;
+        } catch (SQLException e) {
+            System.err.println("Erro ao executar operação no banco:");
+            e.printStackTrace(System.err);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Falha ao carregar o driver postgresql:");
+            e.printStackTrace(System.err);
+        } catch (Throwable e) {
+            System.err.println("Erro inesperado:");
+            e.printStackTrace(System.err);
         }
+
+        if (erro) response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        else request.getRequestDispatcher(destino).forward(request, response);
     }
 
     @Override
@@ -167,10 +172,6 @@ public class InstituicaoServlet extends HttpServlet{
 
             request.setAttribute("instituicoes", instituicoes);
             request.setAttribute("filtros", filtros);
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/instituicoes.jsp")
-                    .forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);

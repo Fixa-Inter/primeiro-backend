@@ -20,43 +20,53 @@ import java.util.List;
 @WebServlet(name = "UsuarioServlet", value = "/usuarios")
 public class UsuarioServlet extends HttpServlet{
 
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/usuarios.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-usuario.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-usuario.jsp";
+    private static final String PAGINA_ERRO = "/html/erro.html";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
 
-        if (action == null){
+        boolean erro = true;
+        String destino = null;
+
+        if (action == null) {
             action = "read";
         }
-
-        if (action.equals("read")){
-            listarUsuarios(request, response);
-        } else if (action.equals("create")) {
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-usuario.jsp")
-                    .forward(request, response);
-
-        } else if (action.equals("update")) {
-
-            int id = Integer.parseInt(
-                    request.getParameter("id")
-            );
-
-            try (UsuarioDAO dao = new UsuarioDAO()) {
-
-                Usuario usuario = dao.pesquisarPorId(id);
-
-                request.setAttribute("usuario", usuario);
-
-                request
-                        .getRequestDispatcher("/WEB-INF/views/editar-usuario.jsp")
-                        .forward(request, response);
-
-            } catch (SQLException | ClassNotFoundException e) {
-                throw new ServletException(e);
+        try {
+            if (action.equals("read")) {
+                listarUsuarios(request, response);
+                destino = PAGINA_PRINCIPAL;
+            } else if (action.equals("create")) {
+                destino = PAGINA_CADASTRO;
+            } else if (action.equals("update")) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                try (UsuarioDAO dao = new UsuarioDAO()) {
+                    Usuario usuario = dao.pesquisarPorId(id);
+                    request.setAttribute("usuario", usuario);
+                }
+                destino = PAGINA_EDICAO;
             }
+            erro = false;
+        } catch (SQLException e) {
+            System.err.println("Erro ao executar operação no banco:");
+            e.printStackTrace(System.err);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Falha ao carregar o driver postgresql:");
+            e.printStackTrace(System.err);
+        } catch (Throwable e) {
+            System.err.println("Erro inesperado:");
+            e.printStackTrace(System.err);
+        }
+
+        if (erro) {
+            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        } else {
+            request.getRequestDispatcher(destino).forward(request, response);
         }
     }
 
@@ -166,10 +176,6 @@ public class UsuarioServlet extends HttpServlet{
             request.setAttribute("usuarios",
                     usuarios);
             request.setAttribute("filtros", filtros);
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/usuarios.jsp")
-                    .forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);

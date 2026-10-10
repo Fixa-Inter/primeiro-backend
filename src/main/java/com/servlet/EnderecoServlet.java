@@ -22,6 +22,11 @@ import java.util.List;
 @WebServlet(name = "EnderecoServlet", value = "/enderecos")
 public class EnderecoServlet extends HttpServlet{
 
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/enderecos.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-endereco.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-endereco.jsp";
+    private static final String PAGINA_ERRO = "/html/erro.html";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -32,33 +37,42 @@ public class EnderecoServlet extends HttpServlet{
             action = "read";
         }
 
-        if (action.equals("read")){
-            listarEnderecos(request, response);
-        } else if (action.equals("create")) {
+        boolean erro = true;
+        String destino = null;
 
-            request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-endereco.jsp")
-                    .forward(request, response);
-
-        } else if (action.equals("update")) {
-
-            int id = Integer.parseInt(
-                    request.getParameter("id")
-            );
-
-            try (EnderecoDAO dao = new EnderecoDAO()) {
-
-                Endereco endereco = dao.pesquisarPorId(id);
-
-                request.setAttribute("endereco", endereco);
-
-                request
-                        .getRequestDispatcher("/WEB-INF/views/editar-endereco.jsp")
-                        .forward(request, response);
-
-            } catch (SQLException | ClassNotFoundException e) {
-                throw new ServletException(e);
+        if (action == null) {
+            action = "read";
+        }
+        try {
+            if (action.equals("read")) {
+                listarEnderecos(request, response);
+                destino = PAGINA_PRINCIPAL;
+            } else if (action.equals("create")) {
+                destino = PAGINA_CADASTRO;
+            } else if (action.equals("update")) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                try (EnderecoDAO dao = new EnderecoDAO()) {
+                    Endereco endereco = dao.pesquisarPorId(id);
+                    request.setAttribute("endereco", endereco);
+                }
+                destino = PAGINA_EDICAO;
             }
+            erro = false;
+        } catch (SQLException e) {
+            System.err.println("Erro ao executar operação no banco:");
+            e.printStackTrace(System.err);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Falha ao carregar o driver postgresql:");
+            e.printStackTrace(System.err);
+        } catch (Throwable e) {
+            System.err.println("Erro inesperado:");
+            e.printStackTrace(System.err);
+        }
+
+        if (erro) {
+            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        } else {
+            request.getRequestDispatcher(destino).forward(request, response);
         }
     }
 
@@ -167,10 +181,6 @@ public class EnderecoServlet extends HttpServlet{
 
             request.setAttribute("enderecos", enderecos);
             request.setAttribute("filtros", filtros);
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/enderecos.jsp")
-                    .forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);
