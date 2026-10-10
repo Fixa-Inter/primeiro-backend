@@ -70,7 +70,7 @@ public class PlanoDAO extends DAO{
     }
 
     //construtor de DAO
-    public PlanoDAO() throws SQLException, ClassNotFoundException {
+    public PlanoDAO() throws SQLException {
         super();
     }
 

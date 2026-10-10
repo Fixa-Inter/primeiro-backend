@@ -81,7 +81,7 @@ public class ContratoDAO extends DAO{
     }
 
     //construtor de DAO
-    public ContratoDAO() throws SQLException, ClassNotFoundException {
+    public ContratoDAO() throws SQLException{
         super();
     }
 

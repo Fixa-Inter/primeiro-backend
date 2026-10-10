@@ -47,7 +47,7 @@ public class SuperAdministradorDAO extends DAO{
     }
 
     // construtor de DAO
-    public SuperAdministradorDAO() throws SQLException, ClassNotFoundException {
+    public SuperAdministradorDAO() throws SQLException {
         super();
     }
 
