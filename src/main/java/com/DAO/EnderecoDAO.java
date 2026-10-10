@@ -132,7 +132,7 @@ public class EnderecoDAO extends DAO{
     }
 
     // select
-    public List<Endereco> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException{
+    public List<Endereco> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException{
 
         List<Endereco> resultado =  new ArrayList<Endereco>();
 
@@ -224,6 +224,17 @@ public class EnderecoDAO extends DAO{
 
             }
 
+            //comeco da pesquisa
+            if (pesquisa != null && !pesquisa.isEmpty()){
+                String pesquisaNormalizada = pesquisa.toLowerCase().trim().replace(" ", "");
+                resultado.removeIf(endereco -> !endereco.toString()
+                        .toLowerCase()
+                        .trim()
+                        .replace(" ", "")
+                        .contains(pesquisaNormalizada));
+            }
+            //fim da pesquisa
+
         }
 
         conn.commit();
@@ -232,7 +243,7 @@ public class EnderecoDAO extends DAO{
     }
 
 
-    public Endereco pesquisarId(int idInstituicao) throws SQLException {
+    public Endereco pesquisarPorId(int idInstituicao) throws SQLException {
 
 
         String sql = "SELECT id, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id, cnpj, data_criacao FROM endereco WHERE fk_instituicao_id = ?";
@@ -271,7 +282,7 @@ public class EnderecoDAO extends DAO{
     // select cnpj para o servlet, pois como a tabela cnpj e unique, precisa de um metodo para verificar se já existe um cnpj igual e mostrar
     // uma excecao com mensagem pra isso, e retorna null caso n tenha esse cnpj registrado, liberando para o registro no sistema
 
-    public Endereco pesquisarcnpj(String cnpjInsert) throws SQLException{
+    public Endereco pesquisarPorCnpj(String cnpjInsert) throws SQLException{
 
         String sql = "SELECT id, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id, cnpj, data_criacao FROM endereco WHERE cnpj = ?";;
 
@@ -365,7 +376,7 @@ public class EnderecoDAO extends DAO{
         }
 
         if(!Objects.equals(fkInstituicao, original.getFkInstituicao())){
-            sql.append("fkInstituicao = ?, ");
+            sql.append("fk_instituicao_id = ?, ");
             valores.add(fkInstituicao);
         }
 

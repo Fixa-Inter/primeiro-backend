@@ -94,6 +94,8 @@ public class UsuarioServlet extends HttpServlet{
 
             String ordenacao = request.getParameter("ordenacao");
 
+            String pesquisa = request.getParameter("pesquisa");
+
             String removerFiltroParam = request.getParameter("removerFiltro");
             Integer indiceRemover = null;
             if (removerFiltroParam != null
@@ -151,7 +153,8 @@ public class UsuarioServlet extends HttpServlet{
             List<Usuario> usuarios = dao.listar(
                     filtros,
                     campoSequencia,
-                    direcaoSequencia
+                    direcaoSequencia,
+                    pesquisa
             );
 
             request.setAttribute("usuarios",
@@ -203,6 +206,10 @@ public class UsuarioServlet extends HttpServlet{
         );
 
         try (UsuarioDAO dao = new UsuarioDAO()) {
+
+            if (dao.pesquisarPorEmail(email) != null){
+                throw new ServletException();
+            }
 
             dao.cadastrar(usuario);
 
@@ -297,6 +304,12 @@ public class UsuarioServlet extends HttpServlet{
                     dataAniversario,
                     primeiroAcesso
             );
+
+            Usuario usuarioApoioEmail = dao.pesquisarPorEmail(email);
+
+            if (usuarioApoioEmail != null && usuarioApoioEmail.getId() != id){
+                throw new ServletException();
+            }
 
             dao.atualizar(original, alterado);
 

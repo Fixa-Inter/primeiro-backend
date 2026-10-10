@@ -87,7 +87,7 @@ public class Contrato {
 
     @Override
     public String toString(){
-        return "Contrato{id=%d, dataInicio=%s, dataVencimento=%s, fkPlano=%d, fkEndereco=%d,statusContrato=%s}"
+        return "%s %s %s %s %s %s"
                 .formatted(id, dataInicio, dataVencimento, fkPlano, fkEndereco, statusContrato);
     }
 }

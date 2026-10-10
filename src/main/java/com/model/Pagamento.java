@@ -25,10 +25,14 @@ public class Pagamento {
         this.dataPagamento = dataPagamento;
         this.foiRealizado = foiRealizado;
         this.fkContrato = fkContrato;
-        metodoPagamento = metodoPagamento;
+        this.metodoPagamento = metodoPagamento;
     }
 
-
+    public Pagamento(MetodoPagamento metodoPagamento, Integer fkContrato, BigDecimal valor) {
+        this.metodoPagamento = metodoPagamento;
+        this.fkContrato = fkContrato;
+        this.valor = valor;
+    }
     // gettes e setters
 
     public Integer getId() {
@@ -82,7 +86,7 @@ public class Pagamento {
     // toString
     @Override
     public String toString(){
-        return "Pagamento{id=%d, valor=%f, dataPagamento=%s, foiRealizado=%b, fkContrato=%d, MetodoPagamento=%d}"
+        return "%s %s %s %s %s %s"
                 .formatted(id, valor, dataPagamento, foiRealizado, fkContrato, metodoPagamento.getNome());
     }
 }

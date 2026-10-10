@@ -32,6 +32,17 @@ public class Endereco {
         this.fkInstituicao = fkInstituicao;
     }
 
+    public Endereco(String rua, String bairro, String complemento, String cidade, String estado, String numero, String cep, String cnpj, Integer fkInstituicao) {
+        this.rua = rua;
+        this.bairro = bairro;
+        this.complemento = complemento;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.numero = numero;
+        this.cep = cep;
+        this.cnpj = cnpj;
+        this.fkInstituicao = fkInstituicao;
+    }
 
     // getters e setters
 
@@ -131,7 +142,7 @@ public class Endereco {
 
     @Override
     public String toString(){
-        return "Endereco{id=%d, rua='%s', bairro='%s', complemento='%s', cidade='%s', estado='%s', numero='%s', cep='%s', cnpj='%s', dataCriacao='%s'}"
+        return "%d %s %s %s %s %s %s %s %s', dataCriacao='%s'}"
                 .formatted(id, rua, bairro, complemento, cidade, estado, numero, cep, fkInstituicao, cnpj, dataCriacao);
     }
 }

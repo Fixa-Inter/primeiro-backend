@@ -1,9 +1,10 @@
 package com.servlet;
 
-import com.DAO.PlanoDAO;
+import com.DAO.EnderecoDAO;
+import com.model.Endereco;
 import com.model.Filtro;
-import com.model.Plano;
 import com.model.enums.OperacaoFiltro;
+import com.model.enums.TipoAcesso;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,11 +13,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "PlanoServlet", value = "/planos")
-public class PlanoServlet extends HttpServlet {
+@WebServlet(name = "EnderecoServlet", value = "/enderecos")
+public class EnderecoServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -29,11 +32,11 @@ public class PlanoServlet extends HttpServlet {
         }
 
         if (action.equals("read")){
-            listarPlanos(request, response);
+            listarEnderecos(request, response);
         } else if (action.equals("create")) {
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-plano.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/cadastro-endereco.jsp")
                     .forward(request, response);
 
         } else if (action.equals("update")) {
@@ -42,14 +45,14 @@ public class PlanoServlet extends HttpServlet {
                     request.getParameter("id")
             );
 
-            try (PlanoDAO dao = new PlanoDAO()) {
+            try (EnderecoDAO dao = new EnderecoDAO()) {
 
-                Plano plano = dao.pesquisarPorId(id);
+                Endereco endereco = dao.pesquisarPorId(id);
 
-                request.setAttribute("plano", plano);
+                request.setAttribute("endereco", endereco);
 
                 request
-                        .getRequestDispatcher("/WEB-INF/views/editar-plano.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/editar-endereco.jsp")
                         .forward(request, response);
 
             } catch (SQLException | ClassNotFoundException e) {
@@ -67,20 +70,20 @@ public class PlanoServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("create".equals(action)) {
-            cadastrarPlano(request, response);
+            cadastrarEndereco(request, response);
         } else if ("update".equals(action)) {
-            atualizarPlano(request, response);
+            atualizarEndereco(request, response);
         } else if ("delete".equals(action)){
-            deletarPlano(request, response);
+            deletarEndereco(request, response);
         }
     }
 
-    private void listarPlanos(
+    private void listarEnderecos(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (EnderecoDAO dao = new EnderecoDAO()) {
 
             List<Filtro> filtros = new ArrayList<>();
 
@@ -149,18 +152,18 @@ public class PlanoServlet extends HttpServlet {
                 direcaoSequencia = null;
             }
 
-            List<Plano> planos = dao.buscar(
+            List<Endereco> enderecos = dao.listar(
                     filtros,
                     campoSequencia,
                     direcaoSequencia,
                     pesquisa
             );
 
-            request.setAttribute("planos", planos);
+            request.setAttribute("enderecos", enderecos);
             request.setAttribute("filtros", filtros);
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/planos.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/enderecos.jsp")
                     .forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -168,36 +171,53 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
-    private void cadastrarPlano(
+    private void cadastrarEndereco(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        String nome = request.getParameter("nome");
+        String rua = request.getParameter("rua");
 
-        double valor = Double.parseDouble(
-                request.getParameter("valor")
+        String bairro = request.getParameter("bairro");
+
+        String complemento = request.getParameter("complemento");
+
+        String cidade = request.getParameter("cidade");
+
+        String estado = request.getParameter("estado");
+
+        String numero = request.getParameter("numero");
+
+        String cep = request.getParameter("cep");
+
+        String cnpj = request.getParameter("cnpj");
+
+        Integer fkInstituicao = Integer.parseInt(
+                request.getParameter("fkInstituicao")
         );
 
-        int duracao = Integer.parseInt(
-                request.getParameter("duracao")
+        Endereco endereco = new Endereco(
+                rua,
+                bairro,
+                complemento,
+                cidade,
+                estado,
+                numero,
+                cep,
+                cnpj,
+                fkInstituicao
         );
 
-        String descricao = request.getParameter("descricao");
+        try (EnderecoDAO dao = new EnderecoDAO()) {
 
-        Plano plano = new Plano(
-                nome,
-                valor,
-                duracao,
-                descricao
-        );
+            if (dao.pesquisarPorCnpj(cnpj) != null){
+                throw new ServletException();
+            }
 
-        try (PlanoDAO dao = new PlanoDAO()) {
-
-            dao.cadastrar(plano);
+            dao.cadastrar(endereco);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/enderecos"
             );
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -205,17 +225,17 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
-    private void deletarPlano(
+    private void deletarEndereco(
             HttpServletRequest request,
             HttpServletResponse response
     ){
         int id = Integer.parseInt(request.getParameter("id"));
 
-        try (PlanoDAO planoDAO = new PlanoDAO()){
-            planoDAO.remover(id);
+        try (EnderecoDAO enderecoDAO = new EnderecoDAO()){
+            enderecoDAO.remover(id);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/enderecos"
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -227,7 +247,7 @@ public class PlanoServlet extends HttpServlet {
 
     }
 
-    private void atualizarPlano(
+    private void atualizarEndereco(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
@@ -236,41 +256,70 @@ public class PlanoServlet extends HttpServlet {
                 request.getParameter("id")
         );
 
-        String nome = request.getParameter("nome");
+        String rua = request.getParameter("rua");
 
-        double valorMensal = Double.parseDouble(
-                request.getParameter("valorMensal")
+        String bairro = request.getParameter("bairro");
+
+        String complemento = request.getParameter("complemento");
+
+        String cidade = request.getParameter("cidade");
+
+        String estado = request.getParameter("estado");
+
+        String numero = request.getParameter("numero");
+
+        String cep = request.getParameter("cep");
+
+        String cnpj = request.getParameter("cnpj");
+
+        Integer fkInstituicao = Integer.parseInt(
+                request.getParameter("fkInstituicao")
         );
 
-        int duracaoMeses = Integer.parseInt(
-                request.getParameter("duracaoMeses")
-        );
 
-        String descricao = request.getParameter("descricao");
+        String dataCriacaoParam = request.getParameter("dataCriacao");
 
+        LocalDateTime dataCriacao = null;
 
+        if (dataCriacaoParam != null && !dataCriacaoParam.isBlank()) {
+            dataCriacao = LocalDateTime.parse(dataCriacaoParam);
+        }
 
-        try (PlanoDAO dao = new PlanoDAO()) {
+        try (EnderecoDAO dao = new EnderecoDAO()) {
 
             // Busca como está atualmente no banco
-            Plano original = dao.pesquisarPorId(id);
+            Endereco original = dao.pesquisarPorId(id);
 
             // Monta o objeto com os novos dados
-            Plano alterado = new Plano(
-                    nome,
-                    valorMensal,
-                    duracaoMeses,
-                    descricao
+            Endereco alterado = new Endereco(
+                    id,
+                    rua,
+                    bairro,
+                    complemento,
+                    cidade,
+                    estado,
+                    numero,
+                    cep,
+                    cnpj,
+                    original.getDataCriacao(),
+                    fkInstituicao
             );
+
+            Endereco enderecoApoioCnpj = dao.pesquisarPorCnpj(cnpj);
+
+            if (enderecoApoioCnpj != null && enderecoApoioCnpj.getId() != id){
+                throw new ServletException();
+            }
 
             dao.atualizar(original, alterado);
 
             response.sendRedirect(
-                    request.getContextPath() + "/planos"
+                    request.getContextPath() + "/enderecos"
             );
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);
         }
     }
+
 }

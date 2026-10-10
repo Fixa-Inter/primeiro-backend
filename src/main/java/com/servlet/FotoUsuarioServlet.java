@@ -85,7 +85,7 @@ public class FotoUsuarioServlet extends HttpServlet{
 
         try (FotoUsuarioDAO dao = new FotoUsuarioDAO()) {
 
-            List<FotoUsuario> fotoUsuarios = dao.listar();
+            List<FotoUsuario> fotoUsuarios = dao.listar(request.getParameter("pesquisa"));
 
             request.setAttribute("fotos", fotoUsuarios);
 

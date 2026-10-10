@@ -114,7 +114,7 @@ public class ContratoDAO extends DAO{
     }
 
     //select
-    public List<Contrato> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia) throws SQLException{
+    public List<Contrato> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException{
 
         ArrayList<Contrato> resultado = new ArrayList<>();
         String sql = "SELECT ID, DATA_INICIO, DATA_VENCIMENTO, FK_ENDERECO_ID, FK_PLANO_ID, STATUS_CONTRATO FROM CONTRATO";
@@ -187,6 +187,13 @@ public class ContratoDAO extends DAO{
                     resultado.add(new Contrato(id,dataInicio, dataVencimento, fkPlano, fkEndereco, StatusContrato.converterEnum(statusContrato)));
                 }
             }
+        }
+
+        if (pesquisa != null && !pesquisa.isEmpty()) {
+            String pesquisaNormalizada = pesquisa.toLowerCase().trim().replace(" ", "");
+            resultado.removeIf(contrato -> !contrato.toString()
+                    .toLowerCase().trim().replace(" ", "")
+                    .contains(pesquisaNormalizada));
         }
 
         conn.commit();

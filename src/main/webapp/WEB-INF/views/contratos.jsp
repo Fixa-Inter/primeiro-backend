@@ -32,6 +32,20 @@
     Cadastrar contrato
 </a>
 
+<form method="get" action="<%= contexto %>/contratos">
+    <input type="hidden" name="action" value="read">
+    <input type="search" name="pesquisa" value="${param.pesquisa}" placeholder="Pesquisar...">
+    <% if (filtros != null) for (Filtro filtro : filtros) { %>
+    <input type="hidden" name="campoFiltro" value="<%= filtro.getCampoFiltravel() %>">
+    <input type="hidden" name="operacaoFiltro" value="<%= filtro.getOperacaoFiltro().name() %>">
+    <input type="hidden" name="valorFiltro" value="<%= filtro.getValor() %>">
+    <% } %>
+    <% if (ordenacaoAtual != null && !ordenacaoAtual.isBlank()) { %>
+    <input type="hidden" name="ordenacao" value="<%= ordenacaoAtual %>">
+    <% } %>
+    <button type="submit">Pesquisar</button>
+</form>
+
 <h2>Filtros aplicados</h2>
 
 <%

@@ -12,9 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,6 +94,8 @@ public class InstituicaoServlet extends HttpServlet{
 
             String ordenacao = request.getParameter("ordenacao");
 
+            String pesquisa = request.getParameter("pesquisa");
+
             String removerFiltroParam = request.getParameter("removerFiltro");
             Integer indiceRemover = null;
             if (removerFiltroParam != null
@@ -153,7 +153,8 @@ public class InstituicaoServlet extends HttpServlet{
             List<Instituicao> instituicoes = dao.listar(
                     filtros,
                     campoSequencia,
-                    direcaoSequencia
+                    direcaoSequencia,
+                    pesquisa
             );
 
             request.setAttribute("instituicoes", instituicoes);
@@ -171,7 +172,7 @@ public class InstituicaoServlet extends HttpServlet{
     private void cadastrarInstituicao(
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws ServletException, IOException {
+    ) throws ServletException, IOException{
 
 
         String nome = request.getParameter("nome");
@@ -185,6 +186,14 @@ public class InstituicaoServlet extends HttpServlet{
         Instituicao instituicao = new Instituicao(nome, emailCorporativo, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
         try (InstituicaoDAO dao = new InstituicaoDAO()) {
+
+            if (dao.pesquisarPorDominioEmail(dominioEmail) != null){
+                throw new ServletException();
+            }
+
+            if (dao.pesquisarPorEmailCorporativo(emailCorporativo) != null){
+                throw new ServletException();
+            }
 
             dao.cadastrar(instituicao);
 
@@ -245,6 +254,16 @@ public class InstituicaoServlet extends HttpServlet{
             // Monta o objeto com os novos dados
             Instituicao alterado = new Instituicao(id, nome, emailCorporativo, original.getDataCadastro(), TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
+            Instituicao instituicaoApoioDominio = dao.pesquisarPorDominioEmail(dominioEmail);
+            Instituicao instituicaoApoioEmail = dao.pesquisarPorEmailCorporativo(emailCorporativo);
+
+            if (instituicaoApoioDominio != null && instituicaoApoioDominio.getId() != id){
+                throw new ServletException();
+            }
+
+            if (instituicaoApoioEmail != null && instituicaoApoioEmail.getEmailCorporativo() != emailCorporativo){
+                throw new ServletException();
+            }
 
             dao.atualizar(original, alterado);
 

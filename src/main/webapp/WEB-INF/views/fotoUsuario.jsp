@@ -26,6 +26,12 @@
     Cadastrar Foto
 </a>
 
+<form method="get" action="<%= contexto %>/fotoUsuario">
+    <input type="hidden" name="action" value="read">
+    <input type="search" name="pesquisa" value="${param.pesquisa}" placeholder="Pesquisar...">
+    <button type="submit">Pesquisar</button>
+</form>
+
 <hr>
 
 <table border="1">
