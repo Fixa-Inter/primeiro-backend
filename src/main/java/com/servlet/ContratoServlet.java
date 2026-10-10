@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.ContratoDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Contrato;
 import com.model.Filtro;
 import com.model.enums.OperacaoFiltro;
@@ -18,8 +19,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 @WebServlet(name="ContratoServlet", value = "/contratos")
 public class ContratoServlet extends HttpServlet{
+
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/contratos.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-contrato.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-contrato.jsp";
+    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request,
@@ -28,38 +36,56 @@ public class ContratoServlet extends HttpServlet{
 
         String action = request.getParameter("action");
 
+        boolean erro = true;
+        String destino = null;
+
         if (action == null){
             action = "read";
         }
-
-        if (action.equals("read")){
-            listarContratos(request, response);
-        } else if (action.equals("create")) {
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-contrato.jsp")
-                    .forward(request, response);
-
-        } else if (action.equals("update")) {
-
-            int id = Integer.parseInt(
-                    request.getParameter("id")
-            );
-
-            try (ContratoDAO dao = new ContratoDAO()) {
-
-                Contrato contrato = dao.pesquisarPorId(id);
-
-                request.setAttribute("contrato", contrato);
-
-                request
-                        .getRequestDispatcher("/WEB-INF/views/editar-contrato.jsp")
-                        .forward(request, response);
-
-            } catch (SQLException | ClassNotFoundException e) {
-                throw new ServletException(e);
+        try {
+            if (action.equals("read")) {
+                listarContratos(request, response);
+                destino = PAGINA_PRINCIPAL;
             }
+            else if (action.equals("create")) {
+                destino = PAGINA_CADASTRO;
+            }
+            else if (action.equals("update")) {
+
+                int id = Integer.parseInt(
+                        request.getParameter("id")
+                );
+
+                try (ContratoDAO dao = new ContratoDAO()) {
+                    Contrato contrato = dao.pesquisarPorId(id);
+                    request.setAttribute("contrato", contrato);
+                }
+
+                destino = PAGINA_EDICAO;
+            }
+
+            erro = false;
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao executar operação no banco:");
+            e.printStackTrace(System.err);
+
+        } catch (ClassNotFoundException e) {
+            System.err.println("Falha ao carregar o driver postgresql:");
+            e.printStackTrace(System.err);
+
+        } catch (Throwable e) {
+            System.err.println("Erro inesperado:");
+            e.printStackTrace(System.err);
         }
+
+        if (erro) {
+            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+
+        } else {
+            request.getRequestDispatcher(destino).forward(request, response);
+        }
+
     }
 
     @Override
@@ -70,12 +96,17 @@ public class ContratoServlet extends HttpServlet{
 
         String action = request.getParameter("action");
 
-        if ("create".equals(action)) {
-            cadastrarContrato(request, response);
-        } else if ("update".equals(action)) {
-            atualizarContrato(request, response);
-        } else if ("delete".equals(action)){
-            deletarContrato(request, response);
+        try{
+            if ("create".equals(action)) {
+                cadastrarContrato(request, response);
+            } else if ("update".equals(action)) {
+                atualizarContrato(request, response);
+            } else if ("delete".equals(action)){
+                deletarContrato(request, response);
+            }
+        }catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 
@@ -163,10 +194,6 @@ public class ContratoServlet extends HttpServlet{
             request.setAttribute("contratos", contratos);
             request.setAttribute("filtros", filtros);
 
-            request
-                    .getRequestDispatcher("/WEB-INF/views/contratos.jsp")
-                    .forward(request, response);
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);
         }
@@ -190,6 +217,11 @@ public class ContratoServlet extends HttpServlet{
         int statusContrato = Integer.parseInt(
                 request.getParameter("STATUS_CONTRATO")
         );
+
+        //verificacoes necessarias
+        if (request.getParameter("statusContrato").isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("statusContrato");
+        }
 
         Contrato contrato = new Contrato(
                 dataVencimento,

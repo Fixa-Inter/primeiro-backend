@@ -12,10 +12,17 @@
 
 <h1>Cadastrar Instituição</h1>
 
+<% String erro = (String) request.getAttribute("erro"); %>
 <form
         action="${pageContext.request.contextPath}/instituicoes"
         method="post"
 >
+            <% if (erro != null && !erro.isBlank()) { %>
+            <p>
+                <%= erro %>
+            </p>
+            <% } %>
+
 
     <input
             type="hidden"
@@ -68,13 +75,13 @@
         Tipo de instituição:
     </label>
 
-    <input
-            type="number"
-            id="tipoInstituicao"
-            name="tipoInstituicao"
-            min="1"
-            required
-    >
+    <select id="tipoInstituicao" name="tipoInstituicao" required>
+        <option value="">Selecione o tipo</option>
+        <option value="1">Escola</option>
+        <option value="2">Faculdade</option>
+        <option value="3">Empresa</option>
+        <option value="4">Órgão público</option>
+    </select>
 
     <br><br>
 

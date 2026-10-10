@@ -10,8 +10,15 @@
 
 <h1>Cadastrar Endereço</h1>
 
+<% String erro = (String) request.getAttribute("erro"); %>
 <form method="post"
-      action="<%= request.getContextPath() %>/enderecos">
+      action="<%= request.getContextPath() %>
+            <% if (erro != null && !erro.isBlank()) { %>
+            <p>
+                <%= erro %>
+            </p>
+            <% } %>
+/enderecos">
 
     <input type="hidden"
            name="action"

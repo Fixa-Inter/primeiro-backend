@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.UsuarioDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.*;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
@@ -19,43 +20,53 @@ import java.util.List;
 @WebServlet(name = "UsuarioServlet", value = "/usuarios")
 public class UsuarioServlet extends HttpServlet{
 
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/usuarios.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-usuario.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-usuario.jsp";
+    private static final String PAGINA_ERRO = "/html/erro.html";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
 
-        if (action == null){
+        boolean erro = true;
+        String destino = null;
+
+        if (action == null) {
             action = "read";
         }
-
-        if (action.equals("read")){
-            listarUsuarios(request, response);
-        } else if (action.equals("create")) {
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-usuario.jsp")
-                    .forward(request, response);
-
-        } else if (action.equals("update")) {
-
-            int id = Integer.parseInt(
-                    request.getParameter("id")
-            );
-
-            try (UsuarioDAO dao = new UsuarioDAO()) {
-
-                Usuario usuario = dao.pesquisarPorId(id);
-
-                request.setAttribute("usuario", usuario);
-
-                request
-                        .getRequestDispatcher("/WEB-INF/views/editar-usuario.jsp")
-                        .forward(request, response);
-
-            } catch (SQLException | ClassNotFoundException e) {
-                throw new ServletException(e);
+        try {
+            if (action.equals("read")) {
+                listarUsuarios(request, response);
+                destino = PAGINA_PRINCIPAL;
+            } else if (action.equals("create")) {
+                destino = PAGINA_CADASTRO;
+            } else if (action.equals("update")) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                try (UsuarioDAO dao = new UsuarioDAO()) {
+                    Usuario usuario = dao.pesquisarPorId(id);
+                    request.setAttribute("usuario", usuario);
+                }
+                destino = PAGINA_EDICAO;
             }
+            erro = false;
+        } catch (SQLException e) {
+            System.err.println("Erro ao executar operação no banco:");
+            e.printStackTrace(System.err);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Falha ao carregar o driver postgresql:");
+            e.printStackTrace(System.err);
+        } catch (Throwable e) {
+            System.err.println("Erro inesperado:");
+            e.printStackTrace(System.err);
+        }
+
+        if (erro) {
+            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        } else {
+            request.getRequestDispatcher(destino).forward(request, response);
         }
     }
 
@@ -67,12 +78,17 @@ public class UsuarioServlet extends HttpServlet{
 
         String action = request.getParameter("action");
 
-        if ("create".equals(action)) {
-            cadastrarUsuario(request, response);
-        } else if ("update".equals(action)) {
-            atualizarUsuario(request, response);
-        } else if ("delete".equals(action)){
-            deletarUsuario(request, response);
+        try {
+            if ("create".equals(action)) {
+                cadastrarUsuario(request, response);
+            } else if ("update".equals(action)) {
+                atualizarUsuario(request, response);
+            } else if ("delete".equals(action)){
+                deletarUsuario(request, response);
+            }
+        } catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 
@@ -161,10 +177,6 @@ public class UsuarioServlet extends HttpServlet{
                     usuarios);
             request.setAttribute("filtros", filtros);
 
-            request
-                    .getRequestDispatcher("/WEB-INF/views/usuarios.jsp")
-                    .forward(request, response);
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);
         }
@@ -177,7 +189,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String nome = request.getParameter("nome");
 
-        String senhaHash = request.getParameter("senhaHash");
+        String senha = request.getParameter("senha");
 
         String email = request.getParameter("email");
 
@@ -195,9 +207,26 @@ public class UsuarioServlet extends HttpServlet{
                 request.getParameter("dataAniversario")
         );
 
+        //verificacoes necessarias
+        if (email.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("email");
+        }
+
+        if (senha.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("senha");
+        }
+
+        if (nome.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("nome");
+        }
+
+        if (request.getParameter("tipoDeAcesso").isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("tipoDeAcesso");
+        }
+
         Usuario usuario = new Usuario(
                 nome,
-                senhaHash,
+                senha,
                 email,
                 cargo,
                 tipoDeAcesso,
@@ -208,7 +237,7 @@ public class UsuarioServlet extends HttpServlet{
         try (UsuarioDAO dao = new UsuarioDAO()) {
 
             if (dao.pesquisarPorEmail(email) != null){
-                throw new ServletException();
+                throw ExcecaoDeJSP.emailDuplicado();
             }
 
             dao.cadastrar(usuario);
@@ -255,7 +284,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String nome = request.getParameter("nome");
 
-        String senhaHash = request.getParameter("senhaHash");
+        String senhaHash = request.getParameter("senha");
 
         boolean estaAtivo = Boolean.parseBoolean(
                 request.getParameter("estaAtivo")
@@ -308,7 +337,7 @@ public class UsuarioServlet extends HttpServlet{
             Usuario usuarioApoioEmail = dao.pesquisarPorEmail(email);
 
             if (usuarioApoioEmail != null && usuarioApoioEmail.getId() != id){
-                throw new ServletException();
+                throw ExcecaoDeJSP.emailDuplicado();
             }
 
             dao.atualizar(original, alterado);

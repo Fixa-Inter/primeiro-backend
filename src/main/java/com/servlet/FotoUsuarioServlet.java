@@ -2,6 +2,7 @@ package com.servlet;
 
 import com.DAO.FotoUsuarioDAO;
 import com.DAO.SuperAdministradorDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.FotoUsuario;
 import com.model.SuperAdministrador;
@@ -22,42 +23,52 @@ import java.util.List;
 @WebServlet(name = "FotoUsuarioServlet", value = "/fotoUsuario")
 public class FotoUsuarioServlet extends HttpServlet{
 
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/fotoUsuario.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-fotoUsuario.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-fotoUsuario.jsp";
+    private static final String PAGINA_ERRO = "/html/erro.html";
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
 
-        if (action == null){
+        boolean erro = true;
+        String destino = null;
+
+        if (action == null) {
             action = "read";
         }
-
-        if (action.equals("read")){
-            listarFotos(request, response);
-        } else if (action.equals("create")) {
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-fotoUsuario.jsp")
-                    .forward(request, response);
-
-        } else if (action.equals("update")) {
-
-            int id = Integer.parseInt(
-                    request.getParameter("id")
-            );
-
-            try (FotoUsuarioDAO dao = new FotoUsuarioDAO()) {
-
-                FotoUsuario fotoUsuario = dao.pesquisarPorId(id);
-
-                request.setAttribute("fotoUsuario", fotoUsuario);
-
-                request
-                        .getRequestDispatcher("/WEB-INF/views/editar-fotoUsuario.jsp")
-                        .forward(request, response);
-
-            } catch (SQLException | ClassNotFoundException e) {
-                throw new ServletException(e);
+        try {
+            if (action.equals("read")) {
+                listarFotos(request, response);
+                destino = PAGINA_PRINCIPAL;
+            } else if (action.equals("create")) {
+                destino = PAGINA_CADASTRO;
+            } else if (action.equals("update")) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                try (FotoUsuarioDAO dao = new FotoUsuarioDAO()) {
+                    FotoUsuario fotoUsuario = dao.pesquisarPorId(id);
+                    request.setAttribute("fotoUsuario", fotoUsuario);
+                }
+                destino = PAGINA_EDICAO;
             }
+            erro = false;
+        } catch (SQLException e) {
+            System.err.println("Erro ao executar operação no banco:");
+            e.printStackTrace(System.err);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Falha ao carregar o driver postgresql:");
+            e.printStackTrace(System.err);
+        } catch (Throwable e) {
+            System.err.println("Erro inesperado:");
+            e.printStackTrace(System.err);
+        }
+
+        if (erro) {
+            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        } else {
+            request.getRequestDispatcher(destino).forward(request, response);
         }
     }
 
@@ -69,12 +80,17 @@ public class FotoUsuarioServlet extends HttpServlet{
 
         String action = request.getParameter("action");
 
-        if ("create".equals(action)) {
-            cadastrarFotoUsuario(request, response);
-        } else if ("update".equals(action)) {
-            atualizarFotoUsuario(request, response);
-        } else if ("delete".equals(action)){
-            deletarFotoUsuario(request, response);
+        try {
+            if ("create".equals(action)) {
+                cadastrarFotoUsuario(request, response);
+            } else if ("update".equals(action)) {
+                atualizarFotoUsuario(request, response);
+            } else if ("delete".equals(action)){
+                deletarFotoUsuario(request, response);
+            }
+        } catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 
@@ -88,10 +104,6 @@ public class FotoUsuarioServlet extends HttpServlet{
             List<FotoUsuario> fotoUsuarios = dao.listar(request.getParameter("pesquisa"));
 
             request.setAttribute("fotos", fotoUsuarios);
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/fotoUsuario.jsp")
-                    .forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);

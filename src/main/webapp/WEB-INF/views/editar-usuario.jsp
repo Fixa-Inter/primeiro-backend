@@ -17,8 +17,15 @@
 
 <h1>Editar Usuário</h1>
 
+<% String erro = (String) request.getAttribute("erro"); %>
 <form action="${pageContext.request.contextPath}/usuarios"
       method="post">
+            <% if (erro != null && !erro.isBlank()) { %>
+            <p>
+                <%= erro %>
+            </p>
+            <% } %>
+
 
     <input type="hidden"
            name="action"
@@ -47,8 +54,8 @@
     </label>
 
     <input type="password"
-           id="senhaHash"
-           name="senhaHash"
+           id="senha"
+           name="senha"
            value="<%= usuario.getSenhaHash() %>"
            required>
 

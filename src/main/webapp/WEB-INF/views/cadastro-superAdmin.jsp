@@ -12,10 +12,17 @@
 
 <h1>Cadastrar Super Administrador</h1>
 
+<% String erro = (String) request.getAttribute("erro"); %>
 <form
         action="${pageContext.request.contextPath}/superAdmin"
         method="post"
 >
+            <% if (erro != null && !erro.isBlank()) { %>
+            <p>
+                <%= erro %>
+            </p>
+            <% } %>
+
 
     <input
             type="hidden"

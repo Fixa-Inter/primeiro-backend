@@ -12,8 +12,15 @@
 
 <h1>Cadastrar Pagamento</h1>
 
+<% String erro = (String) request.getAttribute("erro"); %>
 <form method="post"
       action="${pageContext.request.contextPath}/pagamentos">
+            <% if (erro != null && !erro.isBlank()) { %>
+            <p>
+                <%= erro %>
+            </p>
+            <% } %>
+
 
     <input type="hidden" name="action" value="create">
 

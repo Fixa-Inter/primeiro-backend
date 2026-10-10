@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.PagamentoDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.Pagamento;
 import com.model.enums.MetodoPagamento;
@@ -22,44 +23,49 @@ import java.util.List;
 @WebServlet(name = "PagamentoServlet", value = "/pagamentos")
 public class PagamentoServlet extends HttpServlet {
 
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/pagamentos.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-pagamento.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-pagamento.jsp";
+    private static final String PAGINA_ERRO = "/html/erro.html";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
 
-        if (action == null){
-            action = "read";
-        }
+        boolean erro = true;
+        String destino = null;
 
-        if (action.equals("read")){
-            listarPagamentos(request, response);
-        } else if (action.equals("create")) {
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-pagamento.jsp")
-                    .forward(request, response);
-
-        } else if (action.equals("update")) {
-
-            int id = Integer.parseInt(
-                    request.getParameter("id")
-            );
-
-            try (PagamentoDAO dao = new PagamentoDAO()) {
-
-                Pagamento pagamento = dao.pesquisarPorId(id);
-
-                request.setAttribute("pagamento", pagamento);
-
-                request
-                        .getRequestDispatcher("/WEB-INF/views/editar-pagamento.jsp")
-                        .forward(request, response);
-
-            } catch (SQLException | ClassNotFoundException e) {
-                throw new ServletException(e);
+        if (action == null) action = "read";
+        try {
+            if (action.equals("read")) {
+                listarPagamentos(request, response);
+                destino = PAGINA_PRINCIPAL;
+            } else if (action.equals("create")) {
+                destino = PAGINA_CADASTRO;
+            } else if (action.equals("update")) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                try (PagamentoDAO dao = new PagamentoDAO()) {
+                    Pagamento pagamento = dao.pesquisarPorId(id);
+                    request.setAttribute("pagamento", pagamento);
+                }
+                destino = PAGINA_EDICAO;
             }
+            erro = false;
+        } catch (SQLException e) {
+            System.err.println("Erro ao executar operação no banco:");
+            e.printStackTrace(System.err);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Falha ao carregar o driver postgresql:");
+            e.printStackTrace(System.err);
+        } catch (Throwable e) {
+            System.err.println("Erro inesperado:");
+            e.printStackTrace(System.err);
         }
+
+        if (erro) response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        else request.getRequestDispatcher(destino).forward(request, response);
     }
 
     @Override
@@ -70,12 +76,17 @@ public class PagamentoServlet extends HttpServlet {
 
         String action = request.getParameter("action");
 
-        if ("create".equals(action)) {
-            cadastrarPagamento(request, response);
-        } else if ("update".equals(action)) {
-            atualizarPagamento(request, response);
-        } else if ("delete".equals(action)){
-            deletarPagamento(request, response);
+        try {
+            if ("create".equals(action)) {
+                cadastrarPagamento(request, response);
+            } else if ("update".equals(action)) {
+                atualizarPagamento(request, response);
+            } else if ("delete".equals(action)){
+                deletarPagamento(request, response);
+            }
+        } catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 
@@ -163,10 +174,6 @@ public class PagamentoServlet extends HttpServlet {
             request.setAttribute("pagamentos", pagamentos);
             request.setAttribute("filtros", filtros);
 
-            request
-                    .getRequestDispatcher("/WEB-INF/views/pagamentos.jsp")
-                    .forward(request, response);
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);
         }
@@ -188,6 +195,11 @@ public class PagamentoServlet extends HttpServlet {
         BigDecimal valor = new BigDecimal(
                 request.getParameter("valor")
         );
+
+        //verificacoes necessarias
+        if (request.getParameter("metodoPagamento").isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("metodoPagamento");
+        }
 
         Pagamento pagamento = new Pagamento(
           metodoPagamento,

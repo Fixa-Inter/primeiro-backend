@@ -12,10 +12,17 @@
 
 <h1>Cadastrar Plano</h1>
 
+<% String erro = (String) request.getAttribute("erro"); %>
 <form
         action="${pageContext.request.contextPath}/planos"
         method="post"
 >
+            <% if (erro != null && !erro.isBlank()) { %>
+            <p>
+                <%= erro %>
+            </p>
+            <% } %>
+
 
     <input
             type="hidden"

@@ -11,8 +11,15 @@
 
 <h1>Cadastrar Usuário</h1>
 
+<% String erro = (String) request.getAttribute("erro"); %>
 <form action="${pageContext.request.contextPath}/usuarios"
       method="post">
+            <% if (erro != null && !erro.isBlank()) { %>
+            <p>
+                <%= erro %>
+            </p>
+            <% } %>
+
 
     <input type="hidden"
            name="action"
@@ -29,13 +36,13 @@
 
     <br><br>
 
-    <label for="senhaHash">
+    <label for="senha">
         Senha:
     </label>
 
     <input type="password"
-           id="senhaHash"
-           name="senhaHash"
+           id="senha"
+           name="senha"
            required>
 
     <br><br>
