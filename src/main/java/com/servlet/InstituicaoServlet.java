@@ -68,13 +68,19 @@ public class InstituicaoServlet extends HttpServlet{
     ) throws ServletException, IOException, ExcecaoDeJSP{
 
         String action = request.getParameter("action");
+        try {
 
-        if ("create".equals(action)) {
-            cadastrarInstituicao(request, response);
-        } else if ("update".equals(action)) {
-            atualizarInstituicao(request, response);
-        } else if ("delete".equals(action)){
-            deletarInstituicao(request, response);
+            if ("create".equals(action)) {
+                cadastrarInstituicao(request, response);
+            } else if ("update".equals(action)) {
+                atualizarInstituicao(request, response);
+            } else if ("delete".equals(action)){
+                deletarInstituicao(request, response);
+            }
+        }
+        catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 

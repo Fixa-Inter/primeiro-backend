@@ -66,13 +66,17 @@ public class PlanoServlet extends HttpServlet {
     ) throws ServletException, IOException {
 
         String action = request.getParameter("action");
-
-        if ("create".equals(action)) {
-            cadastrarPlano(request, response);
-        } else if ("update".equals(action)) {
-            atualizarPlano(request, response);
-        } else if ("delete".equals(action)){
-            deletarPlano(request, response);
+        try {
+            if ("create".equals(action)) {
+                cadastrarPlano(request, response);
+            } else if ("update".equals(action)) {
+                atualizarPlano(request, response);
+            } else if ("delete".equals(action)) {
+                deletarPlano(request, response);
+            }
+        }catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 

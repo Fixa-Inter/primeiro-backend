@@ -70,12 +70,17 @@ public class EnderecoServlet extends HttpServlet{
 
         String action = request.getParameter("action");
 
-        if ("create".equals(action)) {
-            cadastrarEndereco(request, response);
-        } else if ("update".equals(action)) {
-            atualizarEndereco(request, response);
-        } else if ("delete".equals(action)){
-            deletarEndereco(request, response);
+        try {
+            if ("create".equals(action)) {
+                cadastrarEndereco(request, response);
+            } else if ("update".equals(action)) {
+                atualizarEndereco(request, response);
+            } else if ("delete".equals(action)){
+                deletarEndereco(request, response);
+            }
+        } catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 

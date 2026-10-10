@@ -2,6 +2,7 @@ package com.servlet;
 
 import com.DAO.FotoUsuarioDAO;
 import com.DAO.SuperAdministradorDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.FotoUsuario;
 import com.model.SuperAdministrador;
@@ -69,12 +70,17 @@ public class FotoUsuarioServlet extends HttpServlet{
 
         String action = request.getParameter("action");
 
-        if ("create".equals(action)) {
-            cadastrarFotoUsuario(request, response);
-        } else if ("update".equals(action)) {
-            atualizarFotoUsuario(request, response);
-        } else if ("delete".equals(action)){
-            deletarFotoUsuario(request, response);
+        try {
+            if ("create".equals(action)) {
+                cadastrarFotoUsuario(request, response);
+            } else if ("update".equals(action)) {
+                atualizarFotoUsuario(request, response);
+            } else if ("delete".equals(action)){
+                deletarFotoUsuario(request, response);
+            }
+        } catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 

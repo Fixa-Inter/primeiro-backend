@@ -71,12 +71,17 @@ public class PagamentoServlet extends HttpServlet {
 
         String action = request.getParameter("action");
 
-        if ("create".equals(action)) {
-            cadastrarPagamento(request, response);
-        } else if ("update".equals(action)) {
-            atualizarPagamento(request, response);
-        } else if ("delete".equals(action)){
-            deletarPagamento(request, response);
+        try {
+            if ("create".equals(action)) {
+                cadastrarPagamento(request, response);
+            } else if ("update".equals(action)) {
+                atualizarPagamento(request, response);
+            } else if ("delete".equals(action)){
+                deletarPagamento(request, response);
+            }
+        } catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 

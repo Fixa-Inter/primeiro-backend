@@ -66,13 +66,17 @@ public class SuperAdministradorServlet extends HttpServlet{
     ) throws ServletException, IOException {
 
         String action = request.getParameter("action");
-
-        if ("create".equals(action)) {
-            cadastrarAdmin(request, response);
-        } else if ("update".equals(action)) {
-            atualizarAdmin(request, response);
-        } else if ("delete".equals(action)){
-            deletarAdmin(request, response);
+        try{
+            if ("create".equals(action)) {
+                cadastrarAdmin(request, response);
+            } else if ("update".equals(action)) {
+                atualizarAdmin(request, response);
+            } else if ("delete".equals(action)){
+                deletarAdmin(request, response);
+            }
+        }catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 

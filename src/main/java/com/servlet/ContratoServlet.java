@@ -19,6 +19,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 @WebServlet(name="ContratoServlet", value = "/contratos")
 public class ContratoServlet extends HttpServlet{
 
@@ -71,12 +73,17 @@ public class ContratoServlet extends HttpServlet{
 
         String action = request.getParameter("action");
 
-        if ("create".equals(action)) {
-            cadastrarContrato(request, response);
-        } else if ("update".equals(action)) {
-            atualizarContrato(request, response);
-        } else if ("delete".equals(action)){
-            deletarContrato(request, response);
+        try{
+            if ("create".equals(action)) {
+                cadastrarContrato(request, response);
+            } else if ("update".equals(action)) {
+                atualizarContrato(request, response);
+            } else if ("delete".equals(action)){
+                deletarContrato(request, response);
+            }
+        }catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 

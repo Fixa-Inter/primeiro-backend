@@ -68,12 +68,17 @@ public class UsuarioServlet extends HttpServlet{
 
         String action = request.getParameter("action");
 
-        if ("create".equals(action)) {
-            cadastrarUsuario(request, response);
-        } else if ("update".equals(action)) {
-            atualizarUsuario(request, response);
-        } else if ("delete".equals(action)){
-            deletarUsuario(request, response);
+        try {
+            if ("create".equals(action)) {
+                cadastrarUsuario(request, response);
+            } else if ("update".equals(action)) {
+                atualizarUsuario(request, response);
+            } else if ("delete".equals(action)){
+                deletarUsuario(request, response);
+            }
+        } catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 
