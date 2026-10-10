@@ -18,8 +18,15 @@
 
 <h1>Editar contrato</h1>
 
+<% String erro = (String) request.getAttribute("erro"); %>
 <form method="post"
-      action="<%= request.getContextPath() %>/contratos">
+      action="<%= request.getContextPath() %>
+            <% if (erro != null && !erro.isBlank()) { %>
+            <p>
+                <%= erro %>
+            </p>
+            <% } %>
+/contratos">
 
     <input type="hidden"
            name="action"

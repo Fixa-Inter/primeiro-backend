@@ -1,10 +1,9 @@
 package com.servlet;
 
 import com.DAO.PagamentoDAO;
-import com.DAO.PlanoDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.Pagamento;
-import com.model.Plano;
 import com.model.enums.MetodoPagamento;
 import com.model.enums.OperacaoFiltro;
 import jakarta.servlet.ServletException;
@@ -15,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,63 +21,79 @@ import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "PagamentoServlet", value = "/pagamentos")
-public class PagamentoServlet extends HttpServlet{
+public class PagamentoServlet extends HttpServlet {
+
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/pagamentos.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-pagamento.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-pagamento.jsp";
+    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         String action = request.getParameter("action");
 
-        if (action == null){
-            action = "read";
-        }
+        boolean erro = true;
+        String destino = null;
 
-        if (action.equals("read")){
-            listarPagamentos(request, response);
-        } else if (action.equals("create")) {
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/editar-pagamentos.jsp")
-                    .forward(request, response);
-        } else if (action.equals("update")) {
-
-            int id = Integer.parseInt(request.getParameter("id"));
-
-            try (PagamentoDAO dao = new PagamentoDAO()){
-
-                Pagamento pagamento = dao.pesquisarId(id);
-
-                request.setAttribute("pagamentos", pagamento);
-
-                request
-                        .getRequestDispatcher("/WEB-INF/views/editar-pagamentos.jsp")
-                        .forward(request, response);
-
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+        if (action == null) action = "read";
+        try {
+            if (action.equals("read")) {
+                listarPagamentos(request, response);
+                destino = PAGINA_PRINCIPAL;
+            } else if (action.equals("create")) {
+                destino = PAGINA_CADASTRO;
+            } else if (action.equals("update")) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                try (PagamentoDAO dao = new PagamentoDAO()) {
+                    Pagamento pagamento = dao.pesquisarPorId(id);
+                    request.setAttribute("pagamento", pagamento);
+                }
+                destino = PAGINA_EDICAO;
             }
-
-
+            erro = false;
+        } catch (SQLException e) {
+            System.err.println("Erro ao executar operação no banco:");
+            e.printStackTrace(System.err);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Falha ao carregar o driver postgresql:");
+            e.printStackTrace(System.err);
+        } catch (Throwable e) {
+            System.err.println("Erro inesperado:");
+            e.printStackTrace(System.err);
         }
+
+        if (erro) response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        else request.getRequestDispatcher(destino).forward(request, response);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    @Override
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
 
         String action = request.getParameter("action");
 
-        if ("create".equals(action)) {
-            cadastrarPagamento(request, response);
-        } else if ("update".equals(action)) {
-            atualizarPagamento(request, response);
-        } else if ("delete".equals(action)){
-            deletarPagamento(request, response);
+        try {
+            if ("create".equals(action)) {
+                cadastrarPagamento(request, response);
+            } else if ("update".equals(action)) {
+                atualizarPagamento(request, response);
+            } else if ("delete".equals(action)){
+                deletarPagamento(request, response);
+            }
+        } catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
-
     }
 
-    private void listarPagamentos(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    private void listarPagamentos(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
 
         try (PagamentoDAO dao = new PagamentoDAO()) {
 
@@ -93,6 +107,8 @@ public class PagamentoServlet extends HttpServlet{
             String direcaoSequencia;
 
             String ordenacao = request.getParameter("ordenacao");
+
+            String pesquisa = request.getParameter("pesquisa");
 
             String removerFiltroParam = request.getParameter("removerFiltro");
             Integer indiceRemover = null;
@@ -148,51 +164,50 @@ public class PagamentoServlet extends HttpServlet{
                 direcaoSequencia = null;
             }
 
-            List<Pagamento> pagamentos = dao.buscar(
+            List<Pagamento> pagamentos = dao.listar(
                     filtros,
                     campoSequencia,
-                    direcaoSequencia
+                    direcaoSequencia,
+                    pesquisa
             );
 
             request.setAttribute("pagamentos", pagamentos);
             request.setAttribute("filtros", filtros);
 
-            request
-                    .getRequestDispatcher("/WEB-INF/views/pagamentos.jsp")
-                    .forward(request, response);
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new ServletException(e);
         }
-
     }
 
-    private void cadastrarPagamento(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    private void cadastrarPagamento(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
 
-        BigDecimal valor = new BigDecimal(request.getParameter("valor"));
+        MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(
+                request.getParameter("metodoPagamento")
+        );
 
-        String dataPagamentoParam = request.getParameter("data_pagamento");
+        Integer fkContrato = Integer.parseInt(
+                request.getParameter("fkContrato")
+        );
 
-        LocalDateTime dataPagamento = null;
+        BigDecimal valor = new BigDecimal(
+                request.getParameter("valor")
+        );
 
-        if (dataPagamentoParam != null && !dataPagamentoParam.isBlank()){
-            dataPagamento = LocalDateTime.parse(dataPagamentoParam);
+        //verificacoes necessarias
+        if (request.getParameter("metodoPagamento").isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("metodoPagamento");
         }
 
-        Integer fkContrato = Integer.parseInt(request.getParameter("fk_contrato_id"));
-
-        int metodoPagamento = Integer.parseInt(request.getParameter("metodo_pagamento"));
-
         Pagamento pagamento = new Pagamento(
-                valor,
-                dataPagamento,
-                fkContrato,
-                MetodoPagamento.converterEnum(metodoPagamento)
-                );
+          metodoPagamento,
+          fkContrato,
+          valor
+        );
 
-        try (PagamentoDAO dao = new PagamentoDAO()){
+        try (PagamentoDAO dao = new PagamentoDAO()) {
 
             dao.cadastrar(pagamento);
 
@@ -200,20 +215,19 @@ public class PagamentoServlet extends HttpServlet{
                     request.getContextPath() + "/pagamentos"
             );
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new ServletException(e);
         }
-
     }
 
-    private void deletarPagamento(HttpServletRequest request, HttpServletResponse response){
-
+    private void deletarPagamento(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ){
         int id = Integer.parseInt(request.getParameter("id"));
 
-        try (PagamentoDAO dao = new PagamentoDAO()){
-            dao.remover(id);
+        try (PagamentoDAO pagamentoDAO = new PagamentoDAO()){
+            pagamentoDAO.remover(id);
 
             response.sendRedirect(
                     request.getContextPath() + "/pagamentos"
@@ -225,38 +239,50 @@ public class PagamentoServlet extends HttpServlet{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
-    public void atualizarPagamento(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    private void atualizarPagamento(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
 
-        Integer id = Integer.parseInt(request.getParameter("id"));
-        BigDecimal valor = new BigDecimal(request.getParameter("valor"));
+        int id = Integer.parseInt(
+                request.getParameter("id")
+        );
 
-        String dataPagamentoParam = request.getParameter("data_pagamento");
-        LocalDateTime dataPagamento = null;
+        MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(
+                request.getParameter("metodoPagamento")
+        );
 
-        if (dataPagamentoParam != null && !dataPagamentoParam.isBlank()) {
-            // O parse direto funciona bem com o formato enviado pelo HTML5 (ex: 2023-10-25T15:30)
-            dataPagamento = LocalDateTime.parse(dataPagamentoParam);
-        }
+        Integer fkContrato = Integer.parseInt(
+                request.getParameter("fkContrato")
+        );
 
-        Boolean foiRealizado = Boolean.parseBoolean(request.getParameter("foiRealizado"));
-        Integer fkContrato = Integer.parseInt(request.getParameter("fk_contrato_id"));
-        Integer metodoPagamento = Integer.parseInt(request.getParameter("metodo_pagamento"));
+        BigDecimal valor = new BigDecimal(
+                request.getParameter("valor")
+        );
 
-        try (PagamentoDAO dao = new PagamentoDAO()){
+
+        boolean foiRealizado = Boolean.parseBoolean(
+                request.getParameter("foiRealizado")
+        );
+
+
+
+        try (PagamentoDAO dao = new PagamentoDAO()) {
 
             // Busca como está atualmente no banco
-            Pagamento original = dao.pesquisarId(id);
+            Pagamento original = dao.pesquisarPorId(id);
 
             // Monta o objeto com os novos dados
             Pagamento alterado = new Pagamento(
                     id,
                     valor,
-                    dataPagamento,
+                    original.getDataPagamento(),
                     foiRealizado,
                     fkContrato,
-                    MetodoPagamento.converterEnum(metodoPagamento)
+                    metodoPagamento
             );
 
             dao.atualizar(original, alterado);
@@ -265,12 +291,8 @@ public class PagamentoServlet extends HttpServlet{
                     request.getContextPath() + "/pagamentos"
             );
 
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new ServletException(e);
         }
-
     }
 }

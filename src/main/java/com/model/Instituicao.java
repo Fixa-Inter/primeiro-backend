@@ -85,7 +85,7 @@ public class Instituicao {
 
     @Override
     public String toString(){
-        return "Instituicao{id=%d, nome='%s', emailCorporativo='%s', dataCadastro=%s, dominioEmail=%s,tipoDeInstituicao=%s}"
+        return "%s %s %s %s %s %s"
                 .formatted(id, nome, emailCorporativo, dataCadastro, dominioEmail, tipoDeInstituicao);
     }
 }

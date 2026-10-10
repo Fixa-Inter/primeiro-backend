@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.InstituicaoDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.Instituicao;
 import com.model.enums.OperacaoFiltro;
@@ -12,14 +13,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @WebServlet(name = "InstituicaoServlet", value = "/instituicoes")
 public class InstituicaoServlet extends HttpServlet{
+
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/instituicoes.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-instituicao.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-instituicao.jsp";
+    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -27,54 +32,60 @@ public class InstituicaoServlet extends HttpServlet{
 
         String action = request.getParameter("action");
 
-        if (action == null){
-            action = "read";
-        }
+        boolean erro = true;
+        String destino = null;
 
-        if (action.equals("read")){
-            listarInstituicoes(request, response);
-        } else if (action.equals("create")) {
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-instituicao.jsp")
-                    .forward(request, response);
-
-        } else if (action.equals("update")) {
-
-            int id = Integer.parseInt(
-                    request.getParameter("id")
-            );
-
-            try (InstituicaoDAO dao = new InstituicaoDAO()) {
-
-                Instituicao instituicao = dao.pesquisarPorId(id);
-
-                request.setAttribute("instituicao", instituicao);
-
-                request
-                        .getRequestDispatcher("/WEB-INF/views/editar-instituicao.jsp")
-                        .forward(request, response);
-
-            } catch (SQLException | ClassNotFoundException e) {
-                throw new ServletException(e);
+        if (action == null) action = "read";
+        try {
+            if (action.equals("read")) {
+                listarInstituicoes(request, response);
+                destino = PAGINA_PRINCIPAL;
+            } else if (action.equals("create")) {
+                destino = PAGINA_CADASTRO;
+            } else if (action.equals("update")) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                try (InstituicaoDAO dao = new InstituicaoDAO()) {
+                    Instituicao instituicao = dao.pesquisarPorId(id);
+                    request.setAttribute("instituicao", instituicao);
+                }
+                destino = PAGINA_EDICAO;
             }
+            erro = false;
+        } catch (SQLException e) {
+            System.err.println("Erro ao executar operação no banco:");
+            e.printStackTrace(System.err);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Falha ao carregar o driver postgresql:");
+            e.printStackTrace(System.err);
+        } catch (Throwable e) {
+            System.err.println("Erro inesperado:");
+            e.printStackTrace(System.err);
         }
+
+        if (erro) response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        else request.getRequestDispatcher(destino).forward(request, response);
     }
 
     @Override
     protected void doPost(
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws ServletException, IOException {
+    ) throws ServletException, IOException, ExcecaoDeJSP{
 
         String action = request.getParameter("action");
+        try {
 
-        if ("create".equals(action)) {
-            cadastrarInstituicao(request, response);
-        } else if ("update".equals(action)) {
-            atualizarInstituicao(request, response);
-        } else if ("delete".equals(action)){
-            deletarInstituicao(request, response);
+            if ("create".equals(action)) {
+                cadastrarInstituicao(request, response);
+            } else if ("update".equals(action)) {
+                atualizarInstituicao(request, response);
+            } else if ("delete".equals(action)){
+                deletarInstituicao(request, response);
+            }
+        }
+        catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 
@@ -95,6 +106,8 @@ public class InstituicaoServlet extends HttpServlet{
             String direcaoSequencia;
 
             String ordenacao = request.getParameter("ordenacao");
+
+            String pesquisa = request.getParameter("pesquisa");
 
             String removerFiltroParam = request.getParameter("removerFiltro");
             Integer indiceRemover = null;
@@ -153,15 +166,12 @@ public class InstituicaoServlet extends HttpServlet{
             List<Instituicao> instituicoes = dao.listar(
                     filtros,
                     campoSequencia,
-                    direcaoSequencia
+                    direcaoSequencia,
+                    pesquisa
             );
 
             request.setAttribute("instituicoes", instituicoes);
             request.setAttribute("filtros", filtros);
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/instituicoes.jsp")
-                    .forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);
@@ -171,7 +181,7 @@ public class InstituicaoServlet extends HttpServlet{
     private void cadastrarInstituicao(
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws ServletException, IOException {
+    ) throws ServletException, IOException, ExcecaoDeJSP{
 
 
         String nome = request.getParameter("nome");
@@ -182,9 +192,30 @@ public class InstituicaoServlet extends HttpServlet{
                 request.getParameter("tipoInstituicao")
         );
 
+        //verificações
+        if (nome.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("nome");
+        }
+
+        if (emailCorporativo.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("email corporativo");
+        }
+
+        if (request.getParameter("tipoInstituicao").isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("tipo de instituicao");
+        }
+
         Instituicao instituicao = new Instituicao(nome, emailCorporativo, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
         try (InstituicaoDAO dao = new InstituicaoDAO()) {
+
+            if (dao.pesquisarPorDominioEmail(dominioEmail) != null){
+                throw ExcecaoDeJSP.dominioDuplicado();
+            }
+
+            if (dao.pesquisarPorEmailCorporativo(emailCorporativo) != null){
+                throw ExcecaoDeJSP.emailDuplicado();
+            }
 
             dao.cadastrar(instituicao);
 
@@ -222,7 +253,7 @@ public class InstituicaoServlet extends HttpServlet{
     private void atualizarInstituicao(
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws ServletException, IOException {
+    ) throws ServletException, IOException, ExcecaoDeJSP{
 
         int id = Integer.parseInt(
                 request.getParameter("id")
@@ -245,6 +276,16 @@ public class InstituicaoServlet extends HttpServlet{
             // Monta o objeto com os novos dados
             Instituicao alterado = new Instituicao(id, nome, emailCorporativo, original.getDataCadastro(), TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
 
+            Instituicao instituicaoApoioDominio = dao.pesquisarPorDominioEmail(dominioEmail);
+            Instituicao instituicaoApoioEmail = dao.pesquisarPorEmailCorporativo(emailCorporativo);
+
+            if (instituicaoApoioDominio != null && instituicaoApoioDominio.getId() != id){
+                throw ExcecaoDeJSP.dominioDuplicado();
+            }
+
+            if (instituicaoApoioEmail != null && instituicaoApoioEmail.getEmailCorporativo() != emailCorporativo){
+                throw ExcecaoDeJSP.emailDuplicado();
+            }
 
             dao.atualizar(original, alterado);
 

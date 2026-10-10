@@ -28,16 +28,11 @@ public class Pagamento {
         this.metodoPagamento = metodoPagamento;
     }
 
-    // construtor sem os valores que sao default, ou seja: data_pagamento, foi_realizado e data_criacao
-
-    public Pagamento(BigDecimal valor, LocalDateTime dataPagamento, Integer fkContrato, MetodoPagamento metodoPagamento) {
-        this.valor = valor;
-        this.dataPagamento = dataPagamento;
-        this.fkContrato = fkContrato;
+    public Pagamento(MetodoPagamento metodoPagamento, Integer fkContrato, BigDecimal valor) {
         this.metodoPagamento = metodoPagamento;
+        this.fkContrato = fkContrato;
+        this.valor = valor;
     }
-
-
     // gettes e setters
 
     public Integer getId() {
@@ -91,7 +86,7 @@ public class Pagamento {
     // toString
     @Override
     public String toString(){
-        return "Pagamento{id=%d, valor=%f, dataPagamento=%s, foiRealizado=%b, fkContrato=%d, MetodoPagamento=%d}"
+        return "%s %s %s %s %s %s"
                 .formatted(id, valor, dataPagamento, foiRealizado, fkContrato, metodoPagamento.getNome());
     }
 }

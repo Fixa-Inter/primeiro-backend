@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.SuperAdministradorDAO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.SuperAdministrador;
 import com.model.enums.OperacaoFiltro;
@@ -18,44 +19,49 @@ import java.util.List;
 @WebServlet(name = "SuperAdministradorServlet", value = "/superAdmin")
 public class SuperAdministradorServlet extends HttpServlet{
 
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/superAdmin.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-superAdmin.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-superAdmin.jsp";
+    private static final String PAGINA_ERRO = "/html/erro.html";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
 
-        if (action == null){
-            action = "read";
-        }
+        boolean erro = true;
+        String destino = null;
 
-        if (action.equals("read")){
-            listarAdmins(request, response);
-        } else if (action.equals("create")) {
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/cadastro-superAdmin.jsp")
-                    .forward(request, response);
-
-        } else if (action.equals("update")) {
-
-            int id = Integer.parseInt(
-                    request.getParameter("id")
-            );
-
-            try (SuperAdministradorDAO dao = new SuperAdministradorDAO()) {
-
-                SuperAdministrador superAdministrador = dao.pesquisarPorId(id);
-
-                request.setAttribute("superAdmin", superAdministrador);
-
-                request
-                        .getRequestDispatcher("/WEB-INF/views/editar-superAdmin.jsp")
-                        .forward(request, response);
-
-            } catch (SQLException | ClassNotFoundException e) {
-                throw new ServletException(e);
+        if (action == null) action = "read";
+        try {
+            if (action.equals("read")) {
+                listarAdmins(request, response);
+                destino = PAGINA_PRINCIPAL;
+            } else if (action.equals("create")) {
+                destino = PAGINA_CADASTRO;
+            } else if (action.equals("update")) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                try (SuperAdministradorDAO dao = new SuperAdministradorDAO()) {
+                    SuperAdministrador superAdministrador = dao.pesquisarPorId(id);
+                    request.setAttribute("superAdmin", superAdministrador);
+                }
+                destino = PAGINA_EDICAO;
             }
+            erro = false;
+        } catch (SQLException e) {
+            System.err.println("Erro ao executar operação no banco:");
+            e.printStackTrace(System.err);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Falha ao carregar o driver postgresql:");
+            e.printStackTrace(System.err);
+        } catch (Throwable e) {
+            System.err.println("Erro inesperado:");
+            e.printStackTrace(System.err);
         }
+
+        if (erro) response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        else request.getRequestDispatcher(destino).forward(request, response);
     }
 
     @Override
@@ -65,13 +71,17 @@ public class SuperAdministradorServlet extends HttpServlet{
     ) throws ServletException, IOException {
 
         String action = request.getParameter("action");
-
-        if ("create".equals(action)) {
-            cadastrarAdmin(request, response);
-        } else if ("update".equals(action)) {
-            atualizarAdmin(request, response);
-        } else if ("delete".equals(action)){
-            deletarAdmin(request, response);
+        try{
+            if ("create".equals(action)) {
+                cadastrarAdmin(request, response);
+            } else if ("update".equals(action)) {
+                atualizarAdmin(request, response);
+            } else if ("delete".equals(action)){
+                deletarAdmin(request, response);
+            }
+        }catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            doGet(request, response);
         }
     }
 
@@ -150,15 +160,12 @@ public class SuperAdministradorServlet extends HttpServlet{
             List<SuperAdministrador> superAdmins = dao.buscar(
                     filtros,
                     campoSequencia,
-                    direcaoSequencia
+                    direcaoSequencia,
+                    request.getParameter("pesquisa")
             );
 
             request.setAttribute("superAdmins", superAdmins);
             request.setAttribute("filtros", filtros);
-
-            request
-                    .getRequestDispatcher("/WEB-INF/views/superAdmin.jsp")
-                    .forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new ServletException(e);
@@ -176,6 +183,19 @@ public class SuperAdministradorServlet extends HttpServlet{
 
         String senha = request.getParameter("senha");
 
+        //verificacoes necessarias
+
+        if (email.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("email");
+        }
+
+        if (senha.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("senha");
+        }
+
+        if (nome.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("nome");
+        }
 
         SuperAdministrador superAdministrador = new SuperAdministrador(
                 nome,
@@ -184,6 +204,10 @@ public class SuperAdministradorServlet extends HttpServlet{
         );
 
         try (SuperAdministradorDAO dao = new SuperAdministradorDAO()) {
+
+            if (dao.pesquisarPorEmail(email) != null){
+                throw ExcecaoDeJSP.emailDuplicado();
+            }
 
             dao.cadastrar(superAdministrador);
 
@@ -248,6 +272,12 @@ public class SuperAdministradorServlet extends HttpServlet{
                     senha,
                     email
             );
+
+            SuperAdministrador superAdministradorApoioEmail = dao.pesquisarPorEmail(email);
+
+            if (superAdministradorApoioEmail != null && superAdministradorApoioEmail.getId() != id){
+                throw ExcecaoDeJSP.emailDuplicado();
+            }
 
             dao.atualizar(original, alterado);
 

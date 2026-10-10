@@ -18,10 +18,17 @@
 
 <h1>Editar Foto</h1>
 
+<% String erro = (String) request.getAttribute("erro"); %>
 <form
         action="${pageContext.request.contextPath}/fotoUsuario"
         method="post"
 >
+            <% if (erro != null && !erro.isBlank()) { %>
+            <p>
+                <%= erro %>
+            </p>
+            <% } %>
+
 
     <input
             type="hidden"

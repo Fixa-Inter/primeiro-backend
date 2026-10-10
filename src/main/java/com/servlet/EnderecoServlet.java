@@ -1,8 +1,9 @@
 package com.servlet;
 
-import com.DAO.UsuarioDAO;
+import com.DAO.EnderecoDAO;
 import com.exception.ExcecaoDeJSP;
-import com.model.*;
+import com.model.Endereco;
+import com.model.Filtro;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
 import jakarta.servlet.ServletException;
@@ -14,15 +15,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "UsuarioServlet", value = "/usuarios")
-public class UsuarioServlet extends HttpServlet{
+@WebServlet(name = "EnderecoServlet", value = "/enderecos")
+public class EnderecoServlet extends HttpServlet{
 
-    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/usuarios.jsp";
-    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-usuario.jsp";
-    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-usuario.jsp";
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/enderecos.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-endereco.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-endereco.jsp";
     private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
@@ -30,6 +32,10 @@ public class UsuarioServlet extends HttpServlet{
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
+
+        if (action == null){
+            action = "read";
+        }
 
         boolean erro = true;
         String destino = null;
@@ -39,15 +45,15 @@ public class UsuarioServlet extends HttpServlet{
         }
         try {
             if (action.equals("read")) {
-                listarUsuarios(request, response);
+                listarEnderecos(request, response);
                 destino = PAGINA_PRINCIPAL;
             } else if (action.equals("create")) {
                 destino = PAGINA_CADASTRO;
             } else if (action.equals("update")) {
                 int id = Integer.parseInt(request.getParameter("id"));
-                try (UsuarioDAO dao = new UsuarioDAO()) {
-                    Usuario usuario = dao.pesquisarPorId(id);
-                    request.setAttribute("usuario", usuario);
+                try (EnderecoDAO dao = new EnderecoDAO()) {
+                    Endereco endereco = dao.pesquisarPorId(id);
+                    request.setAttribute("endereco", endereco);
                 }
                 destino = PAGINA_EDICAO;
             }
@@ -80,11 +86,11 @@ public class UsuarioServlet extends HttpServlet{
 
         try {
             if ("create".equals(action)) {
-                cadastrarUsuario(request, response);
+                cadastrarEndereco(request, response);
             } else if ("update".equals(action)) {
-                atualizarUsuario(request, response);
+                atualizarEndereco(request, response);
             } else if ("delete".equals(action)){
-                deletarUsuario(request, response);
+                deletarEndereco(request, response);
             }
         } catch (ExcecaoDeJSP e) {
             request.setAttribute("erro", e.getMessage());
@@ -92,12 +98,12 @@ public class UsuarioServlet extends HttpServlet{
         }
     }
 
-    private void listarUsuarios(
+    private void listarEnderecos(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        try (UsuarioDAO dao = new UsuarioDAO()) {
+        try (EnderecoDAO dao = new EnderecoDAO()) {
 
             List<Filtro> filtros = new ArrayList<>();
 
@@ -166,15 +172,14 @@ public class UsuarioServlet extends HttpServlet{
                 direcaoSequencia = null;
             }
 
-            List<Usuario> usuarios = dao.listar(
+            List<Endereco> enderecos = dao.listar(
                     filtros,
                     campoSequencia,
                     direcaoSequencia,
                     pesquisa
             );
 
-            request.setAttribute("usuarios",
-                    usuarios);
+            request.setAttribute("enderecos", enderecos);
             request.setAttribute("filtros", filtros);
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -182,68 +187,53 @@ public class UsuarioServlet extends HttpServlet{
         }
     }
 
-    private void cadastrarUsuario(
+    private void cadastrarEndereco(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        String nome = request.getParameter("nome");
+        String rua = request.getParameter("rua");
 
-        String senha = request.getParameter("senha");
+        String bairro = request.getParameter("bairro");
 
-        String email = request.getParameter("email");
+        String complemento = request.getParameter("complemento");
 
-        String cargo = request.getParameter("cargo");
+        String cidade = request.getParameter("cidade");
 
-        TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
-                request.getParameter("tipoDeAcesso")
+        String estado = request.getParameter("estado");
+
+        String numero = request.getParameter("numero");
+
+        String cep = request.getParameter("cep");
+
+        String cnpj = request.getParameter("cnpj");
+
+        Integer fkInstituicao = Integer.parseInt(
+                request.getParameter("fkInstituicao")
         );
 
-        int fkEndereco = Integer.parseInt(
-                request.getParameter("fkEndereco")
+        Endereco endereco = new Endereco(
+                rua,
+                bairro,
+                complemento,
+                cidade,
+                estado,
+                numero,
+                cep,
+                cnpj,
+                fkInstituicao
         );
 
-        LocalDate dataAniversario = LocalDate.parse(
-                request.getParameter("dataAniversario")
-        );
+        try (EnderecoDAO dao = new EnderecoDAO()) {
 
-        //verificacoes necessarias
-        if (email.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("email");
-        }
-
-        if (senha.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("senha");
-        }
-
-        if (nome.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("nome");
-        }
-
-        if (request.getParameter("tipoDeAcesso").isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("tipoDeAcesso");
-        }
-
-        Usuario usuario = new Usuario(
-                nome,
-                senha,
-                email,
-                cargo,
-                tipoDeAcesso,
-                fkEndereco,
-                dataAniversario
-        );
-
-        try (UsuarioDAO dao = new UsuarioDAO()) {
-
-            if (dao.pesquisarPorEmail(email) != null){
-                throw ExcecaoDeJSP.emailDuplicado();
+            if (dao.pesquisarPorCnpj(cnpj) != null){
+                throw ExcecaoDeJSP.cnpjDuplicado();
             }
 
-            dao.cadastrar(usuario);
+            dao.cadastrar(endereco);
 
             response.sendRedirect(
-                    request.getContextPath() + "/usuarios"
+                    request.getContextPath() + "/enderecos"
             );
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -251,17 +241,17 @@ public class UsuarioServlet extends HttpServlet{
         }
     }
 
-    private void deletarUsuario(
+    private void deletarEndereco(
             HttpServletRequest request,
             HttpServletResponse response
     ){
         int id = Integer.parseInt(request.getParameter("id"));
 
-        try (UsuarioDAO usuarioDAO = new UsuarioDAO()){
-            usuarioDAO.remover(id);
+        try (EnderecoDAO enderecoDAO = new EnderecoDAO()){
+            enderecoDAO.remover(id);
 
             response.sendRedirect(
-                    request.getContextPath() + "/usuarios"
+                    request.getContextPath() + "/enderecos"
             );
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -273,7 +263,7 @@ public class UsuarioServlet extends HttpServlet{
 
     }
 
-    private void atualizarUsuario(
+    private void atualizarEndereco(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
@@ -282,68 +272,65 @@ public class UsuarioServlet extends HttpServlet{
                 request.getParameter("id")
         );
 
-        String nome = request.getParameter("nome");
+        String rua = request.getParameter("rua");
 
-        String senhaHash = request.getParameter("senha");
+        String bairro = request.getParameter("bairro");
 
-        boolean estaAtivo = Boolean.parseBoolean(
-                request.getParameter("estaAtivo")
+        String complemento = request.getParameter("complemento");
+
+        String cidade = request.getParameter("cidade");
+
+        String estado = request.getParameter("estado");
+
+        String numero = request.getParameter("numero");
+
+        String cep = request.getParameter("cep");
+
+        String cnpj = request.getParameter("cnpj");
+
+        Integer fkInstituicao = Integer.parseInt(
+                request.getParameter("fkInstituicao")
         );
 
-        String email = request.getParameter("email");
 
-        String cargo = request.getParameter("cargo");
+        String dataCriacaoParam = request.getParameter("dataCriacao");
 
-        TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
-                request.getParameter("tipoDeAcesso")
-        );
+        LocalDateTime dataCriacao = null;
 
-        int fkEndereco = Integer.parseInt(
-                request.getParameter("fkEndereco")
-        );
-
-        String dataAniversarioParam = request.getParameter("dataAniversario");
-
-        LocalDate dataAniversario = null;
-
-        if (dataAniversarioParam != null && !dataAniversarioParam.isBlank()) {
-            dataAniversario = LocalDate.parse(dataAniversarioParam);
+        if (dataCriacaoParam != null && !dataCriacaoParam.isBlank()) {
+            dataCriacao = LocalDateTime.parse(dataCriacaoParam);
         }
 
-        boolean primeiroAcesso = Boolean.parseBoolean(
-                request.getParameter("primeiroAcesso")
-        );
-
-        try (UsuarioDAO dao = new UsuarioDAO()) {
+        try (EnderecoDAO dao = new EnderecoDAO()) {
 
             // Busca como está atualmente no banco
-            Usuario original = dao.pesquisarPorId(id);
+            Endereco original = dao.pesquisarPorId(id);
 
             // Monta o objeto com os novos dados
-            Usuario alterado = new Usuario(
+            Endereco alterado = new Endereco(
                     id,
-                    nome,
-                    senhaHash,
-                    estaAtivo,
-                    email,
+                    rua,
+                    bairro,
+                    complemento,
+                    cidade,
+                    estado,
+                    numero,
+                    cep,
+                    cnpj,
                     original.getDataCriacao(),
-                    cargo,
-                    tipoDeAcesso,
-                    fkEndereco,
-                    dataAniversario,
-                    primeiroAcesso
+                    fkInstituicao
             );
 
-            Usuario usuarioApoioEmail = dao.pesquisarPorEmail(email);
+            Endereco enderecoApoioCnpj = dao.pesquisarPorCnpj(cnpj);
 
-            if (usuarioApoioEmail != null && usuarioApoioEmail.getId() != id){
-                throw ExcecaoDeJSP.emailDuplicado();
+            if (enderecoApoioCnpj != null && enderecoApoioCnpj.getId() != id){
+                throw ExcecaoDeJSP.cnpjDuplicado();
             }
 
             dao.atualizar(original, alterado);
 
             response.sendRedirect(
-                    request.getContextPath() + "/usuarios"
+                    request.getContextPath() + "/enderecos"
             );
 
         } catch (SQLException | ClassNotFoundException e) {

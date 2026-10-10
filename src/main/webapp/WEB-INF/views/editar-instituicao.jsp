@@ -32,10 +32,17 @@
 } else {
 %>
 
+<% String erro = (String) request.getAttribute("erro"); %>
 <form
         action="${pageContext.request.contextPath}/instituicoes"
         method="post"
 >
+            <% if (erro != null && !erro.isBlank()) { %>
+            <p>
+                <%= erro %>
+            </p>
+            <% } %>
+
 
     <input
             type="hidden"
@@ -102,14 +109,12 @@
         Tipo de instituição:
     </label>
 
-    <input
-            type="number"
-            id="tipoInstituicao"
-            name="tipoInstituicao"
-            value="<%= instituicao.getTipoInstituicao() %>"
-            min="1"
-            required
-    >
+    <select id="tipoInstituicao" name="tipoInstituicao" required>
+        <option value="1" <%= instituicao.getTipoInstituicao().getCodigo() == 1 ? "selected" : "" %>>Escola</option>
+        <option value="2" <%= instituicao.getTipoInstituicao().getCodigo() == 2 ? "selected" : "" %>>Faculdade</option>
+        <option value="3" <%= instituicao.getTipoInstituicao().getCodigo() == 3 ? "selected" : "" %>>Empresa</option>
+        <option value="4" <%= instituicao.getTipoInstituicao().getCodigo() == 4 ? "selected" : "" %>>Órgão público</option>
+    </select>
 
     <br><br>
 

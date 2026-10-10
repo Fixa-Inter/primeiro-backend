@@ -62,7 +62,7 @@ public class FotoUsuario {
 
     @Override
     public String toString(){
-        return "FotoUsuario{id=%d, dataRegistro=%s, url='%s', fkUsuario=%d}"
+        return "%s %s %s %s"
                 .formatted(id, dataRegistro, url, fkUsuario);
     }
 }
