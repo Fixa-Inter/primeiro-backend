@@ -56,11 +56,10 @@ public class ContratoServlet extends HttpServlet{
                         request.getParameter("id")
                 );
 
-                ContratoDAO dao = new ContratoDAO();
-
-                Contrato contrato = dao.pesquisarPorId(id);
-
-                request.setAttribute("contrato", contrato);
+                try (ContratoDAO dao = new ContratoDAO()) {
+                    Contrato contrato = dao.pesquisarPorId(id);
+                    request.setAttribute("contrato", contrato);
+                }
 
                 destino = PAGINA_EDICAO;
             }
