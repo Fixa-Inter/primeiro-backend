@@ -226,31 +226,6 @@ public class ContratoDAO extends DAO{
         return contrato;
     }
 
-    //pesquisar por fkEndereco
-    public Contrato pesquisarPorFkEndereco(int fkEndereco) throws SQLException {
-        String sql = "SELECT DATA_INICIO,DATA_VENCIMENTO,FK_ENDERECO_ID,FK_PLANO_ID,STATUS_CONTRATO FROM CONTRATO WHERE FK_ENDERECO_ID = ?";
-        Contrato contrato;
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, fkEndereco);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (!rs.next()) {
-                    return null;
-                }
-
-                int id = rs.getInt("id");
-                LocalDate dataInicio = rs.getObject("DATA_INICIO", LocalDate.class);
-                LocalDate dataVencimento = rs.getObject("DATA_VENCIMENTO", LocalDate.class);
-                int fkPlano = rs.getInt("FK_PLANO_ID");
-                int statusContrato = rs.getInt("STATUS_CONTRATO");
-
-                contrato = new Contrato(id, dataInicio, dataVencimento, fkPlano, fkEndereco, StatusContrato.converterEnum(statusContrato));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        }
-        return contrato;
-    }
 
     //alter
     public void atualizar(Contrato original, Contrato alterado) throws SQLException{

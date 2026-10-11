@@ -302,7 +302,7 @@ public class UsuarioDAO extends DAO{
             try (ResultSet rs = pstmt.executeQuery()){
 
                 if (!rs.next()){
-                    throw new SQLException("Erro ao encontrar aluno");
+                    return null;
                 }
 
                 int id = rs.getInt("id");
