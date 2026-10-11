@@ -28,4 +28,9 @@ public class ExcecaoDeJSP extends RuntimeException {
         String mensagem = "Por favor, preencha o campo %s.".formatted(campo);
         return new ExcecaoDeJSP(mensagem);
     }
+
+    // Constraint -> senha ou email diferentes do acesso ao banco de dados
+    public static ExcecaoDeJSP falhaLogin() {
+        return new ExcecaoDeJSP("Login falhou. Verifique se Email e Senha.");
+    }
 }
