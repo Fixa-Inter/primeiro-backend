@@ -101,7 +101,7 @@ public class UsuarioDAO extends DAO{
     }
 
     // construtor
-    public UsuarioDAO() throws SQLException, ClassNotFoundException {
+    public UsuarioDAO() throws SQLException {
         super();
     }
 

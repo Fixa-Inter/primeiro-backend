@@ -10,10 +10,9 @@ public abstract class DAO implements AutoCloseable{
     protected static final CriaConexoes criaConn = new CriaConexoes();
     protected Connection conn;
 
-    protected DAO() throws SQLException, ClassNotFoundException{
+    protected DAO() throws SQLException {
 
         conn = criaConn.getConnection();
-        conn.setAutoCommit(false);
     }
 
     @Override

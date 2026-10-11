@@ -54,9 +54,6 @@ public class InstituicaoServlet extends HttpServlet{
         } catch (SQLException e) {
             System.err.println("Erro ao executar operação no banco:");
             e.printStackTrace(System.err);
-        } catch (ClassNotFoundException e) {
-            System.err.println("Falha ao carregar o driver postgresql:");
-            e.printStackTrace(System.err);
         } catch (Throwable e) {
             System.err.println("Erro inesperado:");
             e.printStackTrace(System.err);
@@ -173,7 +170,7 @@ public class InstituicaoServlet extends HttpServlet{
             request.setAttribute("instituicoes", instituicoes);
             request.setAttribute("filtros", filtros);
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new ServletException(e);
         }
     }
@@ -223,7 +220,7 @@ public class InstituicaoServlet extends HttpServlet{
                     request.getContextPath() + "/instituicoes"
             );
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new ServletException(e);
         }
     }
@@ -241,8 +238,6 @@ public class InstituicaoServlet extends HttpServlet{
                     request.getContextPath() + "/instituicoes"
             );
         } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -293,7 +288,7 @@ public class InstituicaoServlet extends HttpServlet{
                     request.getContextPath() + "/instituicoes"
             );
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new ServletException(e);
         }
     }

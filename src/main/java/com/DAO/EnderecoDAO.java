@@ -80,7 +80,7 @@ public class EnderecoDAO extends DAO{
     }
 
     // construtor de DAO
-    public EnderecoDAO() throws SQLException, ClassNotFoundException {
+    public EnderecoDAO() throws SQLException {
         super();
     }
 

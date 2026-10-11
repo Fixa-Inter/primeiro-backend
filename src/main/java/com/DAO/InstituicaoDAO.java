@@ -87,7 +87,7 @@ public class InstituicaoDAO extends DAO{
 
 
     // construtor de DAO
-    public InstituicaoDAO() throws SQLException, ClassNotFoundException {
+    public InstituicaoDAO() throws SQLException {
         super();
     }
 

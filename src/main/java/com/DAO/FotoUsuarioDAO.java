@@ -20,7 +20,7 @@ public class FotoUsuarioDAO extends DAO{
 
     // construtor
 
-    public FotoUsuarioDAO() throws SQLException, ClassNotFoundException {
+    public FotoUsuarioDAO() throws SQLException {
         super();
     }
 

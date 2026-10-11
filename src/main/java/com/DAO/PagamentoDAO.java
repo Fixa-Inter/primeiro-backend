@@ -96,7 +96,7 @@ public class PagamentoDAO extends DAO{
     }
 
     // construtor
-    public PagamentoDAO() throws SQLException, ClassNotFoundException{
+    public PagamentoDAO() throws SQLException {
         super();
     }
 
