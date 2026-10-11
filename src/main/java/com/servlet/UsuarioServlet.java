@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.UsuarioDAO;
+import com.DTO.UsuarioDTO;
 import com.exception.ExcecaoDeJSP;
 import com.model.*;
 import com.model.enums.OperacaoFiltro;
@@ -163,7 +164,7 @@ public class UsuarioServlet extends HttpServlet{
                 direcaoSequencia = null;
             }
 
-            List<Usuario> usuarios = dao.listar(
+            List<UsuarioDTO> usuarios = dao.listarUsuariosDTO(
                     filtros,
                     campoSequencia,
                     direcaoSequencia,

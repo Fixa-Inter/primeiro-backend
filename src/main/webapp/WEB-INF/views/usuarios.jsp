@@ -1,12 +1,12 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.model.Usuario" %>
+<%@ page import="com.DTO.UsuarioDTO" %>
 <%@ page import="com.model.Filtro" %>
 <%@ page import="com.model.enums.OperacaoFiltro" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    List<Usuario> usuarios = (List<Usuario>) request.getAttribute("usuarios");
+    List<UsuarioDTO> usuarios = (List<UsuarioDTO>) request.getAttribute("usuarios");
     List<Filtro> filtros = (List<Filtro>) request.getAttribute("filtros");
 %>
 
@@ -137,9 +137,7 @@
         <option value="NOME">Nome</option>
         <option value="ESTA_ATIVO">Está ativo</option>
         <option value="EMAIL">Email</option>
-        <option value="DATA_CRIACAO">Data de criação</option>
         <option value="CARGO">Cargo</option>
-        <option value="FK_ENDERECO_ID">ID do endereço</option>
         <option value="TIPO_ACESSO">Tipo de acesso</option>
         <option value="DATA_NASCIMENTO">Data de nascimento</option>
         <option value="PRIMEIRO_ACESSO">Primeiro acesso</option>
@@ -240,14 +238,8 @@
         <option value="EMAIL-ASC">Email - Crescente</option>
         <option value="EMAIL-DESC">Email - Decrescente</option>
 
-        <option value="DATA_CRIACAO-ASC">Data de criação - Crescente</option>
-        <option value="DATA_CRIACAO-DESC">Data de criação - Decrescente</option>
-
         <option value="CARGO-ASC">Cargo - Crescente</option>
         <option value="CARGO-DESC">Cargo - Decrescente</option>
-
-        <option value="FK_ENDERECO_ID-ASC">ID do endereço - Crescente</option>
-        <option value="FK_ENDERECO_ID-DESC">ID do endereço - Decrescente</option>
 
         <option value="TIPO_ACESSO-ASC">Tipo de acesso - Crescente</option>
         <option value="TIPO_ACESSO-DESC">Tipo de acesso - Decrescente</option>
@@ -280,19 +272,19 @@
         <th>Nome</th>
         <th>Está ativo</th>
         <th>Email</th>
-        <th>Data de criação</th>
         <th>Cargo</th>
         <th>Tipo de acesso</th>
-        <th>ID do endereço</th>
         <th>Data de nascimento</th>
         <th>Primeiro acesso</th>
+        <th>Estado</th>
+        <th>Instituição</th>
         <th>Ações</th>
     </tr>
     </thead>
 
     <tbody>
 
-    <% for (Usuario usuario : usuarios) { %>
+    <% for (UsuarioDTO usuario : usuarios) { %>
 
     <tr>
 
@@ -313,27 +305,27 @@
         </td>
 
         <td>
-            <%= usuario.getDataCriacao() %>
-        </td>
-
-        <td>
             <%= usuario.getCargo() %>
         </td>
 
         <td>
-            <%= usuario.getTipoDeAcesso() %>
+            <%= usuario.getTipoAcesso() %>
         </td>
 
         <td>
-            <%= usuario.getFkEndereco() %>
-        </td>
-
-        <td>
-            <%= usuario.getDataAniversario() %>
+            <%= usuario.getDataNascimento() %>
         </td>
 
         <td>
             <%= usuario.getPrimeiroAcesso() %>
+        </td>
+
+        <td>
+            <%= usuario.getEstado() %>
+        </td>
+
+        <td>
+            <%= usuario.getInstituicaoNome() %>
         </td>
 
         <td>

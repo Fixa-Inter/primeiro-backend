@@ -1,5 +1,6 @@
 package com.DAO;
 
+import com.DTO.UsuarioDTO;
 import com.model.Filtro;
 import com.model.Usuario;
 import com.model.enums.MetodoPagamento;
@@ -302,7 +303,7 @@ public class UsuarioDAO extends DAO{
             try (ResultSet rs = pstmt.executeQuery()){
 
                 if (!rs.next()){
-                    throw new SQLException("Erro ao encontrar aluno");
+                    return null;
                 }
 
                 int id = rs.getInt("id");
@@ -431,5 +432,106 @@ public class UsuarioDAO extends DAO{
             throw e;
         }
 
+    }
+
+    public List<UsuarioDTO> listarUsuariosDTO(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
+
+        List<UsuarioDTO> resultado = new ArrayList<>();
+
+        String sql = "SELECT * FROM vw_usuario";
+
+        if (filtros != null && !filtros.isEmpty()) {
+
+            sql += " WHERE ";
+
+            for (int i = 0; i < filtros.size(); i++) {
+
+                Filtro filtro = filtros.get(i);
+
+                // Verifica se o campo existe
+                if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
+                    throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
+                }
+
+                // Verifica se a operação é permitida para esse campo
+                if (!operacoesPorCampo
+                        .get(filtro.getCampoFiltravel())
+                        .contains(filtro.getOperacaoFiltro())) {
+
+                    throw new IllegalArgumentException(
+                            "Operação inválida para o campo: " + filtro.getCampoFiltravel()
+                    );
+                }
+
+                // Coloca AND a partir do segundo filtro
+                if (i > 0) {
+                    sql += " AND ";
+                }
+
+                // Adiciona a condição
+                if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+
+                    sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
+                            + filtro.getOperacaoFiltro().getOperadorSQL()
+                            + " REPLACE(unaccent(?), ' ', '')";
+
+                } else {
+
+                    sql += filtro.getCampoFiltravel() + " "
+                            + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+                }
+            }
+        }
+
+        if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
+            sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
+        } else {
+            sql += " ORDER BY ID ASC";
+        }
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Verifica se tem filtro, se sim define a variável do comando SQL
+            if (filtros != null && !filtros.isEmpty()) {
+                for (int i = 0; i < filtros.size(); i++) {
+                    Filtro filtro = filtros.get(i);
+
+                    if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                        pstmt.setObject(i + 1, "%" + filtro.getValor() + "%");
+                    } else {
+                        pstmt.setObject(i + 1, filtro.getValor());
+                    }
+                }
+            }
+
+            try (ResultSet rs = pstmt.executeQuery()){
+                while (rs.next()){
+
+                    int id = rs.getInt("id");
+                    String nome = rs.getString("nome");
+                    boolean estaAtivo = rs.getBoolean("esta_ativo");
+                    String email = rs.getString("email");
+                    String cargo = rs.getString("cargo");
+                    int tipoDeAcesso = rs.getInt("tipo_acesso");
+                    Date dataAniversarioAcessoBD =  rs.getDate("data_nascimento");
+                    LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
+                    Boolean primeiroAcesso = rs.getBoolean("primeiro_acesso");
+
+                    resultado.add(new UsuarioDTO(id, nome, email, cargo,
+                            TipoAcesso.converterEnum(tipoDeAcesso).getNome(), estaAtivo,
+                            dataAniversario, primeiroAcesso, rs.getString("estado"),
+                            rs.getString("instituicao_nome")));
+                }
+            }
+
+            if (pesquisa != null && !pesquisa.isEmpty()) {
+                String pesquisaNormalizada = pesquisa.toLowerCase().trim().replace(" ", "");
+                resultado.removeIf(usuario -> !usuario.toString()
+                        .toLowerCase().trim().replace(" ", "")
+                        .contains(pesquisaNormalizada));
+            }
+
+        }
+        conn.commit();
+        return resultado;
     }
 }

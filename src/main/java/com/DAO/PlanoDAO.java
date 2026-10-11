@@ -232,38 +232,6 @@ public class PlanoDAO extends DAO{
         return plano;
     }
 
-    //pesquisar por nome
-    public Plano pesquisarPorNome(String nome) throws SQLException{
-
-        String sql = "SELECT NOME, VALOR_MENSAL, DESCRICAO, DURACAO_MESES, DATA_CRIACAO FROM PLANO WHERE id = ?";
-
-        Plano plano;
-
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, nome);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                // Se não encontrar o plano retorna null
-                if (!rs.next()) {
-                    return null;
-                }
-
-                int id = rs.getInt("ID");
-                double valorMensal = rs.getDouble("VALOR_MENSAL");
-                String descricao = rs.getString("DESCRICAO");
-                int duracaoMeses = rs.getInt("DURACAO_MESES");
-                Timestamp dataCriacaoSQL = rs.getTimestamp("DATA_CRIACAO");
-                LocalDateTime dataCriacao = (dataCriacaoSQL == null
-                        ? null
-                        : dataCriacaoSQL.toLocalDateTime());
-
-                plano = new Plano(id, nome, valorMensal, duracaoMeses, descricao, dataCriacao);
-            }
-        }
-
-        conn.commit();
-        return plano;
-    }
 
     //update
     public void atualizar(Plano original, Plano alterado) throws SQLException{

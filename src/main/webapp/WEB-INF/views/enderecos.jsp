@@ -1,11 +1,11 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.model.Endereco" %>
+<%@ page import="com.DTO.EnderecoDTO" %>
 <%@ page import="com.model.Filtro" %>
 <%@ page import="com.model.enums.OperacaoFiltro" %>
 
 <%
-    List<Endereco> enderecos =
-            (List<Endereco>) request.getAttribute("enderecos");
+    List<EnderecoDTO> enderecos =
+            (List<EnderecoDTO>) request.getAttribute("enderecos");
 
     List<Filtro> filtros =
             (List<Filtro>) request.getAttribute("filtros");
@@ -498,8 +498,6 @@
         <th>Estado</th>
         <th>Número</th>
         <th>CEP</th>
-        <th>CNPJ</th>
-        <th>Data de criação</th>
         <th>Instituição</th>
         <th>Ações</th>
     </tr>
@@ -511,7 +509,7 @@
     <%
         if (enderecos != null && !enderecos.isEmpty()) {
 
-            for (Endereco endereco : enderecos) {
+            for (EnderecoDTO endereco : enderecos) {
     %>
 
     <tr>
@@ -549,15 +547,7 @@
         </td>
 
         <td>
-            <%= endereco.getCnpj() %>
-        </td>
-
-        <td>
-            <%= endereco.getDataCriacao() %>
-        </td>
-
-        <td>
-            <%= endereco.getFkInstituicao() %>
+            <%= endereco.getInstituicaoNome() %>
         </td>
 
         <td class="acoes">
@@ -614,7 +604,7 @@
 
     <tr>
 
-        <td colspan="12">
+        <td colspan="10">
             Nenhum endereço encontrado.
         </td>
 

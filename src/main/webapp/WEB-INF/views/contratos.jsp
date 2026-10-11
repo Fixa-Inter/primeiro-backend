@@ -1,12 +1,12 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.model.Contrato" %>
+<%@ page import="com.DTO.ContratoDTO" %>
 <%@ page import="com.model.Filtro" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    List<Contrato> contratos =
-            (List<Contrato>) request.getAttribute("contratos");
+    List<ContratoDTO> contratos =
+            (List<ContratoDTO>) request.getAttribute("contratos");
 
     List<Filtro> filtros =
             (List<Filtro>) request.getAttribute("filtros");
@@ -331,8 +331,9 @@
         <th>ID</th>
         <th>Data de início</th>
         <th>Data de vencimento</th>
-        <th>ID do plano</th>
-        <th>ID do endereço</th>
+        <th>Plano</th>
+        <th>Estado</th>
+        <th>Instituição</th>
         <th>Status</th>
         <th>Ações</th>
     </tr>
@@ -341,7 +342,7 @@
     <tbody>
 
     <%
-        for (Contrato contrato : contratos) {
+        for (ContratoDTO contrato : contratos) {
     %>
 
     <tr>
@@ -359,11 +360,15 @@
         </td>
 
         <td>
-            <%= contrato.getFkPlano() %>
+            <%= contrato.getPlanoNome() %>
         </td>
 
         <td>
-            <%= contrato.getFkEndereco() %>
+            <%= contrato.getEstado() %>
+        </td>
+
+        <td>
+            <%= contrato.getInstituicaoNome() %>
         </td>
 
         <td>

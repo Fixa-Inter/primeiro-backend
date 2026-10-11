@@ -1,6 +1,9 @@
 package com.DAO;
 
+import com.DTO.FotoUsuarioDTO;
+import com.model.Filtro;
 import com.model.FotoUsuario;
+import com.model.enums.OperacaoFiltro;
 import com.model.SuperAdministrador;
 import org.postgresql.core.SqlCommand;
 
@@ -14,9 +17,27 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class FotoUsuarioDAO extends DAO{
+
+    public static final Map<String, String> camposFiltraveis = Map.of(
+            "ID", "ID",
+            "DATA_REGISTRO", "Data de registro",
+            "URL", "URL",
+            "USUARIO_NOME", "Nome do usuário",
+            "USUARIO_EMAIL", "Email do usuário"
+    );
+
+    public static final Map<String, List<OperacaoFiltro>> operacoesPorCampo = Map.of(
+            "ID", List.of(OperacaoFiltro.IGUAL),
+            "DATA_REGISTRO", List.of(OperacaoFiltro.IGUAL, OperacaoFiltro.MAIOR_QUE,
+                    OperacaoFiltro.MAIOR_OU_IGUAL, OperacaoFiltro.MENOR_QUE, OperacaoFiltro.MENOR_OU_IGUAL),
+            "URL", List.of(OperacaoFiltro.IGUAL, OperacaoFiltro.CONTEM),
+            "USUARIO_NOME", List.of(OperacaoFiltro.IGUAL, OperacaoFiltro.CONTEM),
+            "USUARIO_EMAIL", List.of(OperacaoFiltro.IGUAL, OperacaoFiltro.CONTEM)
+    );
 
     // construtor
 
@@ -226,5 +247,24 @@ public class FotoUsuarioDAO extends DAO{
         }
     }
 
-
+    public List<FotoUsuarioDTO> listarFotoUsuarioDTO(String pesquisa) throws SQLException {
+        List<FotoUsuarioDTO> resultado = new ArrayList<>();
+        String sql = "SELECT * FROM vw_foto_usuario";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Date dataSql = rs.getDate("data_registro");
+                    resultado.add(new FotoUsuarioDTO(rs.getInt("id"),
+                            dataSql == null ? null : dataSql.toLocalDate(), rs.getString("url"),
+                            rs.getString("usuario_nome"), rs.getString("usuario_email")));
+                }
+            }
+        }
+        if (pesquisa != null && !pesquisa.isBlank()) {
+            String termo = pesquisa.toLowerCase().trim().replace(" ", "");
+            resultado.removeIf(dto -> !dto.toString().toLowerCase().trim().replace(" ", "").contains(termo));
+        }
+        conn.commit();
+        return resultado;
+    }
 }

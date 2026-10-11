@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.PagamentoDAO;
+import com.DTO.PagamentoDTO;
 import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.Pagamento;
@@ -161,7 +162,7 @@ public class PagamentoServlet extends HttpServlet {
                 direcaoSequencia = null;
             }
 
-            List<Pagamento> pagamentos = dao.listar(
+            List<PagamentoDTO> pagamentos = dao.listarPagamentoDTO(
                     filtros,
                     campoSequencia,
                     direcaoSequencia,
