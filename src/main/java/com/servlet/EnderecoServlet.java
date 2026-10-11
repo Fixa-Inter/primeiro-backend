@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.EnderecoDAO;
+import com.DTO.EnderecoDTO;
 import com.exception.ExcecaoDeJSP;
 import com.model.Endereco;
 import com.model.Filtro;
@@ -169,7 +170,7 @@ public class EnderecoServlet extends HttpServlet{
                 direcaoSequencia = null;
             }
 
-            List<Endereco> enderecos = dao.listar(
+            List<EnderecoDTO> enderecos = dao.listarEnderecoDTO(
                     filtros,
                     campoSequencia,
                     direcaoSequencia,

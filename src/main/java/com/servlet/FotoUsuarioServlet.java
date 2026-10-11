@@ -2,6 +2,7 @@ package com.servlet;
 
 import com.DAO.FotoUsuarioDAO;
 import com.DAO.SuperAdministradorDAO;
+import com.DTO.FotoUsuarioDTO;
 import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.FotoUsuario;
@@ -98,7 +99,7 @@ public class FotoUsuarioServlet extends HttpServlet{
 
         try (FotoUsuarioDAO dao = new FotoUsuarioDAO()) {
 
-            List<FotoUsuario> fotoUsuarios = dao.listar(request.getParameter("pesquisa"));
+            List<FotoUsuarioDTO> fotoUsuarios = dao.listarFotoUsuarioDTO(request.getParameter("pesquisa"));
 
             request.setAttribute("fotos", fotoUsuarios);
 
