@@ -57,4 +57,10 @@ public class FotoUsuarioDTO {
     public void setUsuarioEmail(String usuarioEmail) {
         this.usuarioEmail = usuarioEmail;
     }
+
+    @Override
+    public String toString() {
+        return "%s %s %s %s %s"
+                .formatted(id, dataRegistro, url, usuarioNome, usuarioEmail);
+    }
 }

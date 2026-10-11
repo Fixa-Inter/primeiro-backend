@@ -77,4 +77,10 @@ public class ContratoDTO {
     public void setInstituicaoNome(String instituicaoNome) {
         this.instituicaoNome = instituicaoNome;
     }
+
+    @Override
+    public String toString() {
+        return "%s %s %s %s %s %s %s"
+                .formatted(id, dataInicio, dataVencimento, statusContrato, planoNome, estado, instituicaoNome);
+    }
 }

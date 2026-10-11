@@ -107,4 +107,11 @@ public class UsuarioDTO {
     public void setInstituicaoNome(String instituicaoNome) {
         this.instituicaoNome = instituicaoNome;
     }
+
+    @Override
+    public String toString() {
+        return "%s %s %s %s %s %s %s %s %s %s"
+                .formatted(id, nome, email, cargo, tipoAcesso, estaAtivo, dataNascimento,
+                        primeiroAcesso, estado, instituicaoNome);
+    }
 }

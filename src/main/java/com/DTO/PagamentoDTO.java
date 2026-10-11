@@ -109,4 +109,11 @@ public class PagamentoDTO {
     public void setEstaEmDia(Boolean estaEmDia) {
         this.estaEmDia = estaEmDia;
     }
+
+    @Override
+    public String toString() {
+        return "%s %s %s %s %s %s %s %s %s %s"
+                .formatted(id, valor, dataPagamento, foiRealizado, statusContrato, dataVencimento,
+                        planoNome, estado, instituicaoNome, estaEmDia);
+    }
 }

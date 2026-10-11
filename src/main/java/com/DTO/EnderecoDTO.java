@@ -95,4 +95,10 @@ public class EnderecoDTO {
     public void setInstituicaoNome(String instituicaoNome) {
         this.instituicaoNome = instituicaoNome;
     }
+
+    @Override
+    public String toString() {
+        return "%s %s %s %s %s %s %s %s %s"
+                .formatted(id, rua, bairro, complemento, cidade, estado, numero, cep, instituicaoNome);
+    }
 }
