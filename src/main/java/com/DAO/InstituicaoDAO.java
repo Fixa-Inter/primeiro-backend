@@ -270,7 +270,7 @@ public class InstituicaoDAO extends DAO{
             try (ResultSet rs = pstmt.executeQuery()){
 
                 if (!rs.next()){
-                    throw new SQLException("Erro ao procurar insituicao");
+                    return null;
                 }
 
                 int id = rs.getInt("id");

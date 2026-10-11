@@ -2,16 +2,15 @@
 
 <%@ page import="java.util.List" %>
 
-<%@ page import="com.model.Pagamento" %>
+<%@ page import="com.DTO.PagamentoDTO" %>
 <%@ page import="com.model.Filtro" %>
 
-<%@ page import="com.model.enums.MetodoPagamento" %>
 <%@ page import="com.model.enums.OperacaoFiltro" %>
 
 
 <%
-    List<Pagamento> pagamentos =
-            (List<Pagamento>) request.getAttribute("pagamentos");
+    List<PagamentoDTO> pagamentos =
+            (List<PagamentoDTO>) request.getAttribute("pagamentos");
 
     List<Filtro> filtros =
             (List<Filtro>) request.getAttribute("filtros");
@@ -709,9 +708,13 @@
 
         <th>Foi Realizado</th>
 
-        <th>Contrato</th>
+        <th>Status do contrato</th>
 
-        <th>Método de Pagamento</th>
+        <th>Vencimento</th>
+        <th>Plano</th>
+        <th>Estado</th>
+        <th>Instituição</th>
+        <th>Em dia</th>
 
         <th>Ações</th>
 
@@ -719,7 +722,7 @@
 
 
     <%
-        for (Pagamento pagamento : pagamentos) {
+        for (PagamentoDTO pagamento : pagamentos) {
     %>
 
 
@@ -752,7 +755,7 @@
         <td>
 
             <%
-                if (pagamento.getFoiRealizado()) {
+                if (Boolean.TRUE.equals(pagamento.getFoiRealizado())) {
             %>
 
             Sim
@@ -773,7 +776,7 @@
         <!-- CONTRATO -->
 
         <td>
-            <%= pagamento.getFkContrato() %>
+            <%= pagamento.getStatusContrato() %>
         </td>
 
 
@@ -782,12 +785,10 @@
         <td>
 
             <%
-                if (pagamento.getMetodoPagamento() != null) {
+                if (pagamento.getDataVencimento() != null) {
             %>
 
-            <%= pagamento
-                    .getMetodoPagamento()
-                    .getNome() %>
+            <%= pagamento.getDataVencimento() %>
 
             <%
             } else {
@@ -800,6 +801,11 @@
             %>
 
         </td>
+
+        <td><%= pagamento.getPlanoNome() %></td>
+        <td><%= pagamento.getEstado() %></td>
+        <td><%= pagamento.getInstituicaoNome() %></td>
+        <td><%= Boolean.TRUE.equals(pagamento.getEstaEmDia()) ? "Sim" : "Não" %></td>
 
 
         <!-- AÇÕES -->

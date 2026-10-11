@@ -1,5 +1,6 @@
 package com.DAO;
 
+import com.DTO.PagamentoDTO;
 import com.model.Filtro;
 import com.model.Instituicao;
 import com.model.Pagamento;
@@ -11,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -340,5 +342,62 @@ public class PagamentoDAO extends DAO{
             conn.rollback();
             throw e;
         }
+    }
+
+    public List<PagamentoDTO> listarPagamentoDTO(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
+        List<PagamentoDTO> resultado = new ArrayList<>();
+        String sql = "SELECT * FROM vw_pagamento";
+        if (filtros != null && !filtros.isEmpty()) {
+            sql += " WHERE ";
+            for (int i = 0; i < filtros.size(); i++) {
+                Filtro filtro = filtros.get(i);
+                String campo = filtro.getCampoFiltravel();
+                if (!camposFiltraveis.containsKey(campo)) throw new IllegalArgumentException("Campo inválido: " + campo);
+                if (!operacoesPorCampo.get(campo).contains(filtro.getOperacaoFiltro())) {
+                    throw new IllegalArgumentException("Operação inválida para o campo: " + campo);
+                }
+                if (i > 0) sql += " AND ";
+                sql += campo + " " + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+            }
+        }
+        if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
+            sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
+        } else {
+            sql += " ORDER BY id ASC";
+        }
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Verifica se tem filtro, se sim define a variável do comando SQL
+            if (filtros != null && !filtros.isEmpty()) {
+                for (int i = 0; i < filtros.size(); i++) {
+                    Filtro filtro = filtros.get(i);
+
+                    if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                        pstmt.setObject(i + 1, "%" + filtro.getValor() + "%");
+                    } else {
+                        pstmt.setObject(i + 1, filtro.getValor());
+                    }
+                }
+            }
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Timestamp pagamentoSql = rs.getTimestamp("data_pagamento");
+                    Date vencimentoSql = rs.getDate("data_vencimento");
+                    boolean estaEmDiaValor = rs.getBoolean("esta_em_dia");
+                    Boolean estaEmDia = rs.wasNull() ? null : estaEmDiaValor;
+                    resultado.add(new PagamentoDTO(rs.getInt("id"), rs.getBigDecimal("valor"),
+                            pagamentoSql == null ? null : pagamentoSql.toLocalDateTime(),
+                            rs.getBoolean("foi_realizado"), rs.getString("status_contrato"),
+                            vencimentoSql == null ? null : vencimentoSql.toLocalDate(),
+                            rs.getString("plano_nome"), rs.getString("estado"),
+                            rs.getString("instituicao_nome"), estaEmDia));
+                }
+            }
+        }
+        if (pesquisa != null && !pesquisa.isBlank()) {
+            String termo = pesquisa.toLowerCase().trim().replace(" ", "");
+            resultado.removeIf(dto -> !dto.toString().toLowerCase().trim().replace(" ", "").contains(termo));
+        }
+        conn.commit();
+        return resultado;
     }
 }

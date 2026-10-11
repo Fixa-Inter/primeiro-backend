@@ -1,10 +1,8 @@
 package com.DAO;
 
+import com.DTO.ContratoDTO;
 import com.model.Contrato;
 import com.model.Filtro;
-import com.model.Plano;
-import com.model.SuperAdministrador;
-import com.model.enums.MetodoPagamento;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.StatusContrato;
 
@@ -226,31 +224,6 @@ public class ContratoDAO extends DAO{
         return contrato;
     }
 
-    //pesquisar por fkEndereco
-    public Contrato pesquisarPorFkEndereco(int fkEndereco) throws SQLException {
-        String sql = "SELECT DATA_INICIO,DATA_VENCIMENTO,FK_ENDERECO_ID,FK_PLANO_ID,STATUS_CONTRATO FROM CONTRATO WHERE FK_ENDERECO_ID = ?";
-        Contrato contrato;
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, fkEndereco);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (!rs.next()) {
-                    return null;
-                }
-
-                int id = rs.getInt("id");
-                LocalDate dataInicio = rs.getObject("DATA_INICIO", LocalDate.class);
-                LocalDate dataVencimento = rs.getObject("DATA_VENCIMENTO", LocalDate.class);
-                int fkPlano = rs.getInt("FK_PLANO_ID");
-                int statusContrato = rs.getInt("STATUS_CONTRATO");
-
-                contrato = new Contrato(id, dataInicio, dataVencimento, fkPlano, fkEndereco, StatusContrato.converterEnum(statusContrato));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        }
-        return contrato;
-    }
 
     //alter
     public void atualizar(Contrato original, Contrato alterado) throws SQLException{
@@ -323,4 +296,71 @@ public class ContratoDAO extends DAO{
             throw e;
         }
     }
+
+    public List<ContratoDTO> listarContratoDTO(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
+        List<ContratoDTO> resultado = new ArrayList<>();
+        String sql = "SELECT * FROM vw_contrato";
+
+        if (filtros != null && !filtros.isEmpty()) {
+            sql += " WHERE ";
+            for (int i = 0; i < filtros.size(); i++) {
+                Filtro filtro = filtros.get(i);
+                String campo = filtro.getCampoFiltravel();
+                if (!camposFiltraveis.containsKey(campo)) {
+                    throw new IllegalArgumentException("Campo inválido: " + campo);
+                }
+                if (!operacoesPorCampo.get(campo).contains(filtro.getOperacaoFiltro())) {
+                    throw new IllegalArgumentException("Operação inválida para o campo: " + campo);
+                }
+                if (i > 0) sql += " AND ";
+                if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                    sql += "CAST(" + campo + " AS TEXT) " + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+                } else {
+                    sql += campo + " " + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+                }
+            }
+        }
+
+        if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
+            sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
+        } else {
+            sql += " ORDER BY id ASC";
+        }
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Verifica se tem filtro, se sim define a variável do comando SQL
+            if (filtros != null && !filtros.isEmpty()) {
+                for (int i = 0; i < filtros.size(); i++) {
+                    Filtro filtro = filtros.get(i);
+
+                    if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                        pstmt.setObject(i + 1, "%" + filtro.getValor() + "%");
+                    } else {
+                        pstmt.setObject(i + 1, filtro.getValor());
+                    }
+                }
+            }
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Date inicio = rs.getDate("data_inicio");
+                    Date vencimento = rs.getDate("data_vencimento");
+                    int statusCodigo = rs.getInt("status_contrato");
+                    String status = rs.wasNull() ? null : StatusContrato.converterEnum(statusCodigo).getNome();
+                    resultado.add(new ContratoDTO(rs.getInt("id"),
+                            inicio == null ? null : inicio.toLocalDate(),
+                            vencimento == null ? null : vencimento.toLocalDate(), status,
+                            rs.getString("plano_nome"), rs.getString("estado"),
+                            rs.getString("instituicao_nome")));
+                }
+            }
+        }
+        if (pesquisa != null && !pesquisa.isBlank()) {
+            String pesquisaNormalizada = pesquisa.toLowerCase().trim().replace(" ", "");
+            resultado.removeIf(dto -> !dto.toString().toLowerCase().trim().replace(" ", "").contains(pesquisaNormalizada));
+        }
+        conn.commit();
+        return resultado;
+    }
+
+
 }

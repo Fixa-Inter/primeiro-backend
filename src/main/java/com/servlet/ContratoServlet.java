@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.ContratoDAO;
+import com.DTO.ContratoDTO;
 import com.exception.ExcecaoDeJSP;
 import com.model.Contrato;
 import com.model.Filtro;
@@ -180,7 +181,7 @@ public class ContratoServlet extends HttpServlet{
                 direcaoSequencia = null;
             }
 
-            List<Contrato> contratos = dao.buscar(
+            List<ContratoDTO> contratos = dao.listarContratoDTO(
                     filtros,
                     campoSequencia,
                     direcaoSequencia,

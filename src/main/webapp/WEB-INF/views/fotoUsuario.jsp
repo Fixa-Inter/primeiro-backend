@@ -1,11 +1,11 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.model.FotoUsuario" %>
+<%@ page import="com.DTO.FotoUsuarioDTO" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    List<FotoUsuario> fotos =
-            (List<FotoUsuario>) request.getAttribute("fotos");
+    List<FotoUsuarioDTO> fotos =
+            (List<FotoUsuarioDTO>) request.getAttribute("fotos");
 
     String contexto = request.getContextPath();
 %>
@@ -41,7 +41,8 @@
         <th>ID</th>
         <th>Data de registro</th>
         <th>URL</th>
-        <th>ID do usuário</th>
+        <th>Nome do usuário</th>
+        <th>E-mail</th>
         <th>Ações</th>
     </tr>
     </thead>
@@ -51,7 +52,7 @@
     <%
         if (fotos != null && !fotos.isEmpty()) {
 
-            for (FotoUsuario foto : fotos) {
+            for (FotoUsuarioDTO foto : fotos) {
     %>
 
     <tr>
@@ -69,7 +70,11 @@
         </td>
 
         <td>
-            <%= foto.getFkUsuario() %>
+            <%= foto.getUsuarioNome() %>
+        </td>
+
+        <td>
+            <%= foto.getUsuarioEmail() %>
         </td>
 
         <td>
@@ -113,7 +118,7 @@
     %>
 
     <tr>
-        <td colspan="5">
+        <td colspan="6">
             Nenhuma foto cadastrada.
         </td>
     </tr>
