@@ -138,6 +138,19 @@
 
         <input type="hidden" name="action" value="read">
 
+        <% if (filtros != null) {
+            for (Filtro filtro : filtros) { %>
+        <input type="hidden" name="campoFiltro" value="<%= filtro.getCampoFiltravel() %>">
+        <input type="hidden" name="valorFiltro" value="<%= filtro.getValor() %>">
+        <input type="hidden" name="operacaoFiltro" value="<%= filtro.getOperacaoFiltro().name() %>">
+        <%  }
+        } %>
+
+        <% String ordenacaoAtual = request.getParameter("ordenacao");
+           if (ordenacaoAtual != null && !ordenacaoAtual.isBlank()) { %>
+        <input type="hidden" name="ordenacao" value="<%= ordenacaoAtual %>">
+        <% } %>
+
         <select name="campoFiltro" required>
 
             <option value="">Campo</option>

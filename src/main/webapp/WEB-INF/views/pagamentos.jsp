@@ -5,7 +5,8 @@
 <%@ page import="com.DTO.PagamentoDTO" %>
 <%@ page import="com.model.Filtro" %>
 
-<%@ page import="com.model.enums.OperacaoFiltro" %>
+<%@ page import="com.model.enums.MetodoPagamento" %>
+
 
 
 <%
