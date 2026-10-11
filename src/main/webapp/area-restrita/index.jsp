@@ -12,6 +12,11 @@
 
 <h1>Fixa Backend</h1>
 
+<form method="post" action="${pageContext.request.contextPath}/login-handler">
+    <input type="hidden" name="action" value="logout">
+    <button type="submit">Sair</button>
+</form>
+
 <h2>CRUDs</h2>
 
 <ul>
