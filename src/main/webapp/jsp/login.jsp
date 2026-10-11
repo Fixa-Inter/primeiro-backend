@@ -24,12 +24,8 @@
             </div>
             <button action="" type="submit">Entrar</button>
         </form>
-        <a href="../index.html">Voltar ao início</a>
+        <a href="${pageContext.request.contextPath}/index.html">Voltar ao início</a>
         <% if (erro != null) { %>
-        <p>
-            <%= erro %>
-        </p>
-        <% } %><% if (erro != null) { %>
         <p>
             <%= erro %>
         </p>
