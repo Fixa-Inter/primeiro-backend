@@ -24,9 +24,9 @@ import java.util.List;
 @WebServlet(name = "FotoUsuarioServlet", value = "/fotoUsuario")
 public class FotoUsuarioServlet extends HttpServlet{
 
-    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/fotoUsuario.jsp";
-    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-fotoUsuario.jsp";
-    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-fotoUsuario.jsp";
+    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/fotoUsuario.jsp";
+    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-fotoUsuario.jsp";
+    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-fotoUsuario.jsp";
     private static final String PAGINA_ERRO = "/html/erro.html";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

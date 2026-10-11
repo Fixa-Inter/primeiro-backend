@@ -95,63 +95,21 @@
 
 
     <%
-        /*
-         * Mostra o nome do método de pagamento
-         * em vez do código.
-         */
-        if ("METODO_PAGAMENTO".equals(
-                filtro.getCampoFiltravel())) {
-
+        Object valorExibicao;
+        if ("METODO_PAGAMENTO".equals(filtro.getCampoFiltravel())) {
             try {
-
-                int codigo =
-                        Integer.parseInt(
-                                String.valueOf(
-                                        filtro.getValor()
-                                )
-                        );
-
-                out.print(
-                        MetodoPagamento
-                                .converterEnum(codigo)
-                                .getNome()
-                );
-
+                int codigo = Integer.parseInt(String.valueOf(filtro.getValor()));
+                valorExibicao = MetodoPagamento.converterEnum(codigo).getNome();
             } catch (Exception e) {
-
-                out.print(filtro.getValor());
-
+                valorExibicao = filtro.getValor();
             }
-
-        }
-
-        /*
-         * Mostra Sim/Não para boolean.
-         */
-        else if ("FOI_REALIZADO".equals(
-                filtro.getCampoFiltravel())) {
-
-            if (Boolean.TRUE.equals(filtro.getValor())) {
-
-                out.print("Sim");
-
-            } else {
-
-                out.print("Não");
-
-            }
-
-        }
-
-        /*
-         * Demais campos.
-         */
-        else {
-
-            out.print(filtro.getValor());
-
+        } else if ("FOI_REALIZADO".equals(filtro.getCampoFiltravel())) {
+            valorExibicao = Boolean.TRUE.equals(filtro.getValor()) ? "Sim" : "Não";
+        } else {
+            valorExibicao = filtro.getValor();
         }
     %>
+    <%= valorExibicao %>
 
 
     <!-- ================================================ -->

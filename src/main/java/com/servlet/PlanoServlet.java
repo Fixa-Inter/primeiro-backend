@@ -19,9 +19,9 @@ import java.util.List;
 @WebServlet(name = "PlanoServlet", value = "/planos")
 public class PlanoServlet extends HttpServlet {
 
-    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/planos.jsp";
-    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-plano.jsp";
-    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-plano.jsp";
+    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/planos.jsp";
+    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-plano.jsp";
+    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-plano.jsp";
     private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override

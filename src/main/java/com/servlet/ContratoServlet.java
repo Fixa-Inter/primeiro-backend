@@ -25,9 +25,9 @@ import java.util.List;
 @WebServlet(name="ContratoServlet", value = "/contratos")
 public class ContratoServlet extends HttpServlet{
 
-    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/contratos.jsp";
-    private static final String PAGINA_CADASTRO = "/WEB-INF/views/cadastro-contrato.jsp";
-    private static final String PAGINA_EDICAO = "/WEB-INF/views/editar-contrato.jsp";
+    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/contratos.jsp";
+    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-contrato.jsp";
+    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-contrato.jsp";
     private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
