@@ -1,5 +1,6 @@
 package com.DAO;
 
+import com.DTO.EnderecoDTO;
 import com.model.Endereco;
 import com.model.Filtro;
 import com.model.Instituicao;
@@ -423,4 +424,62 @@ public class EnderecoDAO extends DAO{
             throw e;
         }
     }
+
+    public List<EnderecoDTO> listarEnderecoDTO(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
+        List<EnderecoDTO> resultado = new ArrayList<>();
+        String sql = "SELECT * FROM vw_endereco";
+        if (filtros != null && !filtros.isEmpty()) {
+            sql += " WHERE ";
+            for (int i = 0; i < filtros.size(); i++) {
+                Filtro filtro = filtros.get(i);
+                String campo = filtro.getCampoFiltravel();
+                if (!camposFiltraveis.containsKey(campo)) throw new IllegalArgumentException("Campo inválido: " + campo);
+                if (!operacoesPorCampo.get(campo).contains(filtro.getOperacaoFiltro())) {
+                    throw new IllegalArgumentException("Operação inválida para o campo: " + campo);
+                }
+                if (i > 0) sql += " AND ";
+                if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                    sql += "REPLACE(unaccent(CAST(" + campo + " AS TEXT)), ' ', '') "
+                            + filtro.getOperacaoFiltro().getOperadorSQL()
+                            + " REPLACE(unaccent(?), ' ', '')";
+                } else {
+                    sql += campo + " " + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+                }
+            }
+        }
+        if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
+            sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
+        } else {
+            sql += " ORDER BY id ASC";
+        }
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Verifica se tem filtro, se sim define a variável do comando SQL
+            if (filtros != null && !filtros.isEmpty()) {
+                for (int i = 0; i < filtros.size(); i++) {
+                    Filtro filtro = filtros.get(i);
+
+                    if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
+                        pstmt.setObject(i + 1, "%" + filtro.getValor() + "%");
+                    } else {
+                        pstmt.setObject(i + 1, filtro.getValor());
+                    }
+                }
+            }
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    resultado.add(new EnderecoDTO(rs.getInt("id"), rs.getString("rua"),
+                            rs.getString("bairro"), rs.getString("complemento"), rs.getString("cidade"),
+                            rs.getString("estado"), rs.getString("numero"), rs.getString("cep"),
+                            rs.getString("instituicao_nome")));
+                }
+            }
+        }
+        if (pesquisa != null && !pesquisa.isBlank()) {
+            String termo = pesquisa.toLowerCase().trim().replace(" ", "");
+            resultado.removeIf(dto -> !dto.toString().toLowerCase().trim().replace(" ", "").contains(termo));
+        }
+        conn.commit();
+        return resultado;
+    }
+
 }
