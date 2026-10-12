@@ -64,7 +64,7 @@ public class CadastroServlet extends HttpServlet{
             verificarCodigo(request, response);
         } else if ("definirSenha".equals(action)) {
             definirSenha(request, response);
-        } else if ("bucarCnpj".equals(action)){
+        } else if ("buscarCnpj".equals(action)){
             buscarCnpj(request, response);
         } else if ("finalizar".equals(action)) {
             finalizar(request, response);
