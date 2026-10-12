@@ -62,7 +62,7 @@ public class SuperAdministrador {
 
     @Override
     public String toString(){
-        return "%d %s %s %s"
+        return "%s %s %s %s"
                 .formatted(id, nome, senhaHash, email);
     }
 }
