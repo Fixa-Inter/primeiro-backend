@@ -38,7 +38,7 @@ public class EnviadorEmail {
             Message mensagem = new MimeMessage(session);
             mensagem.setFrom(new InternetAddress(remetente));
             mensagem.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
-            mensagem.setContent(html, "text/html; charset-utf=8");
+            mensagem.setContent(html, "text/html; charset=UTF-8");
 
             Transport.send(mensagem);
 
