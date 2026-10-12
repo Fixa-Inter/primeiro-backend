@@ -12,23 +12,27 @@ public class Instituicao {
     private LocalDate dataCadastro;              // coluna: data_cadastro
     private TipoInstituicao tipoDeInstituicao;   // coluna: tipo_de_instituicao
     private String dominioEmail;                 // coluna: dominioEmail
+    private String senhaHash;                    // coluna: senhaHash
 
     // Construtor
 
-    public Instituicao(Integer id, String nome, String emailCorporativo, LocalDate dataCadastro, TipoInstituicao tipoDeInstituicao, String dominioEmail) {
+
+    public Instituicao(Integer id, String nome, String emailCorporativo, LocalDate dataCadastro, TipoInstituicao tipoDeInstituicao, String dominioEmail, String senhaHash) {
         this.id = id;
         this.nome = nome;
         this.emailCorporativo = emailCorporativo;
         this.dataCadastro = dataCadastro;
         this.tipoDeInstituicao = tipoDeInstituicao;
         this.dominioEmail = dominioEmail;
+        this.senhaHash = senhaHash;
     }
 
-    public Instituicao(String nome, String emailCorporativo, TipoInstituicao tipoDeInstituicao, String dominioEmail) {
+    public Instituicao(String nome, String emailCorporativo, TipoInstituicao tipoDeInstituicao, String dominioEmail, String senhaHash) {
         this.nome = nome;
         this.emailCorporativo = emailCorporativo;
         this.tipoDeInstituicao = tipoDeInstituicao;
         this.dominioEmail = dominioEmail;
+        this.senhaHash = senhaHash;
     }
 
     // Getters e setters
@@ -81,11 +85,19 @@ public class Instituicao {
         this.dominioEmail = dominioEmail;
     }
 
+    public String getSenhaHash() {
+        return senhaHash;
+    }
+
+    public void setSenhaHash(String senhaHash) {
+        this.senhaHash = senhaHash;
+    }
+
     // toString
 
     @Override
     public String toString(){
-        return "%s %s %s %s %s %s"
-                .formatted(id, nome, emailCorporativo, dataCadastro, dominioEmail, tipoDeInstituicao);
+        return "%s %s %s %s %s %s %s"
+                .formatted(id, nome, emailCorporativo, dataCadastro, dominioEmail, tipoDeInstituicao, senhaHash );
     }
 }
