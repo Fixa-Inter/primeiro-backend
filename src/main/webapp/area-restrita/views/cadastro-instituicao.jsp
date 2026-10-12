@@ -85,6 +85,20 @@
 
     <br><br>
 
+    <label for="senha">
+        Senha:
+    </label>
+
+    <input
+            type="password"
+            id="senha"
+            name="senha"
+            minlength="8"
+            required
+    >
+
+    <br><br>
+
     <button type="submit">
         Cadastrar
     </button>
