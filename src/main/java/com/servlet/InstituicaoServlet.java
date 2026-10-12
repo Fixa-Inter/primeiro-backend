@@ -202,7 +202,7 @@ public class InstituicaoServlet extends HttpServlet{
             throw ExcecaoDeJSP.notNullVazio("tipo de instituicao");
         }
 
-        Instituicao instituicao = new Instituicao(nome, emailCorporativo, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
+        Instituicao instituicao = new Instituicao(nome, emailCorporativo, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail, null);
 
         try (InstituicaoDAO dao = new InstituicaoDAO()) {
 
@@ -269,7 +269,7 @@ public class InstituicaoServlet extends HttpServlet{
             Instituicao original = dao.pesquisarPorId(id);
 
             // Monta o objeto com os novos dados
-            Instituicao alterado = new Instituicao(id, nome, emailCorporativo, original.getDataCadastro(), TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
+            Instituicao alterado = new Instituicao(id, nome, emailCorporativo, original.getDataCadastro(), TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail, original.getSenhaHash());
 
             Instituicao instituicaoApoioDominio = dao.pesquisarPorDominioEmail(dominioEmail);
             Instituicao instituicaoApoioEmail = dao.pesquisarPorEmailCorporativo(emailCorporativo);
