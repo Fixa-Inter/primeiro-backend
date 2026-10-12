@@ -145,5 +145,5 @@ public class Usuario {
     public String toString(){
         return "%s %s %s %s %s %s %s %s %s %s %s"
                 .formatted(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, tipoDeAcesso, fkEndereco, dataAniversario, primeiroAcesso);
-        }
+    }
 }

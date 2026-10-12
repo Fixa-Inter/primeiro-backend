@@ -142,7 +142,7 @@ public class Endereco {
 
     @Override
     public String toString(){
-        return "%d %s %s %s %s %s %s %s %s', dataCriacao='%s'}"
+        return "%s %s %s %s %s %s %s %s %s %s %s"
                 .formatted(id, rua, bairro, complemento, cidade, estado, numero, cep, fkInstituicao, cnpj, dataCriacao);
     }
 }

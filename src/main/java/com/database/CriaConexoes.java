@@ -12,7 +12,7 @@ public class CriaConexoes {
     private static final HikariDataSource dataSource;
 
     static {
-        Dotenv dotenv = Dotenv.configure().load();
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
         String url = dotenv.get("DB_URL");
         if (url == null) {

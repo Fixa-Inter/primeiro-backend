@@ -6,6 +6,7 @@ import com.model.Filtro;
 import com.model.Instituicao;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoInstituicao;
+import com.service.HashSenha;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -189,6 +190,8 @@ public class InstituicaoServlet extends HttpServlet{
                 request.getParameter("tipoInstituicao")
         );
 
+        String senha = request.getParameter("senha");
+
         //verificações
         if (nome.isBlank()){
             throw ExcecaoDeJSP.notNullVazio("nome");
@@ -202,7 +205,11 @@ public class InstituicaoServlet extends HttpServlet{
             throw ExcecaoDeJSP.notNullVazio("tipo de instituicao");
         }
 
-        Instituicao instituicao = new Instituicao(nome, emailCorporativo, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
+        if (senha.isBlank()){
+            throw ExcecaoDeJSP.notNullVazio("senha");
+        }
+
+        Instituicao instituicao = new Instituicao(nome, emailCorporativo, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail, HashSenha.gerarHash(senha));
 
         try (InstituicaoDAO dao = new InstituicaoDAO()) {
 
@@ -269,7 +276,7 @@ public class InstituicaoServlet extends HttpServlet{
             Instituicao original = dao.pesquisarPorId(id);
 
             // Monta o objeto com os novos dados
-            Instituicao alterado = new Instituicao(id, nome, emailCorporativo, original.getDataCadastro(), TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail);
+            Instituicao alterado = new Instituicao(id, nome, emailCorporativo, original.getDataCadastro(), TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail, original.getSenhaHash());
 
             Instituicao instituicaoApoioDominio = dao.pesquisarPorDominioEmail(dominioEmail);
             Instituicao instituicaoApoioEmail = dao.pesquisarPorEmailCorporativo(emailCorporativo);
