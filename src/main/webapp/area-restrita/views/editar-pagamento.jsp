@@ -4,6 +4,7 @@
 <%
     Pagamento pagamento =
             (Pagamento) request.getAttribute("pagamento");
+    com.DTO.PagamentoDTO pagamentoDTO = (com.DTO.PagamentoDTO) request.getAttribute("pagamentoDTO");
 %>
 
 <!DOCTYPE html>
@@ -21,6 +22,18 @@
 <% String erro = (String) request.getAttribute("erro"); %>
 <form method="post"
       action="${pageContext.request.contextPath}/pagamentos">
+    <% if (pagamentoDTO != null) { %>
+    <fieldset>
+        <legend>Dados relacionados (somente leitura)</legend>
+        <p>Status do contrato: <%= pagamentoDTO.getStatusContrato() %></p>
+        <p>Data de vencimento: <%= pagamentoDTO.getDataVencimento() %></p>
+        <p>Plano: <%= pagamentoDTO.getPlanoNome() %></p>
+        <p>Estado: <%= pagamentoDTO.getEstado() %></p>
+        <p>Instituição: <%= pagamentoDTO.getInstituicaoNome() %></p>
+        <p>Em dia: <%= pagamentoDTO.getEstaEmDia() == null ? "Não informado" : (pagamentoDTO.getEstaEmDia() ? "Sim" : "Não") %></p>
+    </fieldset>
+    <br>
+    <% } %>
             <% if (erro != null && !erro.isBlank()) { %>
             <p>
                 <%= erro %>

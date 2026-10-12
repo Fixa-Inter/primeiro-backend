@@ -1,3 +1,5 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.List,com.model.Instituicao" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -143,10 +145,12 @@
         ID da Instituição:
     </label>
 
-    <input type="number"
-           id="fkInstituicao"
-           name="fkInstituicao"
-           required>
+    <select id="fkInstituicao" name="fkInstituicao" required>
+        <option value="">Selecione uma instituição</option>
+        <% for (Instituicao instituicao : (List<Instituicao>) request.getAttribute("instituicoesDisponiveis")) { %>
+        <option value="<%= instituicao.getId() %>"><%= instituicao.getNome() %></option>
+        <% } %>
+    </select>
 
     <br><br>
 

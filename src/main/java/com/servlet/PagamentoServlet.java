@@ -44,12 +44,17 @@ public class PagamentoServlet extends HttpServlet {
                 listarPagamentos(request, response);
                 destino = PAGINA_PRINCIPAL;
             } else if (action.equals("create")) {
+                try (com.DAO.ContratoDAO contratoDAO = new com.DAO.ContratoDAO()) {
+                    request.setAttribute("contratosDisponiveis", contratoDAO.buscar(null, null, null, null));
+                }
                 destino = PAGINA_CADASTRO;
             } else if (action.equals("update")) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (PagamentoDAO dao = new PagamentoDAO()) {
                     Pagamento pagamento = dao.pesquisarPorId(id);
                     request.setAttribute("pagamento", pagamento);
+                    request.setAttribute("pagamentoDTO", dao.listarPagamentoDTO(null, null, null, null).stream()
+                            .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
                 destino = PAGINA_EDICAO;
             }

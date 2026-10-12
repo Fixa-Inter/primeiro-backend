@@ -1,5 +1,6 @@
 package com.servlet;
 
+import com.DAO.EnderecoDAO;
 import com.DAO.UsuarioDAO;
 import com.DTO.UsuarioDTO;
 import com.exception.ExcecaoDeJSP;
@@ -43,12 +44,17 @@ public class UsuarioServlet extends HttpServlet{
                 listarUsuarios(request, response);
                 destino = PAGINA_PRINCIPAL;
             } else if (action.equals("create")) {
+                try (EnderecoDAO enderecoDAO = new EnderecoDAO()) {
+                    request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
+                }
                 destino = PAGINA_CADASTRO;
             } else if (action.equals("update")) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (UsuarioDAO dao = new UsuarioDAO()) {
                     Usuario usuario = dao.pesquisarPorId(id);
                     request.setAttribute("usuario", usuario);
+                    request.setAttribute("usuarioDTO", dao.listarUsuariosDTO(null, null, null, null).stream()
+                            .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
                 destino = PAGINA_EDICAO;
             }

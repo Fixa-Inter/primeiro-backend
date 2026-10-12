@@ -49,6 +49,11 @@ public class ContratoServlet extends HttpServlet{
                 destino = PAGINA_PRINCIPAL;
             }
             else if (action.equals("create")) {
+                try (com.DAO.EnderecoDAO enderecoDAO = new com.DAO.EnderecoDAO();
+                     com.DAO.PlanoDAO planoDAO = new com.DAO.PlanoDAO()) {
+                    request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
+                    request.setAttribute("planosDisponiveis", planoDAO.buscar(null, null, null, null));
+                }
                 destino = PAGINA_CADASTRO;
             }
             else if (action.equals("update")) {
@@ -60,6 +65,8 @@ public class ContratoServlet extends HttpServlet{
                 try (ContratoDAO dao = new ContratoDAO()) {
                     Contrato contrato = dao.pesquisarPorId(id);
                     request.setAttribute("contrato", contrato);
+                    request.setAttribute("contratoDTO", dao.listarContratoDTO(null, null, null, null).stream()
+                            .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
 
                 destino = PAGINA_EDICAO;

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List,com.model.Endereco" %>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -105,10 +106,12 @@
         ID do endereço:
     </label>
 
-    <input type="number"
-           id="fkEndereco"
-           name="fkEndereco"
-           required>
+    <select id="fkEndereco" name="fkEndereco" required>
+        <option value="">Selecione um endereço</option>
+        <% for (Endereco endereco : (List<Endereco>) request.getAttribute("enderecosDisponiveis")) { %>
+        <option value="<%= endereco.getId() %>"><%= endereco.getRua() %>, <%= endereco.getNumero() %> - <%= endereco.getCidade() %>/<%= endereco.getEstado() %></option>
+        <% } %>
+    </select>
 
     <br><br>
 

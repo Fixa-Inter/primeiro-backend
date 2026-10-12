@@ -49,12 +49,17 @@ public class EnderecoServlet extends HttpServlet{
                 listarEnderecos(request, response);
                 destino = PAGINA_PRINCIPAL;
             } else if (action.equals("create")) {
+                try (com.DAO.InstituicaoDAO instituicaoDAO = new com.DAO.InstituicaoDAO()) {
+                    request.setAttribute("instituicoesDisponiveis", instituicaoDAO.listar(null, null, null, null));
+                }
                 destino = PAGINA_CADASTRO;
             } else if (action.equals("update")) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (EnderecoDAO dao = new EnderecoDAO()) {
                     Endereco endereco = dao.pesquisarPorId(id);
                     request.setAttribute("endereco", endereco);
+                    request.setAttribute("enderecoDTO", dao.listarEnderecoDTO(null, null, null, null).stream()
+                            .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
                 destino = PAGINA_EDICAO;
             }
