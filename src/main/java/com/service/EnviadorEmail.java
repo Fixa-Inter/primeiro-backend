@@ -10,7 +10,7 @@ import java.util.Properties;
 
 public class EnviadorEmail {
 
-    private static final Dotenv dotenv = Dotenv.configure().load();
+    private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
     private final TemplateEmail templateEmail = new TemplateEmail();
 
