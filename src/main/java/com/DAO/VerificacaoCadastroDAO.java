@@ -115,6 +115,23 @@ public class VerificacaoCadastroDAO extends DAO{
             throw e;
         }
     }
+    // invalida todos os códigos de um email (após uso com sucesso ou antes de reenviar)
+    public void invalidarPorEmail(String email) throws SQLException {
+
+        String sql = "UPDATE VERIFICACAO_CADASTRO SET ESTA_VALIDO = FALSE WHERE EMAIL = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+
+            pstmt.executeUpdate();
+            conn.commit();
+
+        } catch (SQLException e) {
+            conn.rollback();
+            throw e;
+        }
+    }
+
 
     // delete
     public void remover(int id) throws SQLException {
