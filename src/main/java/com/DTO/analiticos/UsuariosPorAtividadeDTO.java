@@ -3,8 +3,9 @@ package com.DTO.analiticos;
 public class UsuariosPorAtividadeDTO {
     private String atividade;
     private int usuarios;
+    private int percentual;
 
-    public UsuariosPorAtividadeDTO(boolean ativo, int usuarios) {
+    public UsuariosPorAtividadeDTO(boolean ativo, int usuarios, int percentual) {
         if (ativo){
             this.atividade = "Ativo";
         }
@@ -12,6 +13,7 @@ public class UsuariosPorAtividadeDTO {
             this.atividade = "Inativo";
         }
         this.usuarios = usuarios;
+        this.percentual = percentual;
     }
 
     public String getAtividade() {

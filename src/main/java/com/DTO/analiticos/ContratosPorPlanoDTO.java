@@ -3,10 +3,12 @@ package com.DTO.analiticos;
 public class ContratosPorPlanoDTO {
     private String plano;
     private int contratos;
+    private int percentual;
 
-    public ContratosPorPlanoDTO(String plano, int contratos) {
+    public ContratosPorPlanoDTO(String plano, int contratos, int percentual) {
         this.plano = plano;
         this.contratos = contratos;
+        this.percentual = percentual;
     }
 
     public String getPlano() {

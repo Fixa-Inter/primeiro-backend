@@ -3,10 +3,12 @@ package com.DTO.analiticos;
 public class EnderecosPorInstituicaoDTO {
     private String instituicao;
     private int enderecos;
+    private int percentual;
 
-    public EnderecosPorInstituicaoDTO(String instituicao, int enderecos) {
+    public EnderecosPorInstituicaoDTO(String instituicao, int enderecos, int percentual) {
         this.instituicao = instituicao;
         this.enderecos = enderecos;
+        this.percentual = percentual;
     }
 
     public String getInstituicao() {
