@@ -106,7 +106,7 @@
         Cadastrar instituição
     </a>
 
-    <a href="${pageContext.request.contextPath}/index.jsp">
+    <a href="${pageContext.request.contextPath}/area-restrita/index.jsp">
         Voltar
     </a>
 </div>

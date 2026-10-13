@@ -101,6 +101,8 @@
 
 <body>
 
+<a href="${pageContext.request.contextPath}/area-restrita/index.jsp">Voltar ao painel</a>
+
 <h1>Endereços</h1>
 
 <a href="<%= request.getContextPath() %>/enderecos?action=create">
