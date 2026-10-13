@@ -27,6 +27,8 @@
 
 <body>
 
+<a href="${pageContext.request.contextPath}/area-restrita/index.jsp">Voltar ao painel</a>
+
 <h1>Super Administradores</h1>
 
 <a href="<%= contexto %>/superAdmin?action=create">

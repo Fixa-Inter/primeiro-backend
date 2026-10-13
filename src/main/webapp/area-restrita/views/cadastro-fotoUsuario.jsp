@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List,com.model.Usuario" %>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -44,14 +45,13 @@
 
     <br><br>
 
-    <input
-            type="number"
-            id="fkUsuario"
-            name="fkUsuario"
-            min="1"
-            step="1"
-            required
-    >
+    <label for="fkUsuario">Usuário:</label>
+    <select id="fkUsuario" name="fkUsuario" required>
+        <option value="">Selecione um usuário</option>
+        <% for (Usuario usuario : (List<Usuario>) request.getAttribute("usuariosDisponiveis")) { %>
+        <option value="<%= usuario.getId() %>"><%= usuario.getNome() %> — <%= usuario.getEmail() %></option>
+        <% } %>
+    </select>
 
     <br><br>
 

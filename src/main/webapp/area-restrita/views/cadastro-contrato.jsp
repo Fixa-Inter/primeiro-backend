@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List,com.model.Endereco,com.model.Plano" %>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -47,12 +48,12 @@
         ID do endereço:
     </label>
 
-    <input
-            type="number"
-            id="fkEndereco"
-            name="FK_ENDERECO_ID"
-            required
-    >
+    <select id="fkEndereco" name="FK_ENDERECO_ID" required>
+        <option value="">Selecione um endereço</option>
+        <% for (Endereco endereco : (List<Endereco>) request.getAttribute("enderecosDisponiveis")) { %>
+        <option value="<%= endereco.getId() %>"><%= endereco.getRua() %>, <%= endereco.getNumero() %> - <%= endereco.getCidade() %>/<%= endereco.getEstado() %></option>
+        <% } %>
+    </select>
 
     <br><br>
 
@@ -60,12 +61,12 @@
         ID do plano:
     </label>
 
-    <input
-            type="number"
-            id="fkPlano"
-            name="FK_PLANO_ID"
-            required
-    >
+    <select id="fkPlano" name="FK_PLANO_ID" required>
+        <option value="">Selecione um plano</option>
+        <% for (Plano plano : (List<Plano>) request.getAttribute("planosDisponiveis")) { %>
+        <option value="<%= plano.getId() %>"><%= plano.getNome() %></option>
+        <% } %>
+    </select>
 
     <br><br>
 

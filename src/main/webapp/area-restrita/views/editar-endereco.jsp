@@ -1,8 +1,10 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.model.Endereco" %>
 
 <%
     Endereco endereco =
             (Endereco) request.getAttribute("endereco");
+    com.DTO.EnderecoDTO enderecoDTO = (com.DTO.EnderecoDTO) request.getAttribute("enderecoDTO");
 %>
 
 <!DOCTYPE html>
@@ -26,6 +28,13 @@
             </p>
             <% } %>
 /enderecos">
+    <% if (enderecoDTO != null) { %>
+    <fieldset>
+        <legend>Dados relacionados (somente leitura)</legend>
+        <p>Instituição: <%= enderecoDTO.getInstituicaoNome() %></p>
+    </fieldset>
+    <br>
+    <% } %>
 
     <input type="hidden"
            name="action"

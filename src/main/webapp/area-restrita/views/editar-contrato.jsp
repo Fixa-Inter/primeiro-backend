@@ -5,6 +5,7 @@
 <%
     Contrato contrato =
             (Contrato) request.getAttribute("contrato");
+    com.DTO.ContratoDTO contratoDTO = (com.DTO.ContratoDTO) request.getAttribute("contratoDTO");
 %>
 
 <!DOCTYPE html>
@@ -27,6 +28,15 @@
             </p>
             <% } %>
 /contratos">
+    <% if (contratoDTO != null) { %>
+    <fieldset>
+        <legend>Dados relacionados (somente leitura)</legend>
+        <p>Plano: <%= contratoDTO.getPlanoNome() %></p>
+        <p>Estado: <%= contratoDTO.getEstado() %></p>
+        <p>Instituição: <%= contratoDTO.getInstituicaoNome() %></p>
+    </fieldset>
+    <br>
+    <% } %>
 
     <input type="hidden"
            name="action"

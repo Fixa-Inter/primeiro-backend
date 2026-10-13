@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.DTO.EnderecoDTO" %>
 <%@ page import="com.model.Filtro" %>
@@ -99,6 +100,8 @@
 </head>
 
 <body>
+
+<a href="${pageContext.request.contextPath}/area-restrita/index.jsp">Voltar ao painel</a>
 
 <h1>Endereços</h1>
 

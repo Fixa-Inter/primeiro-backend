@@ -26,6 +26,8 @@
 
 <body>
 
+<a href="${pageContext.request.contextPath}/area-restrita/index.jsp">Voltar ao painel</a>
+
 <h1>Contratos</h1>
 
 <a href="<%= contexto %>/contratos?action=create">

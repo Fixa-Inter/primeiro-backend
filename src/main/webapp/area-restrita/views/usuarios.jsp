@@ -19,6 +19,8 @@
 
 <body>
 
+<a href="${pageContext.request.contextPath}/area-restrita/index.jsp">Voltar ao painel</a>
+
 <h1>Usuários</h1>
 
 <a href="${pageContext.request.contextPath}/usuarios?action=create">

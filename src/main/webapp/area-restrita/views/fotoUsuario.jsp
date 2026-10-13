@@ -20,6 +20,8 @@
 
 <body>
 
+<a href="${pageContext.request.contextPath}/area-restrita/index.jsp">Voltar ao painel</a>
+
 <h1>Fotos dos Usuários</h1>
 
 <a href="<%= contexto %>/fotoUsuario?action=create">

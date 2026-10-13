@@ -4,6 +4,7 @@
 <%
     FotoUsuario foto =
             (FotoUsuario) request.getAttribute("fotoUsuario");
+    com.DTO.FotoUsuarioDTO fotoDTO = (com.DTO.FotoUsuarioDTO) request.getAttribute("fotoUsuarioDTO");
 %>
 
 <!DOCTYPE html>
@@ -23,6 +24,14 @@
         action="${pageContext.request.contextPath}/fotoUsuario"
         method="post"
 >
+    <% if (fotoDTO != null) { %>
+    <fieldset>
+        <legend>Dados relacionados (somente leitura)</legend>
+        <p>Nome do usuário: <%= fotoDTO.getUsuarioNome() %></p>
+        <p>E-mail do usuário: <%= fotoDTO.getUsuarioEmail() %></p>
+    </fieldset>
+    <br>
+    <% } %>
             <% if (erro != null && !erro.isBlank()) { %>
             <p>
                 <%= erro %>

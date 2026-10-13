@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List,com.model.Contrato" %>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -44,12 +45,12 @@
     <br><br>
 
     <label for="fk_contrato">Fk contrato:</label>
-    <input
-            type="number"
-            id="fk_contrato"
-            name="fk_contrato"
-            required
-    >
+    <select id="fk_contrato" name="fk_contrato" required>
+        <option value="">Selecione um contrato</option>
+        <% for (Contrato contrato : (List<Contrato>) request.getAttribute("contratosDisponiveis")) { %>
+        <option value="<%= contrato.getId() %>">Contrato #<%= contrato.getId() %> — vencimento <%= contrato.getDataVencimento() %>, status <%= contrato.getStatusContrato() %></option>
+        <% } %>
+    </select>
 
     <br><br>
 
