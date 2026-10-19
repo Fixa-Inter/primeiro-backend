@@ -212,7 +212,7 @@ public class PagamentoServlet extends HttpServlet {
 
         try (PagamentoDAO dao = new PagamentoDAO()) {
 
-            dao.cadastrar(pagamento);
+            dao.cadastrar(pagamento, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/pagamentos"
@@ -230,7 +230,7 @@ public class PagamentoServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (PagamentoDAO pagamentoDAO = new PagamentoDAO()){
-            pagamentoDAO.remover(id);
+            pagamentoDAO.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/pagamentos"
@@ -286,7 +286,7 @@ public class PagamentoServlet extends HttpServlet {
                     metodoPagamento
             );
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/pagamentos"

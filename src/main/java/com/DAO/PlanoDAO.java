@@ -4,6 +4,12 @@ import com.model.Contrato;
 import com.model.Filtro;
 import com.model.Plano;
 import com.model.enums.OperacaoFiltro;
+import com.utils.desfazer.DesfazerDelete;
+import com.utils.desfazer.DesfazerDeleteFactory;
+import com.utils.desfazer.DesfazerInsert;
+import com.utils.desfazer.DesfazerUpdate;
+import com.utils.desfazer.GerenciadorDesfazer;
+import jakarta.servlet.http.HttpServletRequest;
 import org.postgresql.util.PGInterval;
 
 import java.sql.*;
@@ -75,7 +81,7 @@ public class PlanoDAO extends DAO{
     }
 
     //insert
-    public void cadastrar(Plano plano) throws SQLException{
+    public int cadastrar(Plano plano) throws SQLException{
         String nome = plano.getNome();
         Double valorMensal = plano.getValorMensal();
         Integer duracaoMeses = plano.getDuracaoMeses();
@@ -83,7 +89,7 @@ public class PlanoDAO extends DAO{
 
         String sql = """
                 INSERT INTO PLANO (NOME, VALOR_MENSAL, DURACAO_MESES, DESCRICAO)
-                VALUES(?, ?, ?, ?)
+                VALUES(?, ?, ?, ?) RETURNING ID
                 """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
             pstmt.setString(1, nome);
@@ -91,12 +97,36 @@ public class PlanoDAO extends DAO{
             pstmt.setInt(3, duracaoMeses);
             pstmt.setString(4,descricao);
 
-            pstmt.execute();
+            int id;
+            try (ResultSet rs = pstmt.executeQuery()) { rs.next(); id = rs.getInt("ID"); }
             conn.commit();
+            return id;
         } catch (SQLException e){
             conn.rollback();
             throw new RuntimeException(e);
         }
+    }
+
+    public int cadastrar(Plano plano, HttpServletRequest request) throws SQLException {
+        int id = cadastrar(plano);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
+        return id;
+    }
+
+    public int cadastrarCompleto(Plano plano) throws SQLException {
+        String sql = "INSERT INTO plano (id, nome, valor_mensal, duracao_meses, descricao, data_criacao) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setObject(1, plano.getId());
+            pstmt.setString(2, plano.getNome());
+            pstmt.setObject(3, plano.getValorMensal());
+            pstmt.setObject(4, plano.getDuracaoMeses());
+            pstmt.setString(5, plano.getDescricao());
+            pstmt.setObject(6, plano.getDataCriacao());
+            pstmt.executeUpdate();
+            try (PreparedStatement serial = conn.prepareStatement("SELECT setval(pg_get_serial_sequence('plano', 'id'), COALESCE(max(id), 1)) FROM plano")) { serial.executeQuery(); }
+            conn.commit();
+            return plano.getId();
+        } catch (SQLException e) { conn.rollback(); throw e; }
     }
 
     //select
@@ -287,6 +317,11 @@ public class PlanoDAO extends DAO{
         }
     }
 
+    public void atualizar(Plano original, Plano alterado, HttpServletRequest request) throws SQLException {
+        atualizar(original, alterado);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
+    }
+
     //delete
     public void remover(int id) throws SQLException {
 
@@ -302,4 +337,11 @@ public class PlanoDAO extends DAO{
             throw e;
         }
     }
+
+    public void remover(int id, HttpServletRequest request) throws SQLException {
+        DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
+        remover(id);
+        GerenciadorDesfazer.registrarComando(request, comando);
+    }
+
 }

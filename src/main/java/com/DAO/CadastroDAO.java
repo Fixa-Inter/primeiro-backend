@@ -14,7 +14,7 @@ public class CadastroDAO extends DAO {
     }
 
     // transação única: insere a instituição e o primeiro endereço juntos
-    public void finalizarCadastro(Instituicao instituicao, Endereco endereco) throws SQLException {
+    public int finalizarCadastro(Instituicao instituicao, Endereco endereco) throws SQLException {
 
         String sqlInstituicao = """
                 INSERT INTO instituicao (nome, email_corporativo, dominio_email, tipo_instituicao, senha_hash)
@@ -61,10 +61,11 @@ public class CadastroDAO extends DAO {
 
             // 3. só agora confirma tudo de uma vez
             conn.commit();
+            return idInstituicao;
 
         } catch (SQLException e) {
             conn.rollback(); // qualquer falha → desfaz os dois inserts
-            System.out.print("Erro no cadastro DAO: " + e.getMessage());
+            throw e;
         }
     }
 }

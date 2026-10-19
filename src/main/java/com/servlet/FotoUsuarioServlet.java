@@ -131,7 +131,7 @@ public class FotoUsuarioServlet extends HttpServlet{
 
         try (FotoUsuarioDAO dao = new FotoUsuarioDAO()) {
 
-            dao.cadastrar(fotoUsuario);
+            dao.cadastrar(fotoUsuario, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/fotoUsuario"
@@ -149,7 +149,7 @@ public class FotoUsuarioServlet extends HttpServlet{
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (FotoUsuarioDAO dao = new FotoUsuarioDAO()){
-            dao.remover(id);
+            dao.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/fotoUsuario"
@@ -194,7 +194,7 @@ public class FotoUsuarioServlet extends HttpServlet{
                     fkUsuario
             );
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/fotoUsuario"

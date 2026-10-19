@@ -3,6 +3,12 @@ package com.DAO;
 import com.model.Filtro;
 import com.model.SuperAdministrador;
 import com.model.enums.OperacaoFiltro;
+import com.utils.desfazer.DesfazerDelete;
+import com.utils.desfazer.DesfazerDeleteFactory;
+import com.utils.desfazer.DesfazerInsert;
+import com.utils.desfazer.DesfazerUpdate;
+import com.utils.desfazer.GerenciadorDesfazer;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,26 +58,48 @@ public class SuperAdministradorDAO extends DAO{
     }
 
     //insert
-    public void cadastrar(SuperAdministrador superAdministrador) throws SQLException{
+    public int cadastrar(SuperAdministrador superAdministrador) throws SQLException{
         String nome = superAdministrador.getNome();
         String senhaHash = superAdministrador.getSenhaHash();
         String email = superAdministrador.getEmail();
 
         String sql = """
                 INSERT INTO SUPER_ADMINISTRADOR (NOME,SENHA_HASH,EMAIL) 
-                VALUES(?,?,?)
+                VALUES(?,?,?) RETURNING ID
                 """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1,nome);
             pstmt.setString(2,senhaHash);
             pstmt.setString(3,email);
 
-            pstmt.execute();
+            int id;
+            try (ResultSet rs = pstmt.executeQuery()) { rs.next(); id = rs.getInt("ID"); }
             conn.commit();
+            return id;
         } catch (SQLException e) {
             conn.rollback();
             throw new RuntimeException(e);
         }
+    }
+
+    public int cadastrar(SuperAdministrador superAdministrador, HttpServletRequest request) throws SQLException {
+        int id = cadastrar(superAdministrador);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
+        return id;
+    }
+
+    public int cadastrarCompleto(SuperAdministrador superAdministrador) throws SQLException {
+        String sql = "INSERT INTO super_administrador (id, nome, senha_hash, email) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setObject(1, superAdministrador.getId());
+            pstmt.setString(2, superAdministrador.getNome());
+            pstmt.setString(3, superAdministrador.getSenhaHash());
+            pstmt.setString(4, superAdministrador.getEmail());
+            pstmt.executeUpdate();
+            try (PreparedStatement serial = conn.prepareStatement("SELECT setval(pg_get_serial_sequence('super_administrador', 'id'), COALESCE(max(id), 1)) FROM super_administrador")) { serial.executeQuery(); }
+            conn.commit();
+            return superAdministrador.getId();
+        } catch (SQLException e) { conn.rollback(); throw e; }
     }
 
     //select
@@ -263,6 +291,11 @@ public class SuperAdministradorDAO extends DAO{
         }
     }
 
+    public void atualizar(SuperAdministrador original, SuperAdministrador alterado, HttpServletRequest request) throws SQLException {
+        atualizar(original, alterado);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
+    }
+
     //delete
     public void remover(int id) throws SQLException {
 
@@ -277,4 +310,11 @@ public class SuperAdministradorDAO extends DAO{
             throw e;
         }
     }
+
+    public void remover(int id, HttpServletRequest request) throws SQLException {
+        DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
+        remover(id);
+        GerenciadorDesfazer.registrarComando(request, comando);
+    }
+
 }

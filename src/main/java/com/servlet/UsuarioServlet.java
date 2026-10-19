@@ -244,7 +244,7 @@ public class UsuarioServlet extends HttpServlet{
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 
-            dao.cadastrar(usuario);
+            dao.cadastrar(usuario, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/usuarios"
@@ -262,7 +262,7 @@ public class UsuarioServlet extends HttpServlet{
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (UsuarioDAO usuarioDAO = new UsuarioDAO()){
-            usuarioDAO.remover(id);
+            usuarioDAO.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/usuarios"
@@ -342,7 +342,7 @@ public class UsuarioServlet extends HttpServlet{
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/usuarios"

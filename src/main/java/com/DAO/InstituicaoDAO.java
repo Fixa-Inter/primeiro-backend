@@ -6,6 +6,12 @@ import com.model.enums.MetodoPagamento;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoInstituicao;
 import com.service.HashSenha;
+import com.utils.desfazer.DesfazerDeleteFactory;
+import com.utils.desfazer.DesfazerInsert;
+import com.utils.desfazer.DesfazerUpdate;
+import com.utils.desfazer.GerenciadorDesfazer;
+import com.utils.desfazer.DesfazerDelete;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -93,7 +99,7 @@ public class InstituicaoDAO extends DAO{
     }
 
     // insert
-    public void cadastrar(Instituicao instituicao) throws SQLException {
+    public int cadastrar(Instituicao instituicao) throws SQLException {
 
         String nome = instituicao.getNome();
         String emailCorporativo = instituicao.getEmailCorporativo();
@@ -106,7 +112,7 @@ public class InstituicaoDAO extends DAO{
 
         String sql = """
                      INSERT INTO instituicao (NOME, EMAIL_CORPORATIVO, DOMINIO_EMAIL, TIPO_INSTITUICAO, SENHA_HASH)
-                     VALUES (?, ?, ?, ?, ?)
+                     VALUES (?, ?, ?, ?, ?) RETURNING ID
                      """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
 
@@ -116,14 +122,39 @@ public class InstituicaoDAO extends DAO{
             pstmt.setInt(4, tipoInstituicao);
             pstmt.setString(5, senhaHash);
 
-            pstmt.execute();
+            int id;
+            try (ResultSet rs = pstmt.executeQuery()) { rs.next(); id = rs.getInt("ID"); }
 
             conn.commit();
+            return id;
 
         } catch (SQLException e) {
             conn.rollback();
             throw e;
         }
+    }
+
+    public int cadastrar(Instituicao instituicao, HttpServletRequest request) throws SQLException {
+        int id = cadastrar(instituicao);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
+        return id;
+    }
+
+    public int cadastrarCompleto(Instituicao instituicao) throws SQLException {
+        String sql = "INSERT INTO instituicao (id, nome, email_corporativo, data_cadastro, tipo_instituicao, dominio_email, senha_hash) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setObject(1, instituicao.getId());
+            pstmt.setString(2, instituicao.getNome());
+            pstmt.setString(3, instituicao.getEmailCorporativo());
+            pstmt.setObject(4, instituicao.getDataCadastro());
+            pstmt.setObject(5, instituicao.getTipoInstituicao() == null ? null : instituicao.getTipoInstituicao().getCodigo());
+            pstmt.setString(6, instituicao.getDominioEmail());
+            pstmt.setString(7, instituicao.getSenhaHash());
+            pstmt.executeUpdate();
+            try (PreparedStatement serial = conn.prepareStatement("SELECT setval(pg_get_serial_sequence('instituicao', 'id'), COALESCE(max(id), 1)) FROM instituicao")) { serial.executeQuery(); }
+            conn.commit();
+            return instituicao.getId();
+        } catch (SQLException e) { conn.rollback(); throw e; }
     }
 
     // select
@@ -397,6 +428,11 @@ public class InstituicaoDAO extends DAO{
         }
     }
 
+    public void atualizar(Instituicao original, Instituicao alterada, HttpServletRequest request) throws SQLException {
+        atualizar(original, alterada);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
+    }
+
 
     // delete
     public void remover(int id) throws SQLException {
@@ -415,4 +451,11 @@ public class InstituicaoDAO extends DAO{
         }
 
     }
+
+    public void remover(int id, HttpServletRequest request) throws SQLException {
+        DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
+        remover(id);
+        GerenciadorDesfazer.registrarComando(request, comando);
+    }
+
 }

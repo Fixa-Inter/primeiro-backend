@@ -233,7 +233,7 @@ public class EnderecoServlet extends HttpServlet{
                 throw ExcecaoDeJSP.cnpjDuplicado();
             }
 
-            dao.cadastrar(endereco);
+            dao.cadastrar(endereco, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/enderecos"
@@ -251,7 +251,7 @@ public class EnderecoServlet extends HttpServlet{
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (EnderecoDAO enderecoDAO = new EnderecoDAO()){
-            enderecoDAO.remover(id);
+            enderecoDAO.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/enderecos"
@@ -328,7 +328,7 @@ public class EnderecoServlet extends HttpServlet{
                 throw ExcecaoDeJSP.cnpjDuplicado();
             }
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/enderecos"

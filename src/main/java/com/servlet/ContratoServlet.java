@@ -235,7 +235,7 @@ public class ContratoServlet extends HttpServlet{
         );
         try (ContratoDAO dao = new ContratoDAO()) {
 
-            dao.cadastrar(contrato);
+            dao.cadastrar(contrato, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/contratos"
@@ -253,7 +253,7 @@ public class ContratoServlet extends HttpServlet{
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (ContratoDAO dao = new ContratoDAO()){
-            dao.remover(id);
+            dao.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/contratos"
@@ -308,7 +308,7 @@ public class ContratoServlet extends HttpServlet{
             );
 
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/contratos"

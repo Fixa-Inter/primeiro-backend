@@ -206,7 +206,7 @@ public class PlanoServlet extends HttpServlet {
 
         try (PlanoDAO dao = new PlanoDAO()) {
 
-            dao.cadastrar(plano);
+            dao.cadastrar(plano, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/planos"
@@ -224,7 +224,7 @@ public class PlanoServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (PlanoDAO planoDAO = new PlanoDAO()){
-            planoDAO.remover(id);
+            planoDAO.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/planos"
@@ -273,7 +273,7 @@ public class PlanoServlet extends HttpServlet {
                     descricao
             );
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/planos"

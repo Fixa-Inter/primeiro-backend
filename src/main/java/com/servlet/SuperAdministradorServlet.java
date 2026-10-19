@@ -206,7 +206,7 @@ public class SuperAdministradorServlet extends HttpServlet{
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 
-            dao.cadastrar(superAdministrador);
+            dao.cadastrar(superAdministrador, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/superAdmin"
@@ -224,7 +224,7 @@ public class SuperAdministradorServlet extends HttpServlet{
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (SuperAdministradorDAO dao = new SuperAdministradorDAO()){
-            dao.remover(id);
+            dao.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/superAdmin"
@@ -274,7 +274,7 @@ public class SuperAdministradorServlet extends HttpServlet{
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/superAdmin"

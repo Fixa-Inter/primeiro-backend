@@ -18,21 +18,23 @@ public class VerificacaoCadastroDAO extends DAO{
     }
 
     // insert
-    public void cadastrar(VerificacaoCadastro verificacaoCadastro) throws SQLException {
+    public int cadastrar(VerificacaoCadastro verificacaoCadastro) throws SQLException {
         String codigoVerificacao = verificacaoCadastro.getCodigoVerificacao();
         String email = verificacaoCadastro.getEmail();
 
         String sql = """
                 INSERT INTO VERIFICACAO_CADASTRO (CODIGO_VERIFICACAO, EMAIL)
-                VALUES (?, ?)
+                VALUES (?, ?) RETURNING ID
                 """;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, codigoVerificacao);
             pstmt.setString(2, email);
 
-            pstmt.execute();
+            int id;
+            try (ResultSet rs = pstmt.executeQuery()) { rs.next(); id = rs.getInt("ID"); }
             conn.commit();
+            return id;
         } catch (SQLException e) {
             conn.rollback();
             throw e;
