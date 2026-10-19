@@ -7,6 +7,7 @@ import com.exception.ExcecaoDeJSP;
 import com.model.*;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
+import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -197,6 +198,10 @@ public class UsuarioServlet extends HttpServlet{
 
         String email = request.getParameter("email");
 
+        if (!RegexUtils.validarEmail(email)) {
+            throw ExcecaoDeJSP.valorInvalido("email");
+        }
+
         String cargo = request.getParameter("cargo");
 
         TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
@@ -293,6 +298,10 @@ public class UsuarioServlet extends HttpServlet{
         );
 
         String email = request.getParameter("email");
+
+        if (!RegexUtils.validarEmail(email)) {
+            throw ExcecaoDeJSP.valorInvalido("email");
+        }
 
         String cargo = request.getParameter("cargo");
 

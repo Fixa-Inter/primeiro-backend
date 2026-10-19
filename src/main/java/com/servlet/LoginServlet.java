@@ -4,6 +4,7 @@ import com.DAO.LoginDAO;
 import com.DTO.LoginDTO;
 import com.DTO.SuperAdminDTO;
 import com.exception.ExcecaoDeJSP;
+import com.utils.RegexUtils;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -78,7 +79,11 @@ public class LoginServlet extends HttpServlet {
 
     // === LOGIN ===
     private SuperAdminDTO login(HttpServletRequest req) throws SQLException, ClassNotFoundException, ExcecaoDeJSP {
-        String email = req.getParameter("email").trim();
+        String email = req.getParameter("email");
+        if (!RegexUtils.validarEmail(email)) {
+            throw ExcecaoDeJSP.valorInvalido("email");
+        }
+        email = email.trim();
         String senha = req.getParameter("senha").trim();
         LoginDTO credenciais = new LoginDTO(email, senha);
 

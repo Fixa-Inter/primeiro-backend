@@ -14,6 +14,8 @@ import com.service.ConsultaCnpjService;
 import com.service.EnviadorEmail;
 import com.service.GeradorCodigo;
 import com.service.HashSenha;
+import com.exception.ExcecaoDeJSP;
+import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -57,17 +59,24 @@ public class CadastroServlet extends HttpServlet{
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 
         String action = request.getParameter("action");
-
-        if ("enviarCodigo".equals(action)){
-            enviarCodigo(request, response);
-        } else if ("verificarCodigo".equals(action)) {
-            verificarCodigo(request, response);
-        } else if ("definirSenha".equals(action)) {
-            definirSenha(request, response);
-        } else if ("buscarCnpj".equals(action)){
-            buscarCnpj(request, response);
-        } else if ("finalizar".equals(action)) {
-            finalizar(request, response);
+        try {
+            if ("enviarCodigo".equals(action)){
+                enviarCodigo(request, response);
+            } else if ("verificarCodigo".equals(action)) {
+                verificarCodigo(request, response);
+            } else if ("definirSenha".equals(action)) {
+                definirSenha(request, response);
+            } else if ("buscarCnpj".equals(action)){
+                buscarCnpj(request, response);
+            } else if ("finalizar".equals(action)) {
+                finalizar(request, response);
+            }
+        } catch (ExcecaoDeJSP e) {
+            request.setAttribute("erro", e.getMessage());
+            String pagina = "enviarCodigo".equals(action)
+                    ? "/WEB-INF/cadastro/views/cadastro-instituicao-info.jsp"
+                    : "/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp";
+            request.getRequestDispatcher(pagina).forward(request, response);
         }
     }
 
@@ -78,6 +87,10 @@ public class CadastroServlet extends HttpServlet{
         String tipoInstituicao = request.getParameter("tipoInstituicao");
 
         String emailCorporativo = request.getParameter("emailCorporativo");
+
+        if (!RegexUtils.validarEmail(emailCorporativo)) {
+            throw ExcecaoDeJSP.valorInvalido("emailCorporativo");
+        }
 
         String dominioEmail = emailCorporativo.substring(emailCorporativo.indexOf("@") + 1);
 
@@ -210,6 +223,10 @@ public class CadastroServlet extends HttpServlet{
 
         String cnpj = request.getParameter("cnpj");
 
+        if (!RegexUtils.validarCnpj(cnpj)) {
+            throw ExcecaoDeJSP.valorInvalido("cnpj");
+        }
+
         HttpSession session = request.getSession();
 
         CadastroInstituicaoEnderecoDTO dto = (CadastroInstituicaoEnderecoDTO) session.getAttribute("cadastroDTO");
@@ -282,8 +299,16 @@ public class CadastroServlet extends HttpServlet{
         }
 
         // dados do form apos chamar a API
-        String cnpj = request.getParameter("cnpj").replaceAll("\\D", "");
-        String cep = request.getParameter("cep").replaceAll("\\D", "");
+        String cnpjInformado = request.getParameter("cnpj");
+        String cepInformado = request.getParameter("cep");
+        if (!RegexUtils.validarCnpj(cnpjInformado)) {
+            throw ExcecaoDeJSP.valorInvalido("cnpj");
+        }
+        if (!RegexUtils.validarCep(cepInformado)) {
+            throw ExcecaoDeJSP.valorInvalido("cep");
+        }
+        String cnpj = cnpjInformado.replaceAll("\\D", "");
+        String cep = cepInformado.replaceAll("\\D", "");
         String rua = request.getParameter("rua");
         String bairro = request.getParameter("bairro");
         String complemento = request.getParameter("complemento");

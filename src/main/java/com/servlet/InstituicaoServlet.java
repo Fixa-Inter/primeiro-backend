@@ -7,6 +7,7 @@ import com.model.Instituicao;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoInstituicao;
 import com.service.HashSenha;
+import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -184,6 +185,9 @@ public class InstituicaoServlet extends HttpServlet{
 
         String nome = request.getParameter("nome");
         String emailCorporativo = request.getParameter("emailCorporativo");
+        if (!RegexUtils.validarEmail(emailCorporativo)) {
+            throw ExcecaoDeJSP.valorInvalido("emailCorporativo");
+        }
         String dominioEmail = request.getParameter("dominioEmail");
 
         Integer tipoInstituicao = Integer.parseInt(
@@ -263,6 +267,9 @@ public class InstituicaoServlet extends HttpServlet{
 
         String nome = request.getParameter("nome");
         String emailCorporativo = request.getParameter("emailCorporativo");
+        if (!RegexUtils.validarEmail(emailCorporativo)) {
+            throw ExcecaoDeJSP.valorInvalido("emailCorporativo");
+        }
 
         String dominioEmail = request.getParameter("dominioEmail");
 

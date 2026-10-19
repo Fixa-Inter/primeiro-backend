@@ -7,6 +7,7 @@ import com.model.Endereco;
 import com.model.Filtro;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
+import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -211,6 +212,13 @@ public class EnderecoServlet extends HttpServlet{
 
         String cnpj = request.getParameter("cnpj");
 
+        if (!RegexUtils.validarCep(cep)) {
+            throw ExcecaoDeJSP.valorInvalido("cep");
+        }
+        if (!RegexUtils.validarCnpj(cnpj)) {
+            throw ExcecaoDeJSP.valorInvalido("cnpj");
+        }
+
         Integer fkInstituicao = Integer.parseInt(
                 request.getParameter("fkInstituicao")
         );
@@ -288,6 +296,13 @@ public class EnderecoServlet extends HttpServlet{
         String cep = request.getParameter("cep");
 
         String cnpj = request.getParameter("cnpj");
+
+        if (!RegexUtils.validarCep(cep)) {
+            throw ExcecaoDeJSP.valorInvalido("cep");
+        }
+        if (!RegexUtils.validarCnpj(cnpj)) {
+            throw ExcecaoDeJSP.valorInvalido("cnpj");
+        }
 
         Integer fkInstituicao = Integer.parseInt(
                 request.getParameter("fkInstituicao")

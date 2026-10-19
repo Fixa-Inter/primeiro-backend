@@ -5,6 +5,7 @@ import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.SuperAdministrador;
 import com.model.enums.OperacaoFiltro;
+import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -177,6 +178,9 @@ public class SuperAdministradorServlet extends HttpServlet{
         String nome = request.getParameter("nome");
 
         String email = request.getParameter("email");
+        if (!RegexUtils.validarEmail(email)) {
+            throw ExcecaoDeJSP.valorInvalido("email");
+        }
 
         String senha = request.getParameter("senha");
 
@@ -249,6 +253,9 @@ public class SuperAdministradorServlet extends HttpServlet{
         String nome = request.getParameter("nome");
 
         String email = request.getParameter("email");
+        if (!RegexUtils.validarEmail(email)) {
+            throw ExcecaoDeJSP.valorInvalido("email");
+        }
 
         String senha = request.getParameter("senha");
 

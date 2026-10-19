@@ -9,6 +9,9 @@ public class RegexUtils {
     public static final String REGEX_CEP = "^[0-9]{5}[-]?[0-9]{3}$";
 
     private static boolean validarCampo(String campo, String regex) {
+        if (campo == null) {
+            return false;
+        }
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(campo);
         return m.matches();
