@@ -221,7 +221,7 @@ public class InstituicaoServlet extends HttpServlet{
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 
-            dao.cadastrar(instituicao);
+            dao.cadastrar(instituicao, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/instituicoes"
@@ -239,7 +239,7 @@ public class InstituicaoServlet extends HttpServlet{
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (InstituicaoDAO dao = new InstituicaoDAO()){
-            dao.remover(id);
+            dao.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/instituicoes"
@@ -289,7 +289,7 @@ public class InstituicaoServlet extends HttpServlet{
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/instituicoes"

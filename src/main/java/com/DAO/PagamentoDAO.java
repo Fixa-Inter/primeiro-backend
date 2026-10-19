@@ -6,6 +6,12 @@ import com.model.Instituicao;
 import com.model.Pagamento;
 import com.model.enums.MetodoPagamento;
 import com.model.enums.OperacaoFiltro;
+import com.utils.desfazer.DesfazerDelete;
+import com.utils.desfazer.DesfazerDeleteFactory;
+import com.utils.desfazer.DesfazerInsert;
+import com.utils.desfazer.DesfazerUpdate;
+import com.utils.desfazer.GerenciadorDesfazer;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
@@ -104,14 +110,14 @@ public class PagamentoDAO extends DAO{
 
     // insert
 
-    public void cadastrar(Pagamento pagamento) throws SQLException {
+    public int cadastrar(Pagamento pagamento) throws SQLException {
 
         BigDecimal valor = pagamento.getValor();
         Integer fkContrato = pagamento.getFkContrato();
         Integer metodoPagamento = pagamento.getMetodoPagamento().getCodigo();
         String sql = """
                         INSERT INTO pagamento (VALOR, FK_CONTRATO_ID, METODO_PAGAMENTO)
-                        VALUES (?, ?, ?)
+                        VALUES (?, ?, ?) RETURNING ID
                      """;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -120,13 +126,37 @@ public class PagamentoDAO extends DAO{
             pstmt.setInt(2, fkContrato);
             pstmt.setInt(3, metodoPagamento);
 
-            pstmt.execute();
+            int id;
+            try (ResultSet rs = pstmt.executeQuery()) { rs.next(); id = rs.getInt("ID"); }
 
             conn.commit();
+            return id;
         } catch (SQLException e) {
             conn.rollback();
             throw e;
         }
+    }
+
+    public int cadastrar(Pagamento pagamento, HttpServletRequest request) throws SQLException {
+        int id = cadastrar(pagamento);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
+        return id;
+    }
+
+    public int cadastrarCompleto(Pagamento pagamento) throws SQLException {
+        String sql = "INSERT INTO pagamento (id, valor, data_pagamento, foi_realizado, fk_contrato_id, metodo_pagamento) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setObject(1, pagamento.getId());
+            pstmt.setBigDecimal(2, pagamento.getValor());
+            pstmt.setObject(3, pagamento.getDataPagamento());
+            pstmt.setObject(4, pagamento.getFoiRealizado());
+            pstmt.setObject(5, pagamento.getFkContrato());
+            pstmt.setObject(6, pagamento.getMetodoPagamento() == null ? null : pagamento.getMetodoPagamento().getCodigo());
+            pstmt.executeUpdate();
+            try (PreparedStatement serial = conn.prepareStatement("SELECT setval(pg_get_serial_sequence('pagamento', 'id'), COALESCE(max(id), 1)) FROM pagamento")) { serial.executeQuery(); }
+            conn.commit();
+            return pagamento.getId();
+        } catch (SQLException e) { conn.rollback(); throw e; }
     }
 
     // select
@@ -326,6 +356,11 @@ public class PagamentoDAO extends DAO{
         }
     }
 
+    public void atualizar(Pagamento original, Pagamento alterado, HttpServletRequest request) throws SQLException {
+        atualizar(original, alterado);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
+    }
+
     // delete
 
     public void remover(int id) throws SQLException {
@@ -342,6 +377,12 @@ public class PagamentoDAO extends DAO{
             conn.rollback();
             throw e;
         }
+    }
+
+    public void remover(int id, HttpServletRequest request) throws SQLException {
+        DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
+        remover(id);
+        GerenciadorDesfazer.registrarComando(request, comando);
     }
 
     public List<PagamentoDTO> listarPagamentoDTO(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {

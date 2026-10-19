@@ -1,16 +1,16 @@
 package com.DTO;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /** Dados da foto acompanhados dos dados de identificação do usuário. */
 public class FotoUsuarioDTO {
     private Integer id;
-    private LocalDate dataRegistro;
+    private LocalDateTime dataRegistro;
     private String url;
     private String usuarioNome;
     private String usuarioEmail;
 
-    public FotoUsuarioDTO(Integer id, LocalDate dataRegistro, String url, String usuarioNome, String usuarioEmail) {
+    public FotoUsuarioDTO(Integer id, LocalDateTime dataRegistro, String url, String usuarioNome, String usuarioEmail) {
         this.id = id;
         this.dataRegistro = dataRegistro;
         this.url = url;
@@ -26,11 +26,11 @@ public class FotoUsuarioDTO {
         this.id = id;
     }
 
-    public LocalDate getDataRegistro() {
+    public LocalDateTime getDataRegistro() {
         return dataRegistro;
     }
 
-    public void setDataRegistro(LocalDate dataRegistro) {
+    public void setDataRegistro(LocalDateTime dataRegistro) {
         this.dataRegistro = dataRegistro;
     }
 
