@@ -195,6 +195,7 @@ public class EnderecoServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
+        String nome = request.getParameter("nome");
         String rua = request.getParameter("rua");
 
         String bairro = request.getParameter("bairro");
@@ -223,6 +224,7 @@ public class EnderecoServlet extends HttpServlet{
         );
 
         Endereco endereco = new Endereco(
+                nome,
                 rua,
                 bairro,
                 complemento,
@@ -280,6 +282,7 @@ public class EnderecoServlet extends HttpServlet{
                 request.getParameter("id")
         );
 
+        String nome = request.getParameter("nome");
         String rua = request.getParameter("rua");
 
         String bairro = request.getParameter("bairro");
@@ -324,6 +327,7 @@ public class EnderecoServlet extends HttpServlet{
             // Monta o objeto com os novos dados
             Endereco alterado = new Endereco(
                     id,
+                    nome,
                     rua,
                     bairro,
                     complemento,

@@ -26,6 +26,10 @@
            name="action"
            value="create">
 
+    <label for="nome">Nome do endereço:</label>
+    <input type="text" id="nome" name="nome" maxlength="50" required>
+    <br><br>
+
 
 
     <!-- RUA -->

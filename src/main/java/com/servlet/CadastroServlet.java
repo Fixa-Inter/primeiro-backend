@@ -309,12 +309,29 @@ public class CadastroServlet extends HttpServlet{
         }
         String cnpj = cnpjInformado.replaceAll("\\D", "");
         String cep = cepInformado.replaceAll("\\D", "");
+        String nomeEndereco = request.getParameter("nomeEndereco");
         String rua = request.getParameter("rua");
         String bairro = request.getParameter("bairro");
         String complemento = request.getParameter("complemento");
         String cidade = request.getParameter("cidade");
         String estado = request.getParameter("estado");
         String numero = request.getParameter("numero");
+
+        if (nomeEndereco == null || nomeEndereco.isBlank() || nomeEndereco.length() > 50) {
+            request.setAttribute("erro", "Informe um nome para o endereço (até 50 caracteres).");
+            request.setAttribute("nomeEndereco", nomeEndereco);
+            request.setAttribute("cnpj", cnpjInformado);
+            request.setAttribute("rua", rua);
+            request.setAttribute("bairro", bairro);
+            request.setAttribute("complemento", complemento);
+            request.setAttribute("cidade", cidade);
+            request.setAttribute("estado", estado);
+            request.setAttribute("numero", numero);
+            request.setAttribute("cep", cepInformado);
+            request.getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                    .forward(request, response);
+            return;
+        }
 
         // monta instituicao
         Instituicao instituicao = new Instituicao(
@@ -329,6 +346,7 @@ public class CadastroServlet extends HttpServlet{
 
         Endereco endereco = new Endereco(
             null,
+            nomeEndereco,
                 rua,
                 bairro,
                 complemento,

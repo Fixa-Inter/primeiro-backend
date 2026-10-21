@@ -54,6 +54,10 @@
            name="dataCriacao"
            value="<%= endereco.getDataCriacao() %>">
 
+    <label for="nome">Nome do endereço:</label>
+    <input type="text" id="nome" name="nome" maxlength="50" value="<%= endereco.getNome() %>" required>
+    <br><br>
+
 
 
     <!-- RUA -->

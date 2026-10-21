@@ -503,6 +503,7 @@
 
     <tr>
         <th>ID</th>
+        <th>Nome</th>
         <th>Rua</th>
         <th>Bairro</th>
         <th>Complemento</th>
@@ -530,6 +531,10 @@
             <%= endereco.getId() %>
         </td>
 
+
+        <td>
+            <%= endereco.getNome() %>
+        </td>
 
         <td>
             <%= endereco.getRua() %>
