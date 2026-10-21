@@ -16,8 +16,6 @@ import java.io.IOException;
 @WebFilter(filterName = "area-restrita-filter", urlPatterns = "/area-restrita/*")
 public class AreaRestritaFilter extends HttpFilter {
 
-    private static final String PAGINA_LOGIN = "/jsp/login.jsp";
-
     @Override
     public void doFilter(HttpServletRequest req, HttpServletResponse resp, FilterChain chain) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
@@ -27,7 +25,7 @@ public class AreaRestritaFilter extends HttpFilter {
             chain.doFilter(req, resp);
 
         } else {
-            resp.sendRedirect(req.getContextPath() + PAGINA_LOGIN);
+            resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 }

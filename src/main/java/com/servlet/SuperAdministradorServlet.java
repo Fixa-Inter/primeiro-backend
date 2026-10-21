@@ -20,9 +20,9 @@ import java.util.List;
 @WebServlet(name = "SuperAdministradorServlet", value = "/superAdmin")
 public class SuperAdministradorServlet extends HttpServlet{
 
-    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/superAdmin.jsp";
-    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-superAdmin.jsp";
-    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-superAdmin.jsp";
+    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/super-admin.jsp";
+    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-super-admin.jsp";
+    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-super-admin.jsp";
     private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
