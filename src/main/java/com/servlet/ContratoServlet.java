@@ -28,7 +28,6 @@ public class ContratoServlet extends HttpServlet{
     private static final String PAGINA_PRINCIPAL = "/area-restrita/views/contratos.jsp";
     private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-contrato.jsp";
     private static final String PAGINA_EDICAO = "/area-restrita/views/editar-contrato.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request,
@@ -84,7 +83,7 @@ public class ContratoServlet extends HttpServlet{
         }
 
         if (erro) {
-            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } else {
             request.getRequestDispatcher(destino).forward(request, response);

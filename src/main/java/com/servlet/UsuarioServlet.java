@@ -26,7 +26,6 @@ public class UsuarioServlet extends HttpServlet{
     private static final String PAGINA_PRINCIPAL = "/area-restrita/views/usuarios.jsp";
     private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-usuario.jsp";
     private static final String PAGINA_EDICAO = "/area-restrita/views/editar-usuario.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -69,7 +68,7 @@ public class UsuarioServlet extends HttpServlet{
         }
 
         if (erro) {
-            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } else {
             request.getRequestDispatcher(destino).forward(request, response);
         }

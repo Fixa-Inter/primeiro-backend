@@ -21,7 +21,6 @@ public class LoginServlet extends HttpServlet {
 
     private static final String AREA_RESTRITA = "/area-restrita/index.jsp";
     private static final String PAGINA_LOGIN = "jsp/login.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -34,7 +33,7 @@ public class LoginServlet extends HttpServlet {
         String action = req.getParameter("action").trim();
         HttpSession session = req.getSession();
 
-        String destino = PAGINA_ERRO;
+        String destino = null;
 
         try {
             switch (action) {
@@ -74,7 +73,11 @@ public class LoginServlet extends HttpServlet {
             e.printStackTrace(System.err);
         }
 
-        resp.sendRedirect(req.getContextPath() + destino);
+        if (destino != null) {
+            resp.sendRedirect(req.getContextPath() + destino);
+        } else {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
     // === LOGIN ===
