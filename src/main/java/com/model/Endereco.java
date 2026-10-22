@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class Endereco {
 
     private Integer id;                 // coluna: id
+    private String nome;                // coluna: nome
     private String rua;                 // coluna: rua
     private String bairro;              // coluna: bairro
     private String complemento;         // coluna: complemento
@@ -32,6 +33,11 @@ public class Endereco {
         this.fkInstituicao = fkInstituicao;
     }
 
+    public Endereco(Integer id, String nome, String rua, String bairro, String complemento, String cidade, String estado, String numero, String cep, String cnpj, LocalDateTime dataCriacao, Integer fkInstituicao) {
+        this(id, rua, bairro, complemento, cidade, estado, numero, cep, cnpj, dataCriacao, fkInstituicao);
+        this.nome = nome;
+    }
+
     public Endereco(String rua, String bairro, String complemento, String cidade, String estado, String numero, String cep, String cnpj, Integer fkInstituicao) {
         this.rua = rua;
         this.bairro = bairro;
@@ -43,6 +49,15 @@ public class Endereco {
         this.cnpj = cnpj;
         this.fkInstituicao = fkInstituicao;
     }
+
+    public Endereco(String nome, String rua, String bairro, String complemento, String cidade, String estado, String numero, String cep, String cnpj, Integer fkInstituicao) {
+        this(rua, bairro, complemento, cidade, estado, numero, cep, cnpj, fkInstituicao);
+        this.nome = nome;
+    }
+
+    public String getNome() { return nome; }
+
+    public void setNome(String nome) { this.nome = nome; }
 
     // getters e setters
 
@@ -142,7 +157,7 @@ public class Endereco {
 
     @Override
     public String toString(){
-        return "%s %s %s %s %s %s %s %s %s %s %s"
-                .formatted(id, rua, bairro, complemento, cidade, estado, numero, cep, fkInstituicao, cnpj, dataCriacao);
+        return "%s %s %s %s %s %s %s %s %s %s %s %s"
+                .formatted(id, nome, rua, bairro, complemento, cidade, estado, numero, cep, fkInstituicao, cnpj, dataCriacao);
     }
 }

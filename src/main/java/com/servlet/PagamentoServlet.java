@@ -27,7 +27,6 @@ public class PagamentoServlet extends HttpServlet {
     private static final String PAGINA_PRINCIPAL = "/area-restrita/views/pagamentos.jsp";
     private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-pagamento.jsp";
     private static final String PAGINA_EDICAO = "/area-restrita/views/editar-pagamento.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -67,7 +66,7 @@ public class PagamentoServlet extends HttpServlet {
             e.printStackTrace(System.err);
         }
 
-        if (erro) response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        if (erro) response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         else request.getRequestDispatcher(destino).forward(request, response);
     }
 

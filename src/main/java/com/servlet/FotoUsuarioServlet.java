@@ -24,10 +24,9 @@ import java.util.List;
 @WebServlet(name = "FotoUsuarioServlet", value = "/fotoUsuario")
 public class FotoUsuarioServlet extends HttpServlet{
 
-    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/fotoUsuario.jsp";
-    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-fotoUsuario.jsp";
-    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-fotoUsuario.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
+    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/foto-usuario.jsp";
+    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-foto-usuario.jsp";
+    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-foto-usuario.jsp";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -69,7 +68,7 @@ public class FotoUsuarioServlet extends HttpServlet{
         }
 
         if (erro) {
-            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } else {
             request.getRequestDispatcher(destino).forward(request, response);
         }

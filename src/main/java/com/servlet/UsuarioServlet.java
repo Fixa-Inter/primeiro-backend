@@ -7,6 +7,7 @@ import com.exception.ExcecaoDeJSP;
 import com.model.*;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
+import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -25,7 +26,6 @@ public class UsuarioServlet extends HttpServlet{
     private static final String PAGINA_PRINCIPAL = "/area-restrita/views/usuarios.jsp";
     private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-usuario.jsp";
     private static final String PAGINA_EDICAO = "/area-restrita/views/editar-usuario.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -68,7 +68,7 @@ public class UsuarioServlet extends HttpServlet{
         }
 
         if (erro) {
-            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } else {
             request.getRequestDispatcher(destino).forward(request, response);
         }
@@ -197,6 +197,10 @@ public class UsuarioServlet extends HttpServlet{
 
         String email = request.getParameter("email");
 
+        if (!RegexUtils.validarEmail(email)) {
+            throw ExcecaoDeJSP.valorInvalido("email");
+        }
+
         String cargo = request.getParameter("cargo");
 
         TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
@@ -293,6 +297,10 @@ public class UsuarioServlet extends HttpServlet{
         );
 
         String email = request.getParameter("email");
+
+        if (!RegexUtils.validarEmail(email)) {
+            throw ExcecaoDeJSP.valorInvalido("email");
+        }
 
         String cargo = request.getParameter("cargo");
 
