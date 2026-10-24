@@ -14,15 +14,12 @@
 <h1>Cadastrar contrato</h1>
 
 <% String erro = (String) request.getAttribute("erro"); %>
+<% if (erro != null && !erro.isBlank()) { %>
+    <p><%= erro %></p>
+<% } %>
 <form
         method="post"
-        action="<%= request.getContextPath() %>
-            <% if (erro != null && !erro.isBlank()) { %>
-            <p>
-                <%= erro %>
-            </p>
-            <% } %>
-/contratos"
+        action="<%= request.getContextPath() %>/contratos"
 >
 
     <input

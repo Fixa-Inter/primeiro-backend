@@ -1,6 +1,7 @@
 package com.filter;
 
 import com.DTO.SuperAdminDTO;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
@@ -11,9 +12,25 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-// Servlet para filtrar o acesso a páginas JSP da área-restrita, uma vez que não estamos utilizando WEB-INF
+// Servlet para filtrar o acesso a páginas JSP da área-restrita
 
-@WebFilter(filterName = "area-restrita-filter", urlPatterns = "/area-restrita/*")
+@WebFilter(
+        filterName = "area-restrita-filter",
+        urlPatterns = {
+                "/area-restrita/*",
+                "/instituicoes",
+                "/planos",
+                "/superAdmin",
+                "/enderecos",
+                "/contratos",
+                "/usuarios",
+                "/pagamentos",
+                "/fotoUsuario",
+                "/analiticos",
+                "/DesfazerController"
+        },
+        dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.FORWARD}
+)
 public class AreaRestritaFilter extends HttpFilter {
 
     @Override
