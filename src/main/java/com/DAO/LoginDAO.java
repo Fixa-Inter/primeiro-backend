@@ -16,7 +16,9 @@ public class LoginDAO extends DAO{
     public SuperAdminDTO login(LoginDTO credenciais) throws SQLException {
         String sql = "SELECT id, nome, senha_hash FROM super_administrador WHERE email = ?";
 
-        String senhaHash, nome, cargo;
+        String senhaHash;
+        String nome;
+        String cargo;
         SuperAdminDTO superAdm;
         int id;
 
