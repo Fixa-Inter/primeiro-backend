@@ -7,6 +7,7 @@ import com.exception.ExcecaoDeJSP;
 import com.model.*;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
+import com.service.HashSenha;
 import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -234,7 +235,7 @@ public class UsuarioServlet extends HttpServlet{
 
         Usuario usuario = new Usuario(
                 nome,
-                senha,
+                HashSenha.gerarHash(senha),
                 email,
                 cargo,
                 tipoDeAcesso,
@@ -290,7 +291,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String nome = request.getParameter("nome");
 
-        String senhaHash = request.getParameter("senha");
+        String senha = request.getParameter("senha");
 
         boolean estaAtivo = Boolean.parseBoolean(
                 request.getParameter("estaAtivo")
@@ -328,6 +329,9 @@ public class UsuarioServlet extends HttpServlet{
 
             // Busca como está atualmente no banco
             Usuario original = dao.pesquisarPorId(id);
+            String senhaHash = senha == null || senha.isBlank()
+                    ? original.getSenhaHash()
+                    : HashSenha.gerarHash(senha);
 
             // Monta o objeto com os novos dados
             Usuario alterado = new Usuario(

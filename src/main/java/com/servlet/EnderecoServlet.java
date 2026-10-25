@@ -219,6 +219,9 @@ public class EnderecoServlet extends HttpServlet{
             throw ExcecaoDeJSP.valorInvalido("cnpj");
         }
 
+        cep = cep.replaceAll("\\D", "");
+        cnpj = cnpj.replaceAll("\\D", "");
+
         Integer fkInstituicao = Integer.parseInt(
                 request.getParameter("fkInstituicao")
         );
@@ -305,6 +308,9 @@ public class EnderecoServlet extends HttpServlet{
         if (!RegexUtils.validarCnpj(cnpj)) {
             throw ExcecaoDeJSP.valorInvalido("cnpj");
         }
+
+        cep = cep.replaceAll("\\D", "");
+        cnpj = cnpj.replaceAll("\\D", "");
 
         Integer fkInstituicao = Integer.parseInt(
                 request.getParameter("fkInstituicao")

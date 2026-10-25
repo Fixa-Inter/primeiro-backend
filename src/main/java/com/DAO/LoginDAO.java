@@ -2,6 +2,7 @@ package com.DAO;
 
 import com.DTO.LoginDTO;
 import com.DTO.SuperAdminDTO;
+import com.service.HashSenha;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,7 +37,7 @@ public class LoginDAO extends DAO{
                 senhaHash = rs.getString("senha_hash");
 
                 // Se a senha não for compatível retorna null (login falhou)
-                if (!credenciais.getSenha().equals(senhaHash)) {
+                if (!HashSenha.conferir(credenciais.getSenha(), senhaHash)) {
                     return null;
                 }
 

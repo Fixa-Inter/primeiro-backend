@@ -58,15 +58,14 @@
     <br><br>
 
 
-    <label for="senhaHash">
-        Senha:
+    <label for="senha">
+        Nova senha (deixe vazio para manter a atual):
     </label>
 
     <input type="password"
            id="senha"
            name="senha"
-           value="<%= usuario.getSenhaHash() %>"
-           required>
+           autocomplete="new-password">
 
     <br><br>
 
