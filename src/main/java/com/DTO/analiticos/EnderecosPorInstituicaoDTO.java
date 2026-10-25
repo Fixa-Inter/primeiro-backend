@@ -26,4 +26,8 @@ public class EnderecosPorInstituicaoDTO {
     public void setEnderecos(int enderecos) {
         this.enderecos = enderecos;
     }
+
+    public int getPercentual() {
+        return percentual;
+    }
 }

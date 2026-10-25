@@ -31,4 +31,8 @@ public class UsuariosPorAtividadeDTO {
     public void setUsuarios(int usuarios) {
         this.usuarios = usuarios;
     }
+
+    public int getPercentual() {
+        return percentual;
+    }
 }

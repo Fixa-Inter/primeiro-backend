@@ -33,4 +33,10 @@ public class ExcecaoDeJSP extends RuntimeException {
     public static ExcecaoDeJSP falhaLogin() {
         return new ExcecaoDeJSP("Login falhou. Verifique se Email e Senha.");
     }
+
+    //invalido no regex
+    public static ExcecaoDeJSP valorInvalido(String campo) {
+        String msg = "O valor informado para %s é inválido.".formatted(campo);
+        return new ExcecaoDeJSP(msg);
+    }
 }

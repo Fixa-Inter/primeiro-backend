@@ -20,14 +20,10 @@
 <h1>Editar Endereço</h1>
 
 <% String erro = (String) request.getAttribute("erro"); %>
-<form method="post"
-      action="<%= request.getContextPath() %>
-            <% if (erro != null && !erro.isBlank()) { %>
-            <p>
-                <%= erro %>
-            </p>
-            <% } %>
-/enderecos">
+<% if (erro != null && !erro.isBlank()) { %>
+    <p><%= erro %></p>
+<% } %>
+<form method="post" action="<%= request.getContextPath() %>/enderecos">
     <% if (enderecoDTO != null) { %>
     <fieldset>
         <legend>Dados relacionados (somente leitura)</legend>
@@ -53,6 +49,10 @@
     <input type="hidden"
            name="dataCriacao"
            value="<%= endereco.getDataCriacao() %>">
+
+    <label for="nome">Nome do endereço:</label>
+    <input type="text" id="nome" name="nome" maxlength="50" value="<%= endereco.getNome() %>" required>
+    <br><br>
 
 
 

@@ -3,6 +3,7 @@ package com.DTO;
 /** Dados de endereço combinados com o nome da instituição. */
 public class EnderecoDTO {
     private Integer id;
+    private String nome;
     private String rua;
     private String bairro;
     private String complemento;
@@ -23,6 +24,15 @@ public class EnderecoDTO {
         this.cep = cep;
         this.instituicaoNome = instituicaoNome;
     }
+
+    public EnderecoDTO(Integer id, String nome, String rua, String bairro, String complemento, String cidade, String estado, String numero, String cep, String instituicaoNome) {
+        this(id, rua, bairro, complemento, cidade, estado, numero, cep, instituicaoNome);
+        this.nome = nome;
+    }
+
+    public String getNome() { return nome; }
+
+    public void setNome(String nome) { this.nome = nome; }
 
     public Integer getId() {
         return id;
@@ -98,7 +108,7 @@ public class EnderecoDTO {
 
     @Override
     public String toString() {
-        return "%s %s %s %s %s %s %s %s %s"
-                .formatted(id, rua, bairro, complemento, cidade, estado, numero, cep, instituicaoNome);
+        return "%s %s %s %s %s %s %s %s %s %s"
+                .formatted(id, nome, rua, bairro, complemento, cidade, estado, numero, cep, instituicaoNome);
     }
 }

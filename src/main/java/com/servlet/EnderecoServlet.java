@@ -7,6 +7,7 @@ import com.model.Endereco;
 import com.model.Filtro;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
+import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -26,7 +27,6 @@ public class EnderecoServlet extends HttpServlet{
     private static final String PAGINA_PRINCIPAL = "/area-restrita/views/enderecos.jsp";
     private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-endereco.jsp";
     private static final String PAGINA_EDICAO = "/area-restrita/views/editar-endereco.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -73,7 +73,7 @@ public class EnderecoServlet extends HttpServlet{
         }
 
         if (erro) {
-            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } else {
             request.getRequestDispatcher(destino).forward(request, response);
         }
@@ -195,6 +195,7 @@ public class EnderecoServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
+        String nome = request.getParameter("nome");
         String rua = request.getParameter("rua");
 
         String bairro = request.getParameter("bairro");
@@ -211,11 +212,19 @@ public class EnderecoServlet extends HttpServlet{
 
         String cnpj = request.getParameter("cnpj");
 
+        if (!RegexUtils.validarCep(cep)) {
+            throw ExcecaoDeJSP.valorInvalido("cep");
+        }
+        if (!RegexUtils.validarCnpj(cnpj)) {
+            throw ExcecaoDeJSP.valorInvalido("cnpj");
+        }
+
         Integer fkInstituicao = Integer.parseInt(
                 request.getParameter("fkInstituicao")
         );
 
         Endereco endereco = new Endereco(
+                nome,
                 rua,
                 bairro,
                 complemento,
@@ -273,6 +282,7 @@ public class EnderecoServlet extends HttpServlet{
                 request.getParameter("id")
         );
 
+        String nome = request.getParameter("nome");
         String rua = request.getParameter("rua");
 
         String bairro = request.getParameter("bairro");
@@ -288,6 +298,13 @@ public class EnderecoServlet extends HttpServlet{
         String cep = request.getParameter("cep");
 
         String cnpj = request.getParameter("cnpj");
+
+        if (!RegexUtils.validarCep(cep)) {
+            throw ExcecaoDeJSP.valorInvalido("cep");
+        }
+        if (!RegexUtils.validarCnpj(cnpj)) {
+            throw ExcecaoDeJSP.valorInvalido("cnpj");
+        }
 
         Integer fkInstituicao = Integer.parseInt(
                 request.getParameter("fkInstituicao")
@@ -310,6 +327,7 @@ public class EnderecoServlet extends HttpServlet{
             // Monta o objeto com os novos dados
             Endereco alterado = new Endereco(
                     id,
+                    nome,
                     rua,
                     bairro,
                     complemento,

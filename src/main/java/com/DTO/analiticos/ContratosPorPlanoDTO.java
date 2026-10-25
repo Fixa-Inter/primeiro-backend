@@ -26,4 +26,8 @@ public class ContratosPorPlanoDTO {
     public void setContratos(int contratos) {
         this.contratos = contratos;
     }
+
+    public int getPercentual() {
+        return percentual;
+    }
 }

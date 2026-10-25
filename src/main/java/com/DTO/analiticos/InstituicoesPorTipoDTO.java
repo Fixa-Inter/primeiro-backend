@@ -25,6 +25,10 @@ public class InstituicoesPorTipoDTO {
         return instituicoes;
     }
 
+    public int getPercentual() {
+        return percentual;
+    }
+
     public void setInstituicoes(Integer instituicoes) {
         this.instituicoes = instituicoes;
     }
