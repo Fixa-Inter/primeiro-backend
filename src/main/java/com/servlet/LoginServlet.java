@@ -4,6 +4,7 @@ import com.DAO.LoginDAO;
 import com.DTO.LoginDTO;
 import com.DTO.SuperAdminDTO;
 import com.exception.ExcecaoDeJSP;
+import com.model.Instituicao;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,12 +16,13 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet("/login-handler")
+@WebServlet({"/login-handler", "/login"})
 public class LoginServlet extends HttpServlet {
 
     private static final String AREA_RESTRITA = "/area-restrita/index.jsp";
     private static final String PAGINA_LOGIN = "jsp/login.jsp";
     private static final String PAGINA_ERRO = "/html/erro.html";
+    private static final String ADICIONAR_ENDERECO = "/cadastro?action=adicionarEndereco";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -38,6 +40,13 @@ public class LoginServlet extends HttpServlet {
         try {
             switch (action) {
                 case "login" -> {
+
+                    String tipoLogin = req.getParameter("tipoLogin");
+
+                    if ("admin".equals(tipoLogin)){
+                        SuperAdminDTO usuario = login(req);
+                    }
+
                     SuperAdminDTO usuario = login(req);
                     session.setAttribute("usuario", usuario);
                 }
@@ -54,7 +63,7 @@ public class LoginServlet extends HttpServlet {
             destino = AREA_RESTRITA;
 
         }
-        // Se houver alguma exceção de JSP, aciona o método doGet
+        // Se houver alguma exceção de JSP, aciona o metodo doGet
         catch (ExcecaoDeJSP e) {
             req.setAttribute("erro", e.getMessage());
             doGet(req, resp);
