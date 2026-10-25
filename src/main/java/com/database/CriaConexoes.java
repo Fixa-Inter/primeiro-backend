@@ -25,7 +25,7 @@ public class CriaConexoes {
         config.setPassword(dotenv.get("DB_PASSWORD"));
         config.setDriverClassName("org.postgresql.Driver");
 
-        config.setMaximumPoolSize(15);        // quantidade maxima de conexoes simultaneas
+        config.setMaximumPoolSize(5);        // quantidade maxima de conexoes simultaneas
         config.setMinimumIdle(2);             // quantidade de conexoes que sistema tenta manter disponivel sempre
         config.setConnectionTimeout(30000);   // quanto tempo uma requisicao espera por uma conexao livre, se passar de 30s lança uma excecao
         config.setMaxLifetime(1800000);       // troca uma conexao livre por uma nova a cada 30 minutos para evitar erros

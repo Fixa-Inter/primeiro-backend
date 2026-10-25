@@ -30,6 +30,5 @@ bin/
 .DS_Store
 
 ## PROJETO ##
-.env.env
-src/main/resources/.env
+.env
 target/

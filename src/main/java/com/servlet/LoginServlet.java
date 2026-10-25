@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet("/login-handler")
+@WebServlet({"/login-handler", "/login"})
 public class LoginServlet extends HttpServlet {
 
     private static final String AREA_RESTRITA = "/area-restrita/index.jsp";
@@ -38,6 +38,13 @@ public class LoginServlet extends HttpServlet {
         try {
             switch (action) {
                 case "login" -> {
+
+                    String tipoLogin = req.getParameter("tipoLogin");
+
+                    if ("admin".equals(tipoLogin)){
+                        SuperAdminDTO usuario = login(req);
+                    }
+
                     SuperAdminDTO usuario = login(req);
                     session.setAttribute("usuario", usuario);
                 }
@@ -54,7 +61,7 @@ public class LoginServlet extends HttpServlet {
             destino = AREA_RESTRITA;
 
         }
-        // Se houver alguma exceção de JSP, aciona o método doGet
+        // Se houver alguma exceção de JSP, aciona o metodo doGet
         catch (ExcecaoDeJSP e) {
             req.setAttribute("erro", e.getMessage());
             doGet(req, resp);
