@@ -5,6 +5,7 @@ import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.SuperAdministrador;
 import com.model.enums.OperacaoFiltro;
+import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,10 +20,9 @@ import java.util.List;
 @WebServlet(name = "SuperAdministradorServlet", value = "/superAdmin")
 public class SuperAdministradorServlet extends HttpServlet{
 
-    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/superAdmin.jsp";
-    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-superAdmin.jsp";
-    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-superAdmin.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
+    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/super-admin.jsp";
+    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-super-admin.jsp";
+    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-super-admin.jsp";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -57,7 +57,7 @@ public class SuperAdministradorServlet extends HttpServlet{
             e.printStackTrace(System.err);
         }
 
-        if (erro) response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        if (erro) response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         else request.getRequestDispatcher(destino).forward(request, response);
     }
 
@@ -177,6 +177,9 @@ public class SuperAdministradorServlet extends HttpServlet{
         String nome = request.getParameter("nome");
 
         String email = request.getParameter("email");
+        if (!RegexUtils.validarEmail(email)) {
+            throw ExcecaoDeJSP.valorInvalido("email");
+        }
 
         String senha = request.getParameter("senha");
 
@@ -206,7 +209,7 @@ public class SuperAdministradorServlet extends HttpServlet{
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 
-            dao.cadastrar(superAdministrador);
+            dao.cadastrar(superAdministrador, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/superAdmin"
@@ -224,7 +227,7 @@ public class SuperAdministradorServlet extends HttpServlet{
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (SuperAdministradorDAO dao = new SuperAdministradorDAO()){
-            dao.remover(id);
+            dao.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/superAdmin"
@@ -249,6 +252,9 @@ public class SuperAdministradorServlet extends HttpServlet{
         String nome = request.getParameter("nome");
 
         String email = request.getParameter("email");
+        if (!RegexUtils.validarEmail(email)) {
+            throw ExcecaoDeJSP.valorInvalido("email");
+        }
 
         String senha = request.getParameter("senha");
 
@@ -274,7 +280,7 @@ public class SuperAdministradorServlet extends HttpServlet{
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/superAdmin"

@@ -5,6 +5,7 @@
 <%
     Contrato contrato =
             (Contrato) request.getAttribute("contrato");
+    com.DTO.ContratoDTO contratoDTO = (com.DTO.ContratoDTO) request.getAttribute("contratoDTO");
 %>
 
 <!DOCTYPE html>
@@ -19,14 +20,20 @@
 <h1>Editar contrato</h1>
 
 <% String erro = (String) request.getAttribute("erro"); %>
+<% if (erro != null && !erro.isBlank()) { %>
+    <p><%= erro %></p>
+<% } %>
 <form method="post"
-      action="<%= request.getContextPath() %>
-            <% if (erro != null && !erro.isBlank()) { %>
-            <p>
-                <%= erro %>
-            </p>
-            <% } %>
-/contratos">
+      action="<%= request.getContextPath() %>/contratos">
+    <% if (contratoDTO != null) { %>
+    <fieldset>
+        <legend>Dados relacionados (somente leitura)</legend>
+        <p>Plano: <%= contratoDTO.getPlanoNome() %></p>
+        <p>Estado: <%= contratoDTO.getEstado() %></p>
+        <p>Instituição: <%= contratoDTO.getInstituicaoNome() %></p>
+    </fieldset>
+    <br>
+    <% } %>
 
     <input type="hidden"
            name="action"

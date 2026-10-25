@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.DTO.EnderecoDTO" %>
 <%@ page import="com.model.Filtro" %>
@@ -99,6 +100,17 @@
 </head>
 
 <body>
+
+<% if (session.getAttribute("ULTIMO_COMANDO_DESFAZER_SISTEMA") != null) { %>
+<div id="alerta-desfazer" style="background: #fff3cd; padding: 10px; margin: 10px 0; border: 1px solid #ffeeba;">
+    <span>Ação realizada com sucesso!</span>
+    <a href="${pageContext.request.contextPath}/DesfazerController" class="btn btn-warning btn-sm" style="margin-left: 15px;">
+        ↩️ Desfazer Última Ação
+    </a>
+</div>
+<% } %>
+
+<a href="${pageContext.request.contextPath}/area-restrita/index.jsp">Voltar ao painel</a>
 
 <h1>Endereços</h1>
 
@@ -491,6 +503,7 @@
 
     <tr>
         <th>ID</th>
+        <th>Nome</th>
         <th>Rua</th>
         <th>Bairro</th>
         <th>Complemento</th>
@@ -516,6 +529,11 @@
 
         <td>
             <%= endereco.getId() %>
+        </td>
+
+
+        <td>
+            <%= endereco.getNome() %>
         </td>
 
         <td>

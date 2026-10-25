@@ -7,6 +7,7 @@ import com.model.Endereco;
 import com.model.Filtro;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
+import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -26,7 +27,6 @@ public class EnderecoServlet extends HttpServlet{
     private static final String PAGINA_PRINCIPAL = "/area-restrita/views/enderecos.jsp";
     private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-endereco.jsp";
     private static final String PAGINA_EDICAO = "/area-restrita/views/editar-endereco.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -49,12 +49,17 @@ public class EnderecoServlet extends HttpServlet{
                 listarEnderecos(request, response);
                 destino = PAGINA_PRINCIPAL;
             } else if (action.equals("create")) {
+                try (com.DAO.InstituicaoDAO instituicaoDAO = new com.DAO.InstituicaoDAO()) {
+                    request.setAttribute("instituicoesDisponiveis", instituicaoDAO.listar(null, null, null, null));
+                }
                 destino = PAGINA_CADASTRO;
             } else if (action.equals("update")) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (EnderecoDAO dao = new EnderecoDAO()) {
                     Endereco endereco = dao.pesquisarPorId(id);
                     request.setAttribute("endereco", endereco);
+                    request.setAttribute("enderecoDTO", dao.listarEnderecoDTO(null, null, null, null).stream()
+                            .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
                 destino = PAGINA_EDICAO;
             }
@@ -68,7 +73,7 @@ public class EnderecoServlet extends HttpServlet{
         }
 
         if (erro) {
-            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } else {
             request.getRequestDispatcher(destino).forward(request, response);
         }
@@ -190,6 +195,7 @@ public class EnderecoServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
+        String nome = request.getParameter("nome");
         String rua = request.getParameter("rua");
 
         String bairro = request.getParameter("bairro");
@@ -206,11 +212,19 @@ public class EnderecoServlet extends HttpServlet{
 
         String cnpj = request.getParameter("cnpj");
 
+        if (!RegexUtils.validarCep(cep)) {
+            throw ExcecaoDeJSP.valorInvalido("cep");
+        }
+        if (!RegexUtils.validarCnpj(cnpj)) {
+            throw ExcecaoDeJSP.valorInvalido("cnpj");
+        }
+
         Integer fkInstituicao = Integer.parseInt(
                 request.getParameter("fkInstituicao")
         );
 
         Endereco endereco = new Endereco(
+                nome,
                 rua,
                 bairro,
                 complemento,
@@ -228,7 +242,7 @@ public class EnderecoServlet extends HttpServlet{
                 throw ExcecaoDeJSP.cnpjDuplicado();
             }
 
-            dao.cadastrar(endereco);
+            dao.cadastrar(endereco, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/enderecos"
@@ -246,7 +260,7 @@ public class EnderecoServlet extends HttpServlet{
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (EnderecoDAO enderecoDAO = new EnderecoDAO()){
-            enderecoDAO.remover(id);
+            enderecoDAO.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/enderecos"
@@ -268,6 +282,7 @@ public class EnderecoServlet extends HttpServlet{
                 request.getParameter("id")
         );
 
+        String nome = request.getParameter("nome");
         String rua = request.getParameter("rua");
 
         String bairro = request.getParameter("bairro");
@@ -283,6 +298,13 @@ public class EnderecoServlet extends HttpServlet{
         String cep = request.getParameter("cep");
 
         String cnpj = request.getParameter("cnpj");
+
+        if (!RegexUtils.validarCep(cep)) {
+            throw ExcecaoDeJSP.valorInvalido("cep");
+        }
+        if (!RegexUtils.validarCnpj(cnpj)) {
+            throw ExcecaoDeJSP.valorInvalido("cnpj");
+        }
 
         Integer fkInstituicao = Integer.parseInt(
                 request.getParameter("fkInstituicao")
@@ -305,6 +327,7 @@ public class EnderecoServlet extends HttpServlet{
             // Monta o objeto com os novos dados
             Endereco alterado = new Endereco(
                     id,
+                    nome,
                     rua,
                     bairro,
                     complemento,
@@ -323,7 +346,7 @@ public class EnderecoServlet extends HttpServlet{
                 throw ExcecaoDeJSP.cnpjDuplicado();
             }
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/enderecos"

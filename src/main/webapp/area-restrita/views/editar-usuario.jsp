@@ -4,6 +4,7 @@
 
 <%
     Usuario usuario = (Usuario) request.getAttribute("usuario");
+    com.DTO.UsuarioDTO usuarioDTO = (com.DTO.UsuarioDTO) request.getAttribute("usuarioDTO");
 %>
 
 <!DOCTYPE html>
@@ -20,6 +21,14 @@
 <% String erro = (String) request.getAttribute("erro"); %>
 <form action="${pageContext.request.contextPath}/usuarios"
       method="post">
+    <% if (usuarioDTO != null) { %>
+    <fieldset>
+        <legend>Dados relacionados (somente leitura)</legend>
+        <p>Estado: <%= usuarioDTO.getEstado() %></p>
+        <p>Instituição: <%= usuarioDTO.getInstituicaoNome() %></p>
+    </fieldset>
+    <br>
+    <% } %>
             <% if (erro != null && !erro.isBlank()) { %>
             <p>
                 <%= erro %>

@@ -28,7 +28,6 @@ public class ContratoServlet extends HttpServlet{
     private static final String PAGINA_PRINCIPAL = "/area-restrita/views/contratos.jsp";
     private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-contrato.jsp";
     private static final String PAGINA_EDICAO = "/area-restrita/views/editar-contrato.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request,
@@ -49,6 +48,11 @@ public class ContratoServlet extends HttpServlet{
                 destino = PAGINA_PRINCIPAL;
             }
             else if (action.equals("create")) {
+                try (com.DAO.EnderecoDAO enderecoDAO = new com.DAO.EnderecoDAO();
+                     com.DAO.PlanoDAO planoDAO = new com.DAO.PlanoDAO()) {
+                    request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
+                    request.setAttribute("planosDisponiveis", planoDAO.buscar(null, null, null, null));
+                }
                 destino = PAGINA_CADASTRO;
             }
             else if (action.equals("update")) {
@@ -60,6 +64,8 @@ public class ContratoServlet extends HttpServlet{
                 try (ContratoDAO dao = new ContratoDAO()) {
                     Contrato contrato = dao.pesquisarPorId(id);
                     request.setAttribute("contrato", contrato);
+                    request.setAttribute("contratoDTO", dao.listarContratoDTO(null, null, null, null).stream()
+                            .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
 
                 destino = PAGINA_EDICAO;
@@ -77,7 +83,7 @@ public class ContratoServlet extends HttpServlet{
         }
 
         if (erro) {
-            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } else {
             request.getRequestDispatcher(destino).forward(request, response);
@@ -228,7 +234,7 @@ public class ContratoServlet extends HttpServlet{
         );
         try (ContratoDAO dao = new ContratoDAO()) {
 
-            dao.cadastrar(contrato);
+            dao.cadastrar(contrato, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/contratos"
@@ -246,7 +252,7 @@ public class ContratoServlet extends HttpServlet{
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (ContratoDAO dao = new ContratoDAO()){
-            dao.remover(id);
+            dao.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/contratos"
@@ -301,7 +307,7 @@ public class ContratoServlet extends HttpServlet{
             );
 
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/contratos"

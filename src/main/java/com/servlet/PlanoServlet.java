@@ -22,7 +22,6 @@ public class PlanoServlet extends HttpServlet {
     private static final String PAGINA_PRINCIPAL = "/area-restrita/views/planos.jsp";
     private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-plano.jsp";
     private static final String PAGINA_EDICAO = "/area-restrita/views/editar-plano.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -57,7 +56,7 @@ public class PlanoServlet extends HttpServlet {
             e.printStackTrace(System.err);
         }
 
-        if (erro) response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        if (erro) response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         else request.getRequestDispatcher(destino).forward(request, response);
     }
 
@@ -206,7 +205,7 @@ public class PlanoServlet extends HttpServlet {
 
         try (PlanoDAO dao = new PlanoDAO()) {
 
-            dao.cadastrar(plano);
+            dao.cadastrar(plano, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/planos"
@@ -224,7 +223,7 @@ public class PlanoServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (PlanoDAO planoDAO = new PlanoDAO()){
-            planoDAO.remover(id);
+            planoDAO.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/planos"
@@ -273,7 +272,7 @@ public class PlanoServlet extends HttpServlet {
                     descricao
             );
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/planos"

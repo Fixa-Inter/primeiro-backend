@@ -99,6 +99,15 @@
 
 <body>
 
+<% if (session.getAttribute("ULTIMO_COMANDO_DESFAZER_SISTEMA") != null) { %>
+<div id="alerta-desfazer" style="background: #fff3cd; padding: 10px; margin: 10px 0; border: 1px solid #ffeeba;">
+    <span>Ação realizada com sucesso!</span>
+    <a href="${pageContext.request.contextPath}/DesfazerController" class="btn btn-warning btn-sm" style="margin-left: 15px;">
+        ↩️ Desfazer Última Ação
+    </a>
+</div>
+<% } %>
+
 <h1>Instituições</h1>
 
 <div class="acoes">
@@ -106,7 +115,7 @@
         Cadastrar instituição
     </a>
 
-    <a href="${pageContext.request.contextPath}/index.jsp">
+    <a href="${pageContext.request.contextPath}/area-restrita/index.jsp">
         Voltar
     </a>
 </div>

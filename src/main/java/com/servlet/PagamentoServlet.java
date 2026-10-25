@@ -27,7 +27,6 @@ public class PagamentoServlet extends HttpServlet {
     private static final String PAGINA_PRINCIPAL = "/area-restrita/views/pagamentos.jsp";
     private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-pagamento.jsp";
     private static final String PAGINA_EDICAO = "/area-restrita/views/editar-pagamento.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -44,12 +43,17 @@ public class PagamentoServlet extends HttpServlet {
                 listarPagamentos(request, response);
                 destino = PAGINA_PRINCIPAL;
             } else if (action.equals("create")) {
+                try (com.DAO.ContratoDAO contratoDAO = new com.DAO.ContratoDAO()) {
+                    request.setAttribute("contratosDisponiveis", contratoDAO.buscar(null, null, null, null));
+                }
                 destino = PAGINA_CADASTRO;
             } else if (action.equals("update")) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (PagamentoDAO dao = new PagamentoDAO()) {
                     Pagamento pagamento = dao.pesquisarPorId(id);
                     request.setAttribute("pagamento", pagamento);
+                    request.setAttribute("pagamentoDTO", dao.listarPagamentoDTO(null, null, null, null).stream()
+                            .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
                 destino = PAGINA_EDICAO;
             }
@@ -62,7 +66,7 @@ public class PagamentoServlet extends HttpServlet {
             e.printStackTrace(System.err);
         }
 
-        if (erro) response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        if (erro) response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         else request.getRequestDispatcher(destino).forward(request, response);
     }
 
@@ -207,7 +211,7 @@ public class PagamentoServlet extends HttpServlet {
 
         try (PagamentoDAO dao = new PagamentoDAO()) {
 
-            dao.cadastrar(pagamento);
+            dao.cadastrar(pagamento, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/pagamentos"
@@ -225,7 +229,7 @@ public class PagamentoServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (PagamentoDAO pagamentoDAO = new PagamentoDAO()){
-            pagamentoDAO.remover(id);
+            pagamentoDAO.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/pagamentos"
@@ -281,7 +285,7 @@ public class PagamentoServlet extends HttpServlet {
                     metodoPagamento
             );
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/pagamentos"

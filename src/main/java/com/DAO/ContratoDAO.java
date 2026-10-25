@@ -5,6 +5,12 @@ import com.model.Contrato;
 import com.model.Filtro;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.StatusContrato;
+import com.utils.desfazer.DesfazerDelete;
+import com.utils.desfazer.DesfazerDeleteFactory;
+import com.utils.desfazer.DesfazerInsert;
+import com.utils.desfazer.DesfazerUpdate;
+import com.utils.desfazer.GerenciadorDesfazer;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -84,7 +90,7 @@ public class ContratoDAO extends DAO{
     }
 
     //insert
-    public void cadastrar(Contrato contrato) throws SQLException{
+    public int cadastrar(Contrato contrato) throws SQLException{
         LocalDate dataInicio = contrato.getDataInicio();
         LocalDate dataVencimento = contrato.getDataVencimento();
         Integer fkEndereco = contrato.getFkEndereco();
@@ -93,7 +99,7 @@ public class ContratoDAO extends DAO{
 
         String sql = """
                 INSERT INTO CONTRATO (DATA_VENCIMENTO,FK_PLANO_ID,FK_ENDERECO_ID, STATUS_CONTRATO) 
-                VALUES(?,?,?,?)
+                VALUES(?,?,?,?) RETURNING ID
                 """;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setObject(1,dataVencimento, Types.DATE);
@@ -103,12 +109,20 @@ public class ContratoDAO extends DAO{
 
             // tira as colunas data_criacao e data_inicio
 
-            pstmt.execute();
+            int id;
+            try (ResultSet rs = pstmt.executeQuery()) { rs.next(); id = rs.getInt("ID"); }
             conn.commit();
+            return id;
         } catch (SQLException e) {
             conn.rollback();
             throw new RuntimeException(e);
         }
+    }
+
+    public int cadastrar(Contrato contrato, HttpServletRequest request) throws SQLException {
+        int id = cadastrar(contrato);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
+        return id;
     }
 
     //select
@@ -281,6 +295,11 @@ public class ContratoDAO extends DAO{
         }
     }
 
+    public void atualizar(Contrato original, Contrato alterado, HttpServletRequest request) throws SQLException {
+        atualizar(original, alterado);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
+    }
+
     //delete
     public void remover(int id) throws SQLException {
 
@@ -295,6 +314,12 @@ public class ContratoDAO extends DAO{
             conn.rollback();
             throw e;
         }
+    }
+
+    public void remover(int id, HttpServletRequest request) throws SQLException {
+        DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
+        remover(id);
+        GerenciadorDesfazer.registrarComando(request, comando);
     }
 
     public List<ContratoDTO> listarContratoDTO(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
@@ -362,5 +387,22 @@ public class ContratoDAO extends DAO{
         return resultado;
     }
 
-
+    //cadastrar completo, ignorando os default. usado para desfazer um delete
+    public int cadastrarCompleto(Contrato contrato) throws SQLException {
+        String sql = "INSERT INTO contrato (id, data_inicio, data_vencimento, fk_plano_id, fk_endereco_id, status_contrato) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setObject(1, contrato.getId());
+            pstmt.setObject(2, contrato.getDataInicio());
+            pstmt.setObject(3, contrato.getDataVencimento());
+            pstmt.setObject(4, contrato.getFkPlano());
+            pstmt.setObject(5, contrato.getFkEndereco());
+            pstmt.setObject(6, contrato.getStatusContrato() == null ? null : contrato.getStatusContrato().getCodigo());
+            pstmt.executeUpdate();
+            try (PreparedStatement serial = conn.prepareStatement("SELECT setval(pg_get_serial_sequence('contrato', 'id'), COALESCE(max(id), 1)) FROM contrato")) {
+                serial.executeQuery();
+            }
+            conn.commit();
+            return contrato.getId();
+        } catch (SQLException e) { conn.rollback(); throw e; }
+    }
 }

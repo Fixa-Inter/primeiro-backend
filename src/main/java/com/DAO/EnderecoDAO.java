@@ -8,6 +8,12 @@ import com.model.enums.OperacaoFiltro;
 import com.model.enums.StatusContrato;
 import com.model.enums.TipoInstituicao;
 import org.postgresql.core.SqlCommand;
+import com.utils.desfazer.DesfazerDelete;
+import com.utils.desfazer.DesfazerDeleteFactory;
+import com.utils.desfazer.DesfazerInsert;
+import com.utils.desfazer.DesfazerUpdate;
+import com.utils.desfazer.GerenciadorDesfazer;
+import jakarta.servlet.http.HttpServletRequest;
 
 import javax.print.attribute.standard.JobKOctets;
 import java.sql.*;
@@ -23,6 +29,7 @@ public class EnderecoDAO extends DAO{
 
     public static final Map<String, String> camposFiltraveis = Map.of(
             "ID", "Id",
+            "NOME", "Nome",
             "RUA", "Rua",
             "BAIRRO", "Bairro",
             "CIDADE", "Cidade",
@@ -34,6 +41,10 @@ public class EnderecoDAO extends DAO{
 
     public static final Map<String, List<OperacaoFiltro>> operacoesPorCampo = Map.of(
             "ID", List.of(
+                    OperacaoFiltro.IGUAL,
+                    OperacaoFiltro.CONTEM
+            ),
+            "NOME", List.of(
                     OperacaoFiltro.IGUAL,
                     OperacaoFiltro.CONTEM
             ),
@@ -70,7 +81,7 @@ public class EnderecoDAO extends DAO{
         try {
             return switch (campo) {
                 case "ID", "FK_INSTITUICAO_ID" -> Integer.parseInt(valor);
-                case "RUA","BAIRRO", "CIDADE", "ESTADO", "CEP", "CNPJ" -> valor;
+                case "NOME", "RUA","BAIRRO", "CIDADE", "ESTADO", "CEP", "CNPJ" -> valor;
                 default -> throw new IllegalArgumentException();
             };
         } catch (DateTimeParseException |
@@ -86,8 +97,8 @@ public class EnderecoDAO extends DAO{
     }
 
     // insert
-    public void cadastrar(Endereco endereco) throws SQLException {
-
+    public int cadastrar(Endereco endereco) throws SQLException {
+        String nome = endereco.getNome();
         String rua = endereco.getRua();
         String bairro = endereco.getBairro();
         String complemento = endereco.getComplemento();
@@ -105,25 +116,28 @@ public class EnderecoDAO extends DAO{
 
 
         String sql = """
-                INSERT INTO endereco (RUA, BAIRRO, COMPLEMENTO, CIDADE, ESTADO, NUMERO, CEP, FK_INSTITUICAO_ID, cnpj)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO endereco (NOME, RUA, BAIRRO, COMPLEMENTO, CIDADE, ESTADO, NUMERO, CEP, FK_INSTITUICAO_ID, cnpj)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING ID
                 """;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, rua);
-            pstmt.setString(2, bairro);
-            pstmt.setString(3, complemento);
-            pstmt.setString(4, cidade);
-            pstmt.setString(5, estado);
-            pstmt.setString(6, numero);
-            pstmt.setString(7, cep);
-            pstmt.setInt(8, fkInstituicao);
-            pstmt.setString(9, cnpj);
+            pstmt.setString(1, nome);
+            pstmt.setString(2, rua);
+            pstmt.setString(3, bairro);
+            pstmt.setString(4, complemento);
+            pstmt.setString(5, cidade);
+            pstmt.setString(6, estado);
+            pstmt.setString(7, numero);
+            pstmt.setString(8, cep);
+            pstmt.setInt(9, fkInstituicao);
+            pstmt.setString(10, cnpj);
 
-            pstmt.execute();
+            int id;
+            try (ResultSet rs = pstmt.executeQuery()) { rs.next(); id = rs.getInt("ID"); }
 
             conn.commit();
+            return id;
 
         } catch (SQLException e) {
             conn.rollback();
@@ -132,12 +146,18 @@ public class EnderecoDAO extends DAO{
 
     }
 
+    public int cadastrar(Endereco endereco, HttpServletRequest request) throws SQLException {
+        int id = cadastrar(endereco);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
+        return id;
+    }
+
     // select
     public List<Endereco> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException{
 
         List<Endereco> resultado =  new ArrayList<Endereco>();
 
-        String sql = "SELECT id, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id, cnpj, data_criacao FROM endereco";
+        String sql = "SELECT id, nome, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id, cnpj, data_criacao FROM endereco";
 
         if (filtros != null && !filtros.isEmpty()) {
 
@@ -205,6 +225,7 @@ public class EnderecoDAO extends DAO{
             try (ResultSet rs = pstmt.executeQuery()){
                 while (rs.next()){
                     int id = rs.getInt("id");
+                    String nome = rs.getString("nome");
                     String rua = rs.getString("rua");
                     String bairro = rs.getString("bairro");
                     String complemento = rs.getString("complemento");
@@ -221,7 +242,8 @@ public class EnderecoDAO extends DAO{
                             : dataCriacaoSQL.toLocalDateTime());
 
 
-                    resultado.add(new Endereco(id, rua, bairro, complemento, cidade, estado, numero, cep, cnpj, dataCriacao, fkInstituicao));                }
+                    resultado.add(new Endereco(id, nome, rua, bairro, complemento, cidade, estado, numero, cep, cnpj, dataCriacao, fkInstituicao));
+                }
 
             }
 
@@ -243,16 +265,15 @@ public class EnderecoDAO extends DAO{
 
     }
 
+    public Endereco pesquisarPorId(int idEndereco) throws SQLException {
 
-    public Endereco pesquisarPorId(int idInstituicao) throws SQLException {
 
-
-        String sql = "SELECT id, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id, cnpj, data_criacao FROM endereco WHERE fk_instituicao_id = ?";
+        String sql = "SELECT id, nome, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id, cnpj, data_criacao FROM endereco WHERE id = ?";
 
         Endereco e;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
-            pstmt.setInt(1, idInstituicao);
+            pstmt.setInt(1, idEndereco);
 
             try (ResultSet rs = pstmt.executeQuery()){
 
@@ -261,6 +282,7 @@ public class EnderecoDAO extends DAO{
                 }
 
                 int id = rs.getInt("id");
+                String nome = rs.getString("nome");
                 String rua = rs.getString("rua");
                 String bairro = rs.getString("bairro");
                 String complemento = rs.getString("complemento");
@@ -272,7 +294,7 @@ public class EnderecoDAO extends DAO{
                 LocalDateTime dataCriacao = rs.getTimestamp("data_criacao").toLocalDateTime();
                 int fkInstituicao = rs.getInt("fk_instituicao_id");
 
-                e = new Endereco(id, rua, bairro, complemento, cidade, estado, numero, cep, cnpj, dataCriacao, fkInstituicao);
+                e = new Endereco(id, nome, rua, bairro, complemento, cidade, estado, numero, cep, cnpj, dataCriacao, fkInstituicao);
             }
         }
 
@@ -285,7 +307,7 @@ public class EnderecoDAO extends DAO{
 
     public Endereco pesquisarPorCnpj(String cnpjInsert) throws SQLException{
 
-        String sql = "SELECT id, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id, cnpj, data_criacao FROM endereco WHERE cnpj = ?";;
+        String sql = "SELECT id, nome, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id, cnpj, data_criacao FROM endereco WHERE cnpj = ?";;
 
         Endereco e;
 
@@ -299,6 +321,7 @@ public class EnderecoDAO extends DAO{
                 }
 
                 int id = rs.getInt("id");
+                String nome = rs.getString("nome");
                 String rua = rs.getString("rua");
                 String bairro = rs.getString("bairro");
                 String complemento = rs.getString("complemento");
@@ -310,7 +333,7 @@ public class EnderecoDAO extends DAO{
                 LocalDateTime dataCriacao = rs.getTimestamp("data_criacao").toLocalDateTime();
                 int fkInstituicao = rs.getInt("fk_instituicao_id");
 
-                e = new Endereco(id, rua, bairro, complemento, cidade, estado, numero, cep, cnpj, dataCriacao, fkInstituicao);
+                e = new Endereco(id, nome, rua, bairro, complemento, cidade, estado, numero, cep, cnpj, dataCriacao, fkInstituicao);
 
             }
 
@@ -322,9 +345,8 @@ public class EnderecoDAO extends DAO{
 
     // update
     public void atualizar(Endereco original, Endereco alterado) throws SQLException {
-
-
         Integer id = alterado.getId();
+        String nome = alterado.getNome();
         String rua = alterado.getRua();
         String bairro = alterado.getBairro();
         String complemento = alterado.getComplemento();
@@ -339,6 +361,11 @@ public class EnderecoDAO extends DAO{
 
         StringBuilder sql = new StringBuilder("UPDATE endereco SET ");
         List<Object> valores = new ArrayList<>();
+
+        if (!Objects.equals(nome, original.getNome())) {
+            sql.append("nome = ?, ");
+            valores.add(nome);
+        }
 
 
         if(!Objects.equals(rua, original.getRua())){
@@ -407,6 +434,11 @@ public class EnderecoDAO extends DAO{
         }
     }
 
+    public void atualizar(Endereco original, Endereco alterado, HttpServletRequest request) throws SQLException {
+        atualizar(original, alterado);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
+    }
+
     // delete
     public void remover(int id) throws SQLException {
 
@@ -423,6 +455,12 @@ public class EnderecoDAO extends DAO{
             conn.rollback();
             throw e;
         }
+    }
+
+    public void remover(int id, HttpServletRequest request) throws SQLException {
+        DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
+        remover(id);
+        GerenciadorDesfazer.registrarComando(request, comando);
     }
 
     public List<EnderecoDTO> listarEnderecoDTO(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
@@ -467,7 +505,7 @@ public class EnderecoDAO extends DAO{
             }
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    resultado.add(new EnderecoDTO(rs.getInt("id"), rs.getString("rua"),
+                    resultado.add(new EnderecoDTO(rs.getInt("id"), rs.getString("nome"), rs.getString("rua"),
                             rs.getString("bairro"), rs.getString("complemento"), rs.getString("cidade"),
                             rs.getString("estado"), rs.getString("numero"), rs.getString("cep"),
                             rs.getString("instituicao_nome")));
@@ -482,4 +520,60 @@ public class EnderecoDAO extends DAO{
         return resultado;
     }
 
+    //cadastrar completo, ignorando os default. usado para desfazer um delete
+    public int cadastrarCompleto(Endereco endereco) throws SQLException {
+        int id = endereco.getId();
+        String nome = endereco.getNome();
+        LocalDateTime dataCriacao = endereco.getDataCriacao();
+        String rua = endereco.getRua();
+        String bairro = endereco.getBairro();
+        String complemento = endereco.getComplemento();
+        String cidade = endereco.getCidade();
+        String estado = endereco.getEstado();
+        String numero = endereco.getNumero();
+        String cep = endereco.getCep();
+        Integer fkInstituicao = endereco.getFkInstituicao();
+        String cnpj = endereco.getCnpj();
+
+
+        if (complemento == null || complemento.isBlank()){
+            complemento = null;
+        }
+
+
+        String sql = """
+                INSERT INTO endereco (NOME, RUA, BAIRRO, COMPLEMENTO, CIDADE, ESTADO, NUMERO, CEP, FK_INSTITUICAO_ID, CNPJ, ID, DATA_CRIACAO)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, nome);
+            pstmt.setString(2, rua);
+            pstmt.setString(3, bairro);
+            pstmt.setString(4, complemento);
+            pstmt.setString(5, cidade);
+            pstmt.setString(6, estado);
+            pstmt.setString(7, numero);
+            pstmt.setString(8, cep);
+            pstmt.setInt(9, fkInstituicao);
+            pstmt.setString(10, cnpj);
+            pstmt.setInt(11, id);
+            pstmt.setTimestamp(12, Timestamp.valueOf(dataCriacao));
+
+            pstmt.executeUpdate();
+
+            //Ajusta o serial do banco caso o id do cadastro for maior que o serial atual
+            String sqlAjustarSerial = "SELECT setval(pg_get_serial_sequence('endereco', 'id'), COALESCE(max(id), 1)) FROM endereco";
+            PreparedStatement stmtSerial = conn.prepareStatement(sqlAjustarSerial);
+            stmtSerial.executeQuery();
+
+            conn.commit();
+            return id;
+
+        } catch (SQLException e) {
+            conn.rollback();
+            throw e;
+        }
+    }
 }

@@ -1,22 +1,17 @@
-<%@ page import="com.model.FotoUsuario" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<%
-    FotoUsuario foto =
-            (FotoUsuario) request.getAttribute("fotoUsuario");
-%>
+<%@ page import="java.util.List,com.model.Usuario" %>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
-    <title>Editar Foto</title>
+    <title>Cadastrar Foto</title>
 </head>
 
 <body>
 
-<h1>Editar Foto</h1>
+<h1>Cadastrar Foto</h1>
 
 <% String erro = (String) request.getAttribute("erro"); %>
 <form
@@ -33,24 +28,8 @@
     <input
             type="hidden"
             name="action"
-            value="update"
+            value="create"
     >
-
-    <input
-            type="hidden"
-            name="id"
-            value="<%= foto.getId() %>"
-    >
-
-    <p>
-        <strong>ID:</strong>
-        <%= foto.getId() %>
-    </p>
-
-    <p>
-        <strong>Data de registro:</strong>
-        <%= foto.getDataRegistro() %>
-    </p>
 
     <label for="url">
         URL da foto:
@@ -60,30 +39,26 @@
             type="text"
             id="url"
             name="url"
-            value="<%= foto.getUrl() %>"
             maxlength="255"
             required
     >
 
     <br><br>
 
-    <label for="fkUsuario">
-        ID do usuário:
-    </label>
+    <label for="fkUsuario">Usuário:</label>
+    <select id="fkUsuario" name="fkUsuario" required>
+        <option value="">Selecione um usuário</option>
+        <% for (Usuario usuario : (List<Usuario>) request.getAttribute("usuariosDisponiveis")) { %>
+        <option value="<%= usuario.getId() %>"><%= usuario.getNome() %> — <%= usuario.getEmail() %></option>
+        <% } %>
+    </select>
 
-    <input
-            type="number"
-            id="fkUsuario"
-            name="fkUsuario"
-            value="<%= foto.getFkUsuario() %>"
-            min="1"
-            required
-    >
+    <br><br>
 
     <br><br>
 
     <button type="submit">
-        Salvar alterações
+        Cadastrar
     </button>
 
     <a href="${pageContext.request.contextPath}/fotoUsuario">

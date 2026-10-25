@@ -1,11 +1,13 @@
 package com.servlet;
 
+import com.DAO.EnderecoDAO;
 import com.DAO.UsuarioDAO;
 import com.DTO.UsuarioDTO;
 import com.exception.ExcecaoDeJSP;
 import com.model.*;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
+import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -24,7 +26,6 @@ public class UsuarioServlet extends HttpServlet{
     private static final String PAGINA_PRINCIPAL = "/area-restrita/views/usuarios.jsp";
     private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-usuario.jsp";
     private static final String PAGINA_EDICAO = "/area-restrita/views/editar-usuario.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -43,12 +44,17 @@ public class UsuarioServlet extends HttpServlet{
                 listarUsuarios(request, response);
                 destino = PAGINA_PRINCIPAL;
             } else if (action.equals("create")) {
+                try (EnderecoDAO enderecoDAO = new EnderecoDAO()) {
+                    request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
+                }
                 destino = PAGINA_CADASTRO;
             } else if (action.equals("update")) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (UsuarioDAO dao = new UsuarioDAO()) {
                     Usuario usuario = dao.pesquisarPorId(id);
                     request.setAttribute("usuario", usuario);
+                    request.setAttribute("usuarioDTO", dao.listarUsuariosDTO(null, null, null, null).stream()
+                            .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
                 destino = PAGINA_EDICAO;
             }
@@ -62,7 +68,7 @@ public class UsuarioServlet extends HttpServlet{
         }
 
         if (erro) {
-            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } else {
             request.getRequestDispatcher(destino).forward(request, response);
         }
@@ -191,6 +197,10 @@ public class UsuarioServlet extends HttpServlet{
 
         String email = request.getParameter("email");
 
+        if (!RegexUtils.validarEmail(email)) {
+            throw ExcecaoDeJSP.valorInvalido("email");
+        }
+
         String cargo = request.getParameter("cargo");
 
         TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
@@ -238,7 +248,7 @@ public class UsuarioServlet extends HttpServlet{
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 
-            dao.cadastrar(usuario);
+            dao.cadastrar(usuario, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/usuarios"
@@ -256,7 +266,7 @@ public class UsuarioServlet extends HttpServlet{
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (UsuarioDAO usuarioDAO = new UsuarioDAO()){
-            usuarioDAO.remover(id);
+            usuarioDAO.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/usuarios"
@@ -287,6 +297,10 @@ public class UsuarioServlet extends HttpServlet{
         );
 
         String email = request.getParameter("email");
+
+        if (!RegexUtils.validarEmail(email)) {
+            throw ExcecaoDeJSP.valorInvalido("email");
+        }
 
         String cargo = request.getParameter("cargo");
 
@@ -336,7 +350,7 @@ public class UsuarioServlet extends HttpServlet{
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/usuarios"

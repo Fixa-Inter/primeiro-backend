@@ -14,7 +14,7 @@ public class CadastroDAO extends DAO {
     }
 
     // transação única: insere a instituição e o primeiro endereço juntos
-    public void finalizarCadastro(Instituicao instituicao, Endereco endereco) throws SQLException {
+    public int finalizarCadastro(Instituicao instituicao, Endereco endereco) throws SQLException {
 
         String sqlInstituicao = """
                 INSERT INTO instituicao (nome, email_corporativo, dominio_email, tipo_instituicao, senha_hash)
@@ -23,8 +23,8 @@ public class CadastroDAO extends DAO {
                 """;
 
         String sqlEndereco = """
-                INSERT INTO endereco (rua, bairro, complemento, cidade, estado, numero, cep, cnpj, fk_instituicao_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO endereco (nome, rua, bairro, complemento, cidade, estado, numero, cep, cnpj, fk_instituicao_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try {
@@ -46,25 +46,27 @@ public class CadastroDAO extends DAO {
 
             // 2. insere o endereço apontando para a instituição recém-criada
             try (PreparedStatement pstmt = conn.prepareStatement(sqlEndereco)) {
-                pstmt.setString(1, endereco.getRua());
-                pstmt.setString(2, endereco.getBairro());
-                pstmt.setString(3, endereco.getComplemento());
-                pstmt.setString(4, endereco.getCidade());
-                pstmt.setString(5, endereco.getEstado());
-                pstmt.setString(6, endereco.getNumero());
-                pstmt.setString(7, endereco.getCep());
-                pstmt.setString(8, endereco.getCnpj());
-                pstmt.setInt(9, idInstituicao);
+                pstmt.setString(1, endereco.getNome());
+                pstmt.setString(2, endereco.getRua());
+                pstmt.setString(3, endereco.getBairro());
+                pstmt.setString(4, endereco.getComplemento());
+                pstmt.setString(5, endereco.getCidade());
+                pstmt.setString(6, endereco.getEstado());
+                pstmt.setString(7, endereco.getNumero());
+                pstmt.setString(8, endereco.getCep());
+                pstmt.setString(9, endereco.getCnpj());
+                pstmt.setInt(10, idInstituicao);
 
                 pstmt.executeUpdate();
             }
 
             // 3. só agora confirma tudo de uma vez
             conn.commit();
+            return idInstituicao;
 
         } catch (SQLException e) {
             conn.rollback(); // qualquer falha → desfaz os dois inserts
-            System.out.print("Erro no cadastro DAO: " + e.getMessage());
+            throw e;
         }
     }
 }

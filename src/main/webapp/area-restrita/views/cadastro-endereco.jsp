@@ -1,3 +1,5 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.List,com.model.Instituicao" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -11,18 +13,19 @@
 <h1>Cadastrar Endereço</h1>
 
 <% String erro = (String) request.getAttribute("erro"); %>
-<form method="post"
-      action="<%= request.getContextPath() %>
-            <% if (erro != null && !erro.isBlank()) { %>
-            <p>
-                <%= erro %>
-            </p>
-            <% } %>
-/enderecos">
+<% if (erro != null && !erro.isBlank()) { %>
+    <p><%= erro %></p>
+<% } %>
+<form method="post" action="<%= request.getContextPath() %>/enderecos">
 
     <input type="hidden"
            name="action"
            value="create">
+
+    <label for="nome">Nome do endereço:</label>
+    <input type="text" id="nome" name="nome" maxlength="50" required>
+    <br><br>
+
 
 
     <!-- RUA -->
@@ -143,10 +146,12 @@
         ID da Instituição:
     </label>
 
-    <input type="number"
-           id="fkInstituicao"
-           name="fkInstituicao"
-           required>
+    <select id="fkInstituicao" name="fkInstituicao" required>
+        <option value="">Selecione uma instituição</option>
+        <% for (Instituicao instituicao : (List<Instituicao>) request.getAttribute("instituicoesDisponiveis")) { %>
+        <option value="<%= instituicao.getId() %>"><%= instituicao.getNome() %></option>
+        <% } %>
+    </select>
 
     <br><br>
 

@@ -24,10 +24,9 @@ import java.util.List;
 @WebServlet(name = "FotoUsuarioServlet", value = "/fotoUsuario")
 public class FotoUsuarioServlet extends HttpServlet{
 
-    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/fotoUsuario.jsp";
-    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-fotoUsuario.jsp";
-    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-fotoUsuario.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
+    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/foto-usuario.jsp";
+    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-foto-usuario.jsp";
+    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-foto-usuario.jsp";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -45,12 +44,17 @@ public class FotoUsuarioServlet extends HttpServlet{
                 listarFotos(request, response);
                 destino = PAGINA_PRINCIPAL;
             } else if (action.equals("create")) {
+                try (com.DAO.UsuarioDAO usuarioDAO = new com.DAO.UsuarioDAO()) {
+                    request.setAttribute("usuariosDisponiveis", usuarioDAO.listar(null, null, null, null));
+                }
                 destino = PAGINA_CADASTRO;
             } else if (action.equals("update")) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (FotoUsuarioDAO dao = new FotoUsuarioDAO()) {
                     FotoUsuario fotoUsuario = dao.pesquisarPorId(id);
                     request.setAttribute("fotoUsuario", fotoUsuario);
+                    request.setAttribute("fotoUsuarioDTO", dao.listarFotoUsuarioDTO(null).stream()
+                            .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
                 destino = PAGINA_EDICAO;
             }
@@ -64,7 +68,7 @@ public class FotoUsuarioServlet extends HttpServlet{
         }
 
         if (erro) {
-            response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } else {
             request.getRequestDispatcher(destino).forward(request, response);
         }
@@ -126,7 +130,7 @@ public class FotoUsuarioServlet extends HttpServlet{
 
         try (FotoUsuarioDAO dao = new FotoUsuarioDAO()) {
 
-            dao.cadastrar(fotoUsuario);
+            dao.cadastrar(fotoUsuario, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/fotoUsuario"
@@ -144,7 +148,7 @@ public class FotoUsuarioServlet extends HttpServlet{
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (FotoUsuarioDAO dao = new FotoUsuarioDAO()){
-            dao.remover(id);
+            dao.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/fotoUsuario"
@@ -189,7 +193,7 @@ public class FotoUsuarioServlet extends HttpServlet{
                     fkUsuario
             );
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/fotoUsuario"

@@ -1,11 +1,11 @@
 package com.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class FotoUsuario {
 
     private Integer id;              // coluna: id
-    private LocalDate dataRegistro;  // coluna: data_registro
+    private LocalDateTime dataRegistro;  // coluna: data_registro
     private String url;              // coluna: url
     private Integer fkUsuario;       // coluna: fk_usuario_id
 
@@ -17,7 +17,7 @@ public class FotoUsuario {
         this.fkUsuario = fkUsuario;
     }
 
-    public FotoUsuario(Integer id, LocalDate dataRegistro, String url, Integer fkUsuario) {
+    public FotoUsuario(Integer id, LocalDateTime dataRegistro, String url, Integer fkUsuario) {
         this.id = id;
         this.dataRegistro = dataRegistro;
         this.url = url;
@@ -34,11 +34,11 @@ public class FotoUsuario {
         this.id = id;
     }
 
-    public LocalDate getDataRegistro() {
+    public LocalDateTime getDataRegistro() {
         return dataRegistro;
     }
 
-    public void setDataRegistro(LocalDate dataRegistro) {
+    public void setDataRegistro(LocalDateTime dataRegistro) {
         this.dataRegistro = dataRegistro;
     }
 

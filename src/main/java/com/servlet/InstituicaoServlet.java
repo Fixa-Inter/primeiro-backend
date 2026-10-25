@@ -7,6 +7,7 @@ import com.model.Instituicao;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoInstituicao;
 import com.service.HashSenha;
+import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -25,7 +26,6 @@ public class InstituicaoServlet extends HttpServlet{
     private static final String PAGINA_PRINCIPAL = "/area-restrita/views/instituicoes.jsp";
     private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-instituicao.jsp";
     private static final String PAGINA_EDICAO = "/area-restrita/views/editar-instituicao.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -60,7 +60,7 @@ public class InstituicaoServlet extends HttpServlet{
             e.printStackTrace(System.err);
         }
 
-        if (erro) response.sendRedirect(request.getContextPath() + PAGINA_ERRO);
+        if (erro) response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         else request.getRequestDispatcher(destino).forward(request, response);
     }
 
@@ -184,6 +184,9 @@ public class InstituicaoServlet extends HttpServlet{
 
         String nome = request.getParameter("nome");
         String emailCorporativo = request.getParameter("emailCorporativo");
+        if (!RegexUtils.validarEmail(emailCorporativo)) {
+            throw ExcecaoDeJSP.valorInvalido("emailCorporativo");
+        }
         String dominioEmail = request.getParameter("dominioEmail");
 
         Integer tipoInstituicao = Integer.parseInt(
@@ -221,7 +224,7 @@ public class InstituicaoServlet extends HttpServlet{
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 
-            dao.cadastrar(instituicao);
+            dao.cadastrar(instituicao, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/instituicoes"
@@ -239,7 +242,7 @@ public class InstituicaoServlet extends HttpServlet{
         int id = Integer.parseInt(request.getParameter("id"));
 
         try (InstituicaoDAO dao = new InstituicaoDAO()){
-            dao.remover(id);
+            dao.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/instituicoes"
@@ -263,6 +266,9 @@ public class InstituicaoServlet extends HttpServlet{
 
         String nome = request.getParameter("nome");
         String emailCorporativo = request.getParameter("emailCorporativo");
+        if (!RegexUtils.validarEmail(emailCorporativo)) {
+            throw ExcecaoDeJSP.valorInvalido("emailCorporativo");
+        }
 
         String dominioEmail = request.getParameter("dominioEmail");
 
@@ -289,7 +295,7 @@ public class InstituicaoServlet extends HttpServlet{
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 
-            dao.atualizar(original, alterado);
+            dao.atualizar(original, alterado, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/instituicoes"

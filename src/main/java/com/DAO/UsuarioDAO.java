@@ -6,6 +6,12 @@ import com.model.Usuario;
 import com.model.enums.MetodoPagamento;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
+import com.utils.desfazer.DesfazerDelete;
+import com.utils.desfazer.DesfazerDeleteFactory;
+import com.utils.desfazer.DesfazerInsert;
+import com.utils.desfazer.DesfazerUpdate;
+import com.utils.desfazer.GerenciadorDesfazer;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -108,7 +114,7 @@ public class UsuarioDAO extends DAO{
 
     // insert
 
-    public void cadastrar(Usuario usuario) throws SQLException{
+    public int cadastrar(Usuario usuario) throws SQLException{
 
         String nome = usuario.getNome();
         String senhaHash = usuario.getSenhaHash();
@@ -122,7 +128,7 @@ public class UsuarioDAO extends DAO{
 
         String sql = """
                      INSERT INTO usuario (nome, senha_hash, email, cargo, tipo_acesso, fk_endereco_id, data_nascimento)
-                     VALUES (?, ?, ?, ?, ?, ?, ?)
+                     VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING ID
                      """;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -135,13 +141,42 @@ public class UsuarioDAO extends DAO{
             pstmt.setInt(6, fkEndereco);
             pstmt.setDate(7, Date.valueOf(dataAniversario));
 
-            pstmt.execute();
+            int id;
+            try (ResultSet rs = pstmt.executeQuery()) { rs.next(); id = rs.getInt("ID"); }
 
             conn.commit();
+            return id;
         }  catch (SQLException e) {
             conn.rollback();
             throw e;
         }
+    }
+
+    public int cadastrar(Usuario usuario, HttpServletRequest request) throws SQLException {
+        int id = cadastrar(usuario);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
+        return id;
+    }
+
+    public int cadastrarCompleto(Usuario usuario) throws SQLException {
+        String sql = "INSERT INTO usuario (id, nome, senha_hash, esta_ativo, email, data_criacao, cargo, tipo_acesso, fk_endereco_id, data_nascimento, primeiro_acesso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setObject(1, usuario.getId());
+            pstmt.setString(2, usuario.getNome());
+            pstmt.setString(3, usuario.getSenhaHash());
+            pstmt.setObject(4, usuario.getEstaAtivo());
+            pstmt.setString(5, usuario.getEmail());
+            pstmt.setObject(6, usuario.getDataCriacao());
+            pstmt.setString(7, usuario.getCargo());
+            pstmt.setObject(8, usuario.getTipoDeAcesso() == null ? null : usuario.getTipoDeAcesso().getCodigo());
+            pstmt.setObject(9, usuario.getFkEndereco());
+            pstmt.setObject(10, usuario.getDataAniversario());
+            pstmt.setObject(11, usuario.getPrimeiroAcesso());
+            pstmt.executeUpdate();
+            try (PreparedStatement serial = conn.prepareStatement("SELECT setval(pg_get_serial_sequence('usuario', 'id'), COALESCE(max(id), 1)) FROM usuario")) { serial.executeQuery(); }
+            conn.commit();
+            return usuario.getId();
+        } catch (SQLException e) { conn.rollback(); throw e; }
     }
 
     // select
@@ -415,6 +450,11 @@ public class UsuarioDAO extends DAO{
         }
     }
 
+    public void atualizar(Usuario original, Usuario alterado, HttpServletRequest request) throws SQLException {
+        atualizar(original, alterado);
+        GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
+    }
+
     // delete
     public void remover(int id) throws SQLException{
 
@@ -432,6 +472,12 @@ public class UsuarioDAO extends DAO{
             throw e;
         }
 
+    }
+
+    public void remover(int id, HttpServletRequest request) throws SQLException {
+        DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
+        remover(id);
+        GerenciadorDesfazer.registrarComando(request, comando);
     }
 
     public List<UsuarioDTO> listarUsuariosDTO(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {

@@ -37,6 +37,10 @@
     <input type="hidden" name="action" value="finalizar">
     <input type="hidden" name="cnpj" value="${cnpj}">
 
+    <label for="nomeEndereco">Nome do endereço:</label>
+    <input type="text" id="nomeEndereco" name="nomeEndereco" value="${nomeEndereco}" maxlength="50" required>
+    <br><br>
+
     <label for="rua">Rua:</label>
     <input type="text" id="rua" name="rua" value="${rua}" maxlength="40" required>
     <br><br>

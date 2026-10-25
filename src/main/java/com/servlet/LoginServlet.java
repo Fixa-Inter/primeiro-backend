@@ -4,7 +4,7 @@ import com.DAO.LoginDAO;
 import com.DTO.LoginDTO;
 import com.DTO.SuperAdminDTO;
 import com.exception.ExcecaoDeJSP;
-import com.model.Instituicao;
+import com.utils.RegexUtils;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,8 +21,6 @@ public class LoginServlet extends HttpServlet {
 
     private static final String AREA_RESTRITA = "/area-restrita/index.jsp";
     private static final String PAGINA_LOGIN = "jsp/login.jsp";
-    private static final String PAGINA_ERRO = "/html/erro.html";
-    private static final String ADICIONAR_ENDERECO = "/cadastro?action=adicionarEndereco";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -35,7 +33,7 @@ public class LoginServlet extends HttpServlet {
         String action = req.getParameter("action").trim();
         HttpSession session = req.getSession();
 
-        String destino = PAGINA_ERRO;
+        String destino = null;
 
         try {
             switch (action) {
@@ -82,12 +80,20 @@ public class LoginServlet extends HttpServlet {
             e.printStackTrace(System.err);
         }
 
-        resp.sendRedirect(req.getContextPath() + destino);
+        if (destino != null) {
+            resp.sendRedirect(req.getContextPath() + destino);
+        } else {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
     // === LOGIN ===
     private SuperAdminDTO login(HttpServletRequest req) throws SQLException, ClassNotFoundException, ExcecaoDeJSP {
-        String email = req.getParameter("email").trim();
+        String email = req.getParameter("email");
+        if (!RegexUtils.validarEmail(email)) {
+            throw ExcecaoDeJSP.valorInvalido("email");
+        }
+        email = email.trim();
         String senha = req.getParameter("senha").trim();
         LoginDTO credenciais = new LoginDTO(email, senha);
 
