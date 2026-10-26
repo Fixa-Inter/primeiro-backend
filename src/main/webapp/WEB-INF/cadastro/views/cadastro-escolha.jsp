@@ -14,7 +14,7 @@
     <button type="button">Instituição</button>
 </a>
 
-<a href="${pageContext.request.contextPath}/cadastro?action=novoEndereco">
+<a href="${pageContext.request.contextPath}/login-endereco">
     <button type="button">Endereço</button>
 </a>
 
