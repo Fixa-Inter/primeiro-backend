@@ -153,6 +153,7 @@ public class CadastroServlet extends HttpServlet{
         // se não tem cadastro em andamento de acordo com a sessao, volta para o inicio
         if (dto == null){
             response.sendRedirect(request.getContextPath() + "/cadastro?action=iniciar");
+            return;
         }
 
         String email = dto.getEmailCorporativo();
@@ -187,7 +188,7 @@ public class CadastroServlet extends HttpServlet{
         String confirmarSenha = request.getParameter("confirmarSenha");
 
         HttpSession session = request.getSession();
-        CadastroInstituicaoEnderecoDTO dto = (CadastroInstituicaoEnderecoDTO) session.getAttribute("cadastroDAO");
+        CadastroInstituicaoEnderecoDTO dto = (CadastroInstituicaoEnderecoDTO) session.getAttribute("cadastroDTO");
 
         // se de acordo com a sessao nao tiver cadastro, volta para o inicio
         if (dto == null){
