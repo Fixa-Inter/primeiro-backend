@@ -5,6 +5,7 @@ import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.SuperAdministrador;
 import com.model.enums.OperacaoFiltro;
+import com.service.HashSenha;
 import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -199,7 +200,7 @@ public class SuperAdministradorServlet extends HttpServlet{
 
         SuperAdministrador superAdministrador = new SuperAdministrador(
                 nome,
-                senha,
+                HashSenha.gerarHash(senha),
                 email
         );
 
@@ -260,6 +261,8 @@ public class SuperAdministradorServlet extends HttpServlet{
 
         if (senha != null && senha.isBlank()) {
             senha = null;
+        } else if (senha != null) {
+            senha = HashSenha.gerarHash(senha);
         }
 
         try (SuperAdministradorDAO dao = new SuperAdministradorDAO()) {
