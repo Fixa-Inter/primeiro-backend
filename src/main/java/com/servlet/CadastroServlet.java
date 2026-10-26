@@ -382,10 +382,24 @@ public class CadastroServlet extends HttpServlet{
         // cadastroDAO cadastra os dois ao mesmo tempo, e dentro dele define que a fk de endereco e o id instituicao
         try (CadastroDAO cadastroDAO = new CadastroDAO()){
             cadastroDAO.finalizarCadastro(instituicao, endereco);
-        } catch (SQLException e) {
-            System.out.print("Erro de SQL ao tentar cadastrar instituicao e endereco no banco de dados: " + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.out.print("Erro de classe não encontrada ao tentar cadastrar instituicao e endereco no banco de dados: " + e.getMessage());
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.print("Erro ao tentar cadastrar instituicao e endereco no banco de dados: " + e.getMessage());
+
+            // nao vai para a tela de concluido, volta para o endereco com o que foi digitado
+            request.setAttribute("erro", "Não foi possível concluir o cadastro, tente novamente");
+            request.setAttribute("cnpj", cnpj);
+            request.setAttribute("rua", rua);
+            request.setAttribute("bairro", bairro);
+            request.setAttribute("cidade", cidade);
+            request.setAttribute("estado", estado);
+            request.setAttribute("numero", numero);
+            request.setAttribute("complemento", complemento);
+            request.setAttribute("cep", cep);
+
+            request
+                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                    .forward(request, response);
+            return;
         }
 
         session.removeAttribute("cadastroDTO");
