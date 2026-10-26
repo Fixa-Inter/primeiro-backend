@@ -139,6 +139,12 @@ public class CadastroServlet extends HttpServlet{
                     .forward(request, response);
         } catch (SQLException e){
             System.out.print("Erro de SQL no servlet: " + e.getMessage());
+
+            request.setAttribute("erro", "Erro ao acessar o sistema, tente novamente");
+
+            request
+                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-info.jsp")
+                    .forward(request, response);
         }
 
     }
@@ -178,6 +184,12 @@ public class CadastroServlet extends HttpServlet{
                     .forward(request, response);
         } catch (SQLException e){
             System.out.print("Erro de sql ao verificar codigo do email: " + e.getMessage());
+
+            request.setAttribute("erro", "Erro ao acessar o sistema, tente novamente");
+
+            request
+                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-codigo.jsp")
+                    .forward(request, response);
         }
 
     }
@@ -285,6 +297,13 @@ public class CadastroServlet extends HttpServlet{
 
         } catch (SQLException e){
             System.out.print("Erro de sql ao consultar API de cnpj: " + e.getMessage());
+
+            request.setAttribute("erro", "Erro ao acessar o sistema, tente novamente");
+            request.setAttribute("cnpj", cnpj);
+
+            request
+                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                    .forward(request, response);
         }
 
     }

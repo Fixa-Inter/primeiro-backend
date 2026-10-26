@@ -12,6 +12,11 @@
 
 <p>Enviamos um código de 6 dígitos para o seu e-mail.</p>
 
+<% String erro = (String) request.getAttribute("erro"); %>
+<% if (erro != null && !erro.isBlank()) { %>
+    <p style="color: red;"><%= erro %></p>
+<% } %>
+
 <form action="${pageContext.request.contextPath}/cadastro" method="post">
 
     <input type="hidden" name="action" value="verificarCodigo">
