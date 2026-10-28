@@ -42,15 +42,15 @@ public class CadastroServlet extends HttpServlet{
 
         if (action.equals("escolher")){
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-escolha.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-escolha.jsp")
                     .forward(request, response);
         } else if (action.equals("iniciar")) {
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-info.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp")
                     .forward(request, response);
         } else if (action.equals("concluido")) {
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-concluido.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-concluido.jsp")
                     .forward(request, response);
         }
     }
@@ -74,8 +74,8 @@ public class CadastroServlet extends HttpServlet{
         } catch (ExcecaoDeJSP e) {
             request.setAttribute("erro", e.getMessage());
             String pagina = "enviarCodigo".equals(action)
-                    ? "/WEB-INF/cadastro/views/cadastro-instituicao-info.jsp"
-                    : "/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp";
+                    ? "/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp"
+                    : "/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp";
             request.getRequestDispatcher(pagina).forward(request, response);
         }
     }
@@ -102,7 +102,7 @@ public class CadastroServlet extends HttpServlet{
                 request.setAttribute("erro", "Já existe uma instituicao com esse endereço de email");
 
                 request
-                        .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-info.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp")
                         .forward(request, response);
 
                 return;
@@ -135,7 +135,7 @@ public class CadastroServlet extends HttpServlet{
 
             // tela de digitar codigo
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-codigo.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-codigo.jsp")
                     .forward(request, response);
         } catch (SQLException e){
             System.out.print("Erro de SQL no servlet: " + e.getMessage());
@@ -143,7 +143,7 @@ public class CadastroServlet extends HttpServlet{
             request.setAttribute("erro", "Erro ao acessar o sistema, tente novamente");
 
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-info.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp")
                     .forward(request, response);
         }
 
@@ -151,7 +151,13 @@ public class CadastroServlet extends HttpServlet{
 
     private void  verificarCodigo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 
-        String codigoDigitado = request.getParameter("codigo");
+        // o front tem um input por digito (codigo1 a codigo6), junta tudo em um codigo so
+        StringBuilder digitos = new StringBuilder();
+        for (int i = 1; i <= 6; i++) {
+            String digito = request.getParameter("codigo" + i);
+            digitos.append(digito == null ? "" : digito.trim());
+        }
+        String codigoDigitado = digitos.toString();
 
         HttpSession session = request.getSession();
         CadastroInstituicaoEnderecoDTO dto = (CadastroInstituicaoEnderecoDTO) session.getAttribute("cadastroDTO");
@@ -171,7 +177,7 @@ public class CadastroServlet extends HttpServlet{
             if (verificacao == null || !verificacao.getCodigoVerificacao().equals(codigoDigitado)){
 
                 request
-                        .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-erro-codigo.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-erro-codigo.jsp")
                         .forward(request, response);
                 return;
             }
@@ -180,7 +186,7 @@ public class CadastroServlet extends HttpServlet{
             verificacaoCadastroDAO.invalidarPorEmail(email);
 
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-senha.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-senha.jsp")
                     .forward(request, response);
         } catch (SQLException e){
             System.out.print("Erro de sql ao verificar codigo do email: " + e.getMessage());
@@ -188,7 +194,7 @@ public class CadastroServlet extends HttpServlet{
             request.setAttribute("erro", "Erro ao acessar o sistema, tente novamente");
 
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-codigo.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-codigo.jsp")
                     .forward(request, response);
         }
 
@@ -214,7 +220,7 @@ public class CadastroServlet extends HttpServlet{
             request.setAttribute("erro", "As senhas não coincidem");
 
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-senha.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-senha.jsp")
                     .forward(request, response);
 
             return;
@@ -228,7 +234,7 @@ public class CadastroServlet extends HttpServlet{
 
         // vai para a tela de endereco
         request
-                .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
                 .forward(request, response);
     }
 
@@ -260,7 +266,7 @@ public class CadastroServlet extends HttpServlet{
                 request.setAttribute("cnpj", cnpj);
 
                 request
-                        .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
                         .forward(request, response);
                 return;
             }
@@ -275,7 +281,7 @@ public class CadastroServlet extends HttpServlet{
                 request.setAttribute("cnpj", cnpj);
 
                 request
-                        .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
                         .forward(request, response);
                 return;
             }
@@ -291,7 +297,7 @@ public class CadastroServlet extends HttpServlet{
             request.setAttribute("razaoSocial", dados.getRazaoSocial());
 
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
                     .forward(request, response);
 
 
@@ -302,7 +308,7 @@ public class CadastroServlet extends HttpServlet{
             request.setAttribute("cnpj", cnpj);
 
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
                     .forward(request, response);
         }
 
@@ -348,7 +354,7 @@ public class CadastroServlet extends HttpServlet{
             request.setAttribute("estado", estado);
             request.setAttribute("numero", numero);
             request.setAttribute("cep", cepInformado);
-            request.getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+            request.getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
                     .forward(request, response);
             return;
         }
@@ -397,7 +403,7 @@ public class CadastroServlet extends HttpServlet{
             request.setAttribute("cep", cep);
 
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
                     .forward(request, response);
             return;
         }
