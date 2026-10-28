@@ -20,12 +20,13 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 // fluxo 2: instituicao ja cadastrada faz login e adiciona mais um endereco ligado ao seu id
-@WebServlet(name = "LoginEnderecoServlet", value = "/login-endereco")
-public class LoginEnderecoServlet extends HttpServlet {
+@WebServlet(name = "CadastrarEnderecoServlet", value = "/cadastrar-endereco")
+public class CadastrarEnderecoServlet extends HttpServlet {
 
-    private static final String PAGINA_LOGIN = "/WEB-INF/login/login-endereco.jsp";
-    private static final String PAGINA_ENDERECO = "/WEB-INF/login/adicionar-endereco.jsp";
-    private static final String PAGINA_CONCLUIDO = "/WEB-INF/login/endereco-concluido.jsp";
+    private static final String PAGINA_LOGIN = "/WEB-INF/views/publico/cadastrar-endereco/acesso-endereco.jsp";
+    private static final String PAGINA_INFO = "/WEB-INF/views/publico/cadastrar-endereco/endereco-info.jsp";
+    private static final String PAGINA_ENDERECO = "/WEB-INF/views/publico/cadastrar-endereco/adicionar-endereco.jsp";
+    private static final String PAGINA_CONCLUIDO = "/WEB-INF/views/publico/cadastrar-endereco/endereco-concluido.jsp";
 
     // nome do atributo da sessao que guarda a instituicao logada
     private static final String SESSAO_INSTITUICAO = "instituicaoLogada";
@@ -45,12 +46,26 @@ public class LoginEnderecoServlet extends HttpServlet {
             HttpSession session = request.getSession(false);
 
             if (session != null && session.getAttribute(SESSAO_INSTITUICAO) != null) {
-                response.sendRedirect(request.getContextPath() + "/login-endereco?action=adicionar");
+                response.sendRedirect(request.getContextPath() + "/cadastrar-endereco?action=info");
                 return;
             }
 
             request
                     .getRequestDispatcher(PAGINA_LOGIN)
+                    .forward(request, response);
+
+        } else if (action.equals("info")) {
+
+            HttpSession session = request.getSession(false);
+
+            // sem login, volta para a tela de login
+            if (session == null || session.getAttribute(SESSAO_INSTITUICAO) == null) {
+                response.sendRedirect(request.getContextPath() + "/cadastrar-endereco");
+                return;
+            }
+
+            request
+                    .getRequestDispatcher(PAGINA_INFO)
                     .forward(request, response);
 
         } else if (action.equals("adicionar")) {
@@ -59,7 +74,7 @@ public class LoginEnderecoServlet extends HttpServlet {
 
             // sem login, volta para a tela de login
             if (session == null || session.getAttribute(SESSAO_INSTITUICAO) == null) {
-                response.sendRedirect(request.getContextPath() + "/login-endereco");
+                response.sendRedirect(request.getContextPath() + "/cadastrar-endereco");
                 return;
             }
 
@@ -73,7 +88,7 @@ public class LoginEnderecoServlet extends HttpServlet {
 
             // sem login, volta para a tela de login
             if (session == null || session.getAttribute(SESSAO_INSTITUICAO) == null) {
-                response.sendRedirect(request.getContextPath() + "/login-endereco");
+                response.sendRedirect(request.getContextPath() + "/cadastrar-endereco");
                 return;
             }
 
@@ -89,7 +104,7 @@ public class LoginEnderecoServlet extends HttpServlet {
                 session.removeAttribute(SESSAO_INSTITUICAO);
             }
 
-            response.sendRedirect(request.getContextPath() + "/login-endereco");
+            response.sendRedirect(request.getContextPath() + "/index.html");
         }
     }
 
@@ -137,7 +152,7 @@ public class LoginEnderecoServlet extends HttpServlet {
                     instituicao.getEmailCorporativo()
             ));
 
-            response.sendRedirect(request.getContextPath() + "/login-endereco?action=adicionar");
+            response.sendRedirect(request.getContextPath() + "/cadastrar-endereco?action=info");
 
         } catch (SQLException e) {
             System.out.print("Erro de SQL ao fazer login da instituicao: " + e.getMessage());
@@ -151,7 +166,7 @@ public class LoginEnderecoServlet extends HttpServlet {
 
         // sem login, volta para a tela de login
         if (session == null || session.getAttribute(SESSAO_INSTITUICAO) == null) {
-            response.sendRedirect(request.getContextPath() + "/login-endereco");
+            response.sendRedirect(request.getContextPath() + "/cadastrar-endereco");
             return;
         }
 
@@ -214,7 +229,7 @@ public class LoginEnderecoServlet extends HttpServlet {
 
         // sem login, volta para a tela de login
         if (instituicao == null) {
-            response.sendRedirect(request.getContextPath() + "/login-endereco");
+            response.sendRedirect(request.getContextPath() + "/cadastrar-endereco");
             return;
         }
 
@@ -280,7 +295,7 @@ public class LoginEnderecoServlet extends HttpServlet {
 
             enderecoDAO.cadastrar(endereco);
 
-            response.sendRedirect(request.getContextPath() + "/login-endereco?action=concluido");
+            response.sendRedirect(request.getContextPath() + "/cadastrar-endereco?action=concluido");
 
         } catch (SQLException e) {
             System.out.print("Erro de SQL ao cadastrar endereco da instituicao: " + e.getMessage());
