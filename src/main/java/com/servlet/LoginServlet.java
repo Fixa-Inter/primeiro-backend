@@ -20,7 +20,7 @@ import java.sql.SQLException;
 public class LoginServlet extends HttpServlet {
 
     private static final String AREA_RESTRITA = "/area-restrita/index.jsp";
-    private static final String PAGINA_LOGIN = "jsp/login.jsp";
+    private static final String PAGINA_LOGIN = "/WEB-INF/views/publico/login.jsp";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
