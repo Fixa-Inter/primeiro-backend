@@ -42,15 +42,15 @@ public class CadastroServlet extends HttpServlet{
 
         if (action.equals("escolher")){
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-escolha.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-escolha.jsp")
                     .forward(request, response);
         } else if (action.equals("iniciar")) {
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-info.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp")
                     .forward(request, response);
         } else if (action.equals("concluido")) {
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-concluido.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-concluido.jsp")
                     .forward(request, response);
         }
     }
@@ -74,8 +74,8 @@ public class CadastroServlet extends HttpServlet{
         } catch (ExcecaoDeJSP e) {
             request.setAttribute("erro", e.getMessage());
             String pagina = "enviarCodigo".equals(action)
-                    ? "/WEB-INF/cadastro/views/cadastro-instituicao-info.jsp"
-                    : "/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp";
+                    ? "/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp"
+                    : "/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp";
             request.getRequestDispatcher(pagina).forward(request, response);
         }
     }
@@ -102,7 +102,7 @@ public class CadastroServlet extends HttpServlet{
                 request.setAttribute("erro", "Já existe uma instituicao com esse endereço de email");
 
                 request
-                        .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-info.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp")
                         .forward(request, response);
 
                 return;
@@ -135,17 +135,29 @@ public class CadastroServlet extends HttpServlet{
 
             // tela de digitar codigo
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-codigo.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-codigo.jsp")
                     .forward(request, response);
         } catch (SQLException e){
             System.out.print("Erro de SQL no servlet: " + e.getMessage());
+
+            request.setAttribute("erro", "Erro ao acessar o sistema, tente novamente");
+
+            request
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp")
+                    .forward(request, response);
         }
 
     }
 
     private void  verificarCodigo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 
-        String codigoDigitado = request.getParameter("codigo");
+        // o front tem um input por digito (codigo1 a codigo6), junta tudo em um codigo so
+        StringBuilder digitos = new StringBuilder();
+        for (int i = 1; i <= 6; i++) {
+            String digito = request.getParameter("codigo" + i);
+            digitos.append(digito == null ? "" : digito.trim());
+        }
+        String codigoDigitado = digitos.toString();
 
         HttpSession session = request.getSession();
         CadastroInstituicaoEnderecoDTO dto = (CadastroInstituicaoEnderecoDTO) session.getAttribute("cadastroDTO");
@@ -153,6 +165,7 @@ public class CadastroServlet extends HttpServlet{
         // se não tem cadastro em andamento de acordo com a sessao, volta para o inicio
         if (dto == null){
             response.sendRedirect(request.getContextPath() + "/cadastro?action=iniciar");
+            return;
         }
 
         String email = dto.getEmailCorporativo();
@@ -164,7 +177,7 @@ public class CadastroServlet extends HttpServlet{
             if (verificacao == null || !verificacao.getCodigoVerificacao().equals(codigoDigitado)){
 
                 request
-                        .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-erro-codigo.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-erro-codigo.jsp")
                         .forward(request, response);
                 return;
             }
@@ -173,10 +186,16 @@ public class CadastroServlet extends HttpServlet{
             verificacaoCadastroDAO.invalidarPorEmail(email);
 
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-senha.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-senha.jsp")
                     .forward(request, response);
         } catch (SQLException e){
             System.out.print("Erro de sql ao verificar codigo do email: " + e.getMessage());
+
+            request.setAttribute("erro", "Erro ao acessar o sistema, tente novamente");
+
+            request
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-codigo.jsp")
+                    .forward(request, response);
         }
 
     }
@@ -187,7 +206,7 @@ public class CadastroServlet extends HttpServlet{
         String confirmarSenha = request.getParameter("confirmarSenha");
 
         HttpSession session = request.getSession();
-        CadastroInstituicaoEnderecoDTO dto = (CadastroInstituicaoEnderecoDTO) session.getAttribute("cadastroDAO");
+        CadastroInstituicaoEnderecoDTO dto = (CadastroInstituicaoEnderecoDTO) session.getAttribute("cadastroDTO");
 
         // se de acordo com a sessao nao tiver cadastro, volta para o inicio
         if (dto == null){
@@ -201,7 +220,7 @@ public class CadastroServlet extends HttpServlet{
             request.setAttribute("erro", "As senhas não coincidem");
 
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-senha.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-senha.jsp")
                     .forward(request, response);
 
             return;
@@ -215,7 +234,7 @@ public class CadastroServlet extends HttpServlet{
 
         // vai para a tela de endereco
         request
-                .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
                 .forward(request, response);
     }
 
@@ -247,7 +266,7 @@ public class CadastroServlet extends HttpServlet{
                 request.setAttribute("cnpj", cnpj);
 
                 request
-                        .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
                         .forward(request, response);
                 return;
             }
@@ -262,7 +281,7 @@ public class CadastroServlet extends HttpServlet{
                 request.setAttribute("cnpj", cnpj);
 
                 request
-                        .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
                         .forward(request, response);
                 return;
             }
@@ -278,12 +297,19 @@ public class CadastroServlet extends HttpServlet{
             request.setAttribute("razaoSocial", dados.getRazaoSocial());
 
             request
-                    .getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
                     .forward(request, response);
 
 
         } catch (SQLException e){
             System.out.print("Erro de sql ao consultar API de cnpj: " + e.getMessage());
+
+            request.setAttribute("erro", "Erro ao acessar o sistema, tente novamente");
+            request.setAttribute("cnpj", cnpj);
+
+            request
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
+                    .forward(request, response);
         }
 
     }
@@ -328,7 +354,7 @@ public class CadastroServlet extends HttpServlet{
             request.setAttribute("estado", estado);
             request.setAttribute("numero", numero);
             request.setAttribute("cep", cepInformado);
-            request.getRequestDispatcher("/WEB-INF/cadastro/views/cadastro-instituicao-endereco.jsp")
+            request.getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
                     .forward(request, response);
             return;
         }
@@ -362,10 +388,24 @@ public class CadastroServlet extends HttpServlet{
         // cadastroDAO cadastra os dois ao mesmo tempo, e dentro dele define que a fk de endereco e o id instituicao
         try (CadastroDAO cadastroDAO = new CadastroDAO()){
             cadastroDAO.finalizarCadastro(instituicao, endereco);
-        } catch (SQLException e) {
-            System.out.print("Erro de SQL ao tentar cadastrar instituicao e endereco no banco de dados: " + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.out.print("Erro de classe não encontrada ao tentar cadastrar instituicao e endereco no banco de dados: " + e.getMessage());
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.print("Erro ao tentar cadastrar instituicao e endereco no banco de dados: " + e.getMessage());
+
+            // nao vai para a tela de concluido, volta para o endereco com o que foi digitado
+            request.setAttribute("erro", "Não foi possível concluir o cadastro, tente novamente");
+            request.setAttribute("cnpj", cnpj);
+            request.setAttribute("rua", rua);
+            request.setAttribute("bairro", bairro);
+            request.setAttribute("cidade", cidade);
+            request.setAttribute("estado", estado);
+            request.setAttribute("numero", numero);
+            request.setAttribute("complemento", complemento);
+            request.setAttribute("cep", cep);
+
+            request
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
+                    .forward(request, response);
+            return;
         }
 
         session.removeAttribute("cadastroDTO");

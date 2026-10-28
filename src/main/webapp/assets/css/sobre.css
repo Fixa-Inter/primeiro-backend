@@ -1,0 +1,1226 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+
+  background-color: #F9F7FF;
+
+  color: #0B013C;
+
+  font-family: "Inter", sans-serif;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+input {
+  font-family: "Inter", sans-serif;
+}
+
+
+/* NAVBAR */
+
+header {
+  height: 70px;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  padding: 0 90px;
+  display: flex;
+  align-items: center;
+  background-color: rgba(210, 210, 210, 0.512);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 22px rgba(11, 1, 60, 0.14);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  z-index: 1000;
+}
+
+nav > img {
+  width: 140px;
+}
+
+.nav-links {
+  margin-left: auto;
+  margin-right: 250px;
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.nav-links a {
+  font-family: "Poppins", sans-serif;
+  font-size: 17px;
+}
+
+.normal {
+  color: #8A93A2;
+  font-weight: 400;
+}
+
+.sobre-link {
+  color: #0B013C;
+  font-weight: 600;
+  text-decoration: underline #2E62B0;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 14px;
+}
+
+.normal:hover,
+.sobre-link:hover {
+  color: #0B013C;
+  text-decoration: none;
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.entrar{
+  width: 100px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 13px;
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+}
+.cadastrar {
+  width: 150px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 13px;
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+}
+
+.entrar {
+  color: #0B013C;
+  border: 1px solid #8ba6d52b;
+}
+
+.cadastrar {
+  width: 152px;
+  background-color: #153D7D;
+  color: white;
+  border: 1px solid #153D7D;
+}
+
+.entrar:hover {
+  background-color: #F1EFFB;
+}
+
+.cadastrar:hover {
+  background-color: #0B013C;
+  border-color: #0B013C;
+}
+
+/* SOBRE INÍCIO */
+
+.sobre-inicio {
+  width: 100%;
+
+  padding: 110px 120px 90px;
+}
+
+.sobre-inicio-conteudo {
+  width: 100%;
+  max-width: 1550px;
+
+  margin: 0 auto;
+}
+
+.titulo-pequeno {
+  margin: 0 0 10px;
+
+  color: #153D7D;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sobre-inicio h1 {
+  width: 100%;
+  max-width: 1250px;
+
+  margin: 0 0 24px;
+
+  color: #0B013C;
+
+  font-family: "Poppins", sans-serif;
+
+  font-size: 60px;
+  font-weight: 700;
+
+  line-height: 1.05;
+}
+
+.descricao-sobre {
+  width: 100%;
+  max-width: 1100px;
+
+  margin: 0;
+
+  color: #606670;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  line-height: 28px;
+}
+
+
+/* HISTÓRIA */
+
+.historia {
+  width: 100%;
+
+  padding: 70px 80px;
+}
+
+.historia-conteudo {
+  width: 100%;
+  max-width: 1450px;
+
+  margin: auto;
+}
+
+.historia h2 {
+  margin: 0 0 55px;
+
+  color: #0B013C;
+
+  font-family: "Poppins", sans-serif;
+
+  font-size: 32px;
+
+  line-height: 42px;
+}
+
+.linha-historia {
+  display: flex;
+}
+
+.marcadores {
+  width: 45px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  flex-shrink: 0;
+}
+
+.marcador {
+  width: 21px;
+  height: 21px;
+
+  margin-top: 4px;
+
+  background-color: #153D7D;
+
+  transform: rotate(45deg);
+}
+
+.linha {
+  width: 2px;
+  height: 85px;
+
+  background-color: #E1DFEB;
+}
+
+.textos-historia {
+  width: 100%;
+
+  padding-left: 25px;
+}
+
+.textos-historia p {
+  min-height: 105px;
+
+  margin: 0;
+
+  color: #8A93A2;
+
+  font-size: 14px;
+  font-weight: 400;
+
+  line-height: 24px;
+}
+
+.textos-historia .texto-destaque {
+  color: #0B013C;
+
+  font-weight: 500;
+}
+
+
+/* MISSÃO E VISÃO */
+
+.missao-visao {
+  width: 100%;
+
+  padding: 25px 80px 100px;
+}
+
+.cards-missao-visao {
+  width: 100%;
+  max-width: 1450px;
+
+  margin: auto;
+
+  display: flex;
+
+  gap: 20px;
+}
+
+.card-missao,
+.card-visao {
+  width: 50%;
+
+  min-height: 180px;
+
+  padding: 30px;
+
+  border-radius: 18px;
+}
+
+.card-missao {
+  background-color: #0B013C;
+}
+
+.card-visao {
+  background-color: white;
+
+  border: 1px solid #E4E2F1;
+}
+
+.icone-card {
+  margin-bottom: 8px;
+}
+
+.icone-card img {
+  width: 35px;
+}
+
+.card-missao h3,
+.card-visao h3 {
+  margin: 0 0 12px;
+
+  font-family: "Poppins", sans-serif;
+
+  font-size: 17px;
+}
+
+.card-missao h3 {
+  color: white;
+}
+
+.card-visao h3 {
+  color: #0B013C;
+}
+
+.card-missao p,
+.card-visao p {
+  margin: 0;
+
+  font-size: 13px;
+  font-weight: 400;
+
+  line-height: 22px;
+}
+
+.card-missao p {
+  color: #E1DFEB;
+}
+
+.card-visao p {
+  color: #8A93A2;
+}
+
+
+/* VALORES */
+
+.valores {
+  width: 100%;
+
+  padding: 70px 80px 110px;
+}
+
+.valores-conteudo {
+  width: 100%;
+  max-width: 1450px;
+
+  margin: auto;
+}
+
+.valores h2 {
+  margin: 0;
+
+  color: #0B013C;
+
+  font-family: "Poppins", sans-serif;
+
+  font-size: 40px;
+
+  line-height: 50px;
+}
+
+.cards-valores {
+  margin-top: 65px;
+
+  display: flex;
+
+  gap: 18px;
+}
+
+.card-valor {
+  width: 25%;
+
+  min-height: 215px;
+
+  padding: 30px 35px;
+
+  background-color: white;
+
+  border: 1px solid #E4E2F1;
+
+  border-radius: 18px;
+}
+
+.icone-valor {
+  width: 48px;
+  height: 48px;
+
+  margin-bottom: 24px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: #F0EEFA;
+
+  border-radius: 10px;
+}
+
+.icone-valor img {
+  width: 48px;
+  height: 48px;
+}
+
+.card-valor h3 {
+  margin: 0 0 10px;
+
+  color: #0B013C;
+
+  font-family: "Poppins", sans-serif;
+
+  font-size: 17px;
+}
+
+.card-valor p {
+  margin: 0;
+
+  color: #8A93A2;
+
+  font-size: 15px;
+  font-weight: 400;
+
+  line-height: 24px;
+}
+
+.card-valor:hover {
+  border-color: #153D7D;
+}
+
+
+/* SETA */
+
+.subir-seta {
+  position: fixed;
+
+  right: 70px;
+  bottom: 25px;
+
+  width: 65px;
+  height: 65px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: #DBE6F8;
+
+  border-radius: 50%;
+
+  z-index: 900;
+}
+
+.subir-seta img {
+  width: 30px;
+}
+
+
+/* EQUIPE */
+
+.equipe {
+  width: 100%;
+
+  padding: 80px 80px 110px;
+}
+
+.equipe-conteudo {
+  width: 100%;
+  max-width: 1450px;
+
+  margin: auto;
+}
+
+.equipe-titulo {
+  margin-bottom: 55px;
+
+  text-align: center;
+}
+
+.equipe-titulo p {
+  margin: 0 0 10px;
+
+  color: #153D7D;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.equipe-titulo h2 {
+  margin: 0;
+
+  color: #0B013C;
+
+  font-family: "Poppins", sans-serif;
+
+  font-size: 32px;
+}
+
+.linha-equipe {
+  width: 100%;
+  height: 310px;
+
+  margin-bottom: 35px;
+
+  display: flex;
+
+  gap: 18px;
+}
+
+.card-equipe {
+  position: relative;
+
+  flex: 1;
+
+  height: 100%;
+
+  background-position: center;
+  background-size: cover;
+
+  border-radius: 17px;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  transition: 0.6s;
+}
+
+.card-equipe.destaque {
+  flex: 2;
+}
+
+.linha-equipe:hover .card-equipe.destaque {
+  flex: 1;
+}
+
+.linha-equipe .card-equipe:hover {
+  flex: 2;
+}
+
+.card-equipe::after {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(11, 1, 60, 0.32);
+}
+
+.card-equipe:hover::after,
+.card-equipe.destaque::after {
+  background-color: rgba(11, 1, 60, 0.2);
+}
+
+.info-equipe {
+  position: absolute;
+
+  left: 25px;
+  right: 20px;
+  bottom: 22px;
+
+  z-index: 2;
+
+  color: white;
+
+  opacity: 0;
+}
+
+.card-equipe.destaque .info-equipe {
+  opacity: 1;
+}
+
+.linha-equipe:hover .card-equipe.destaque .info-equipe {
+  opacity: 0;
+}
+
+.card-equipe:hover .info-equipe {
+  opacity: 1;
+}
+
+.info-equipe h3 {
+  margin: 0 0 3px;
+
+  color: white;
+
+  font-family: "Poppins", sans-serif;
+
+  font-size: 27px;
+}
+
+.info-equipe p {
+  margin: 0 0 3px;
+
+  color: white;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.info-equipe span {
+  font-size: 10px;
+}
+
+.ferramentas {
+  margin-top: 9px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+.ferramentas img {
+  width: 19px;
+  height: 19px;
+
+  object-fit: contain;
+}
+
+.nome-fechado {
+  position: absolute;
+
+  left: 13px;
+  bottom: 55px;
+
+  z-index: 3;
+
+  padding: 12px 10px;
+
+  background-color: #153D7D;
+
+  color: white;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  writing-mode: vertical-rl;
+
+  transform: rotate(180deg);
+}
+
+.card-equipe:hover .nome-fechado {
+  opacity: 0;
+}
+
+.linha-equipe:hover .card-equipe.destaque .nome-fechado {
+  opacity: 1;
+}
+
+.card-equipe.destaque .nome-fechado {
+  opacity: 0;
+}
+
+
+/* ROADMAP */
+
+.roadmap {
+  width: 100%;
+
+  padding: 80px 80px 110px;
+}
+
+.roadmap-conteudo {
+  width: 100%;
+  max-width: 1450px;
+
+  margin: auto;
+}
+
+.titulo-roadmap {
+  margin: 0 0 20px;
+
+  color: #153D7D;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.roadmap h2 {
+  margin: 0;
+
+  color: #0B013C;
+
+  font-family: "Poppins", sans-serif;
+
+  font-size: 44px;
+}
+
+.descricao-roadmap {
+  margin: 25px 0 0;
+
+  color: #8A93A2;
+
+  font-size: 17px;
+
+  line-height: 28px;
+}
+
+.cards-roadmap {
+  margin-top: 65px;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 22px;
+}
+
+.card-roadmap {
+  width: calc(33.333% - 15px);
+
+  min-height: 185px;
+
+  padding: 32px 35px;
+
+  background-color: white;
+
+  border: 1px solid #E1DFEB;
+
+  border-radius: 20px;
+}
+
+.tag-roadmap {
+  display: inline-block;
+
+  margin-bottom: 12px;
+
+  padding: 7px 13px;
+
+  background-color: #F0EEFA;
+
+  color: #153D7D;
+
+  border-radius: 7px;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.card-roadmap h3 {
+  margin: 0 0 10px;
+
+  color: #0B013C;
+
+  font-family: "Poppins", sans-serif;
+
+  font-size: 17px;
+}
+
+.card-roadmap p {
+  margin: 0;
+
+  color: #8A93A2;
+
+  font-size: 15px;
+
+  line-height: 23px;
+}
+
+.card-roadmap:hover {
+  border-color: #153D7D;
+}
+
+
+/* FOOTER */
+
+.footer {
+  width: 100%;
+
+  padding: 70px 0 35px;
+
+  background-color: #0B013C;
+}
+
+.footer-conteudo {
+  width: 85%;
+  max-width: 1400px;
+
+  margin: auto;
+}
+
+.footer-topo {
+  padding: 0 40px 65px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 50px;
+}
+
+.footer-logo {
+  width: 300px;
+}
+
+.footer-logo img {
+  width: 230px;
+}
+
+.footer-coluna {
+  display: flex;
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+.footer-coluna h4 {
+  margin: 0 0 15px;
+
+  color: #6E96D6;
+
+  font-size: 14px;
+}
+
+.footer-coluna a {
+  color: #C3C5DC;
+
+  font-size: 15px;
+}
+
+.footer-coluna a:hover {
+  color: white;
+
+  text-decoration: underline;
+}
+
+.footer-contato {
+  min-width: 300px;
+}
+
+.footer-contato a {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.footer-contato svg {
+  width: 20px;
+  height: 20px;
+
+  fill: none;
+
+  stroke: #C3C5DC;
+
+  stroke-width: 2;
+}
+
+.footer-linha {
+  width: 100%;
+  height: 1px;
+
+  background-color: #8A93A2;
+}
+
+.footer-baixo {
+  min-height: 70px;
+
+  padding-top: 28px;
+
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer-baixo p,
+.area-restrita {
+  margin: 0;
+
+  color: #8A93A2;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.area-restrita:hover {
+  color: white;
+
+  text-decoration: underline;
+}
+
+
+/* RESPONSIVO */
+
+@media (max-width: 1100px) {
+
+  nav {
+    padding: 0 40px;
+  }
+
+  .nav-links {
+    margin-right: 40px;
+
+    gap: 25px;
+  }
+
+  .cards-valores {
+    flex-wrap: wrap;
+  }
+
+  .card-valor {
+    width: calc(50% - 9px);
+  }
+
+}
+
+
+@media (max-width: 900px) {
+
+  nav {
+    padding: 0 25px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-buttons {
+    margin-left: auto;
+  }
+
+  .sobre-inicio {
+    padding: 70px 30px 60px;
+  }
+
+  .sobre-inicio h1 {
+    font-size: 40px;
+  }
+
+  .historia {
+    padding: 60px 30px;
+  }
+
+  .missao-visao {
+    padding: 20px 30px 80px;
+  }
+
+  .cards-missao-visao {
+    flex-direction: column;
+  }
+
+  .card-missao,
+  .card-visao {
+    width: 100%;
+  }
+
+  .valores {
+    padding: 60px 30px 90px;
+  }
+
+  .cards-valores {
+    flex-wrap: wrap;
+  }
+
+  .card-valor {
+    width: calc(50% - 9px);
+  }
+
+  .equipe {
+    padding: 70px 30px 90px;
+  }
+
+  .linha-equipe {
+    height: auto;
+
+    flex-wrap: wrap;
+  }
+
+  .card-equipe,
+  .card-equipe.destaque {
+    flex: none;
+
+    width: calc(50% - 9px);
+    height: 300px;
+  }
+
+  .linha-equipe:hover .card-equipe.destaque,
+  .linha-equipe .card-equipe:hover {
+    flex: none;
+  }
+
+  .info-equipe {
+    opacity: 1;
+  }
+
+  .nome-fechado {
+    display: none;
+  }
+
+  .roadmap {
+    padding: 70px 30px 90px;
+  }
+
+  .card-roadmap {
+    width: calc(50% - 11px);
+  }
+
+  .footer-conteudo {
+    width: 90%;
+  }
+
+  .footer-topo {
+    flex-wrap: wrap;
+  }
+
+  .footer-logo {
+    width: 100%;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  header {
+    height: 65px;
+  }
+
+  nav {
+    height: 65px;
+
+    padding: 0 20px;
+  }
+
+  nav > img {
+    width: 105px;
+  }
+
+  .entrar {
+    display: none;
+  }
+
+  .cadastrar {
+    width: auto;
+    height: 42px;
+
+    padding: 0 18px;
+
+    font-size: 14px;
+  }
+
+  .sobre-inicio {
+    padding: 60px 20px 50px;
+  }
+
+  .sobre-inicio h1 {
+    font-size: 34px;
+
+    line-height: 1.2;
+  }
+
+  .sobre-inicio h1 br,
+  .descricao-sobre br {
+    display: none;
+  }
+
+  .historia {
+    padding: 50px 20px;
+  }
+
+  .historia h2 {
+    font-size: 27px;
+
+    line-height: 36px;
+  }
+
+  .marcadores {
+    width: 30px;
+  }
+
+  .marcador {
+    width: 16px;
+    height: 16px;
+  }
+
+  .linha {
+    height: 140px;
+  }
+
+  .textos-historia {
+    padding-left: 15px;
+  }
+
+  .textos-historia p {
+    min-height: 160px;
+
+    font-size: 13px;
+
+    line-height: 21px;
+  }
+
+  .missao-visao {
+    padding: 20px 20px 70px;
+  }
+
+  .valores {
+    padding: 50px 20px 70px;
+  }
+
+  .valores h2 {
+    font-size: 29px;
+
+    line-height: 38px;
+  }
+
+  .cards-valores {
+    margin-top: 40px;
+
+    flex-direction: column;
+  }
+
+  .card-valor {
+    width: 100%;
+  }
+
+  .subir-seta {
+    right: 20px;
+    bottom: 20px;
+
+    width: 55px;
+    height: 55px;
+  }
+
+  .equipe {
+    padding: 60px 20px 80px;
+  }
+
+  .equipe-titulo h2 {
+    font-size: 27px;
+  }
+
+  .linha-equipe {
+    gap: 15px;
+  }
+
+  .card-equipe,
+  .card-equipe.destaque {
+    width: 100%;
+    height: 320px;
+  }
+
+  .roadmap {
+    padding: 60px 20px 80px;
+  }
+
+  .roadmap h2 {
+    font-size: 31px;
+  }
+
+  .descricao-roadmap {
+    font-size: 14px;
+
+    line-height: 23px;
+  }
+
+  .descricao-roadmap br {
+    display: none;
+  }
+
+  .cards-roadmap {
+    margin-top: 40px;
+  }
+
+  .card-roadmap {
+    width: 100%;
+
+    padding: 28px 25px;
+  }
+
+  .footer {
+    padding: 50px 0 30px;
+  }
+
+  .footer-topo {
+    padding: 0 0 45px;
+
+    flex-direction: column;
+
+    gap: 35px;
+  }
+
+  .footer-logo img {
+    width: 180px;
+  }
+
+  .footer-contato {
+    min-width: 0;
+  }
+
+  .footer-baixo {
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+}
