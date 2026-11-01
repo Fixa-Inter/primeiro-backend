@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.List" %>
+<%@ page import="java.util.List" %>
 <%@ page import="com.DTO.UsuarioDTO" %>
 <% List<UsuarioDTO> usuarios = (List<UsuarioDTO>) request.getAttribute("usuarios"); %>
 <!DOCTYPE html>
@@ -7,10 +7,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Usuários | FIXA</title>
-    <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
-    <link rel="stylesheet" href="../../assets/css/crud.css" />
-    <script src="../../assets/js/operadores-filtro.js" defer></script>
+    <link rel="icon" href="<%= request.getContextPath() %>/assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/fontes/fontes.css" />
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css" />
+    <script src="<%= request.getContextPath() %>/assets/js/operadores-filtro.js" defer></script>
   </head>
   <body data-entidade="usuarios">
     <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
@@ -22,11 +22,11 @@
         aria-label="Expandir menu lateral"
         aria-expanded="false"
       >
-        <img class="simbolo" src="../../assets/img/crud/simbolo-fixa.svg" alt="" />
-        <img class="logo-menu" src="../../assets/img/crud/logo-fixa.svg" alt="FIXA" />
+        <img class="simbolo" src="<%= request.getContextPath() %>/assets/img/crud/simbolo-fixa.svg" alt="" />
+        <img class="logo-menu" src="<%= request.getContextPath() %>/assets/img/crud/logo-fixa.svg" alt="FIXA" />
       </button>
       <nav class="navegacao" aria-label="Páginas do CRUD">
-        <a href="../index.html" title="Página inicial">
+        <a href="<%= request.getContextPath() %>/analiticos" title="Página inicial">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -42,7 +42,7 @@
           </svg>
           <span class="texto-menu">Página inicial</span>
         </a>
-        <a href="/instituicoes" title="Instituições">
+        <a href="<%= request.getContextPath() %>/instituicoes" title="Instituições">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -59,7 +59,7 @@
           </svg>
           <span class="texto-menu">Instituições</span>
         </a>
-        <a href="/usuarios" title="Usuários" aria-current="page">
+        <a href="<%= request.getContextPath() %>/usuarios" title="Usuários" aria-current="page">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -77,7 +77,7 @@
           </svg>
           <span class="texto-menu">Usuários</span>
         </a>
-        <a href="/enderecos" title="Endereços">
+        <a href="<%= request.getContextPath() %>/enderecos" title="Endereços">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -93,7 +93,7 @@
           </svg>
           <span class="texto-menu">Endereços</span>
         </a>
-        <a href="/superAdmin" title="Super administradores">
+        <a href="<%= request.getContextPath() %>/superAdmin" title="Super administradores">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -108,7 +108,7 @@
           </svg>
           <span class="texto-menu">Super administradores</span>
         </a>
-        <a href="/planos" title="Planos">
+        <a href="<%= request.getContextPath() %>/planos" title="Planos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -123,7 +123,7 @@
           </svg>
           <span class="texto-menu">Planos</span>
         </a>
-        <a href="/contratos" title="Contratos">
+        <a href="<%= request.getContextPath() %>/contratos" title="Contratos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -142,7 +142,7 @@
           </svg>
           <span class="texto-menu">Contratos</span>
         </a>
-        <a href="/pagamentos" title="Pagamentos">
+        <a href="<%= request.getContextPath() %>/pagamentos" title="Pagamentos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -158,7 +158,7 @@
           </svg>
           <span class="texto-menu">Pagamentos</span>
         </a>
-        <a href="/fotoUsuario" title="Fotos de usuário">
+        <a href="<%= request.getContextPath() %>/fotoUsuario" title="Fotos de usuário">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -176,8 +176,7 @@
           <span class="texto-menu">Fotos de usuário</span>
         </a>
       </nav>
-      <div class="rodape-menu">
-        <a href="../../jsp/login.html" class="voltar-login">
+      <div class="rodape-menu"><form action="<%= request.getContextPath() %>/login-handler" method="post"><input type="hidden" name="action" value="logout" /><button class="voltar-login" type="submit">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -189,8 +188,7 @@
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path>
           </svg>
           <span class="texto-menu">Sair</span>
-        </a>
-      </div>
+        </button></form></div>
     </aside>
     <div class="pagina">
       <header class="cabecalho">
@@ -199,14 +197,14 @@
           <p>Consulte, filtre e edite os registros de usuários.</p>
         </div>
         <div class="acoes">
-          <a class="botao" id="novo" href="/usuarios?action=create">+ Novo</a>
+          <a class="botao" id="novo" href="<%= request.getContextPath() %>/usuarios?action=create">+ Novo</a>
         </div>
       </header>
       <main class="conteudo" id="conteudo">
         <section class="cartao lista" aria-label="Registros de usuários">
           <div class="barra-tabela">
             <strong id="contagem" role="status"><%= usuarios == null ? 0 : usuarios.size() %> <%= usuarios != null && usuarios.size() == 1 ? "registro" : "registros" %></strong>
-            <form id="filtro-form" class="filtros" role="search" action="/usuarios" method="get"><input type="hidden" name="action" value="read" />
+            <form id="filtro-form" class="filtros" role="search" action="<%= request.getContextPath() %>/usuarios" method="get"><input type="hidden" name="action" value="read" />
               <label class="sr-only" for="campo-filtro">Campo</label>
               <select id="campo-filtro" name="campo">
                 <option value="id">ID</option>
@@ -405,7 +403,7 @@
     %>
                   <tr>
                     <td><%= usuario.getId() %></td><td><%= usuario.getNome() %></td><td><%= usuario.getEstaAtivo() ? "Sim" : "Não" %></td><td><%= usuario.getEmail() %></td><td><%= usuario.getCargo() %></td><td><%= usuario.getTipoAcesso() %></td><td><%= usuario.getDataNascimento() %></td><td><%= usuario.getPrimeiroAcesso() ? "Sim" : "Não" %></td><td class="coluna-relacionada"><%= usuario.getEstado() %></td><td class="coluna-relacionada"><%= usuario.getInstituicaoNome() %></td>
-                    <td class="coluna-acoes"><div class="acoes-linha"><a class="editar" href="/usuarios?action=update&id=<%= usuario.getId() %>">Editar</a><form action="/usuarios" method="post" class="form-excluir"><input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value="<%= usuario.getId() %>" /><button class="excluir" type="submit">Excluir</button></form></div></td>
+                    <td class="coluna-acoes"><div class="acoes-linha"><a class="editar" href="<%= request.getContextPath() %>/usuarios?action=update&id=<%= usuario.getId() %>">Editar</a><form action="<%= request.getContextPath() %>/usuarios" method="post" class="form-excluir"><input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value="<%= usuario.getId() %>" /><button class="excluir" type="submit">Excluir</button></form></div></td>
                   </tr>
     <% } } else { %>
                   <tr><td class="vazio" colspan="11">Nenhum registro encontrado.</td></tr>

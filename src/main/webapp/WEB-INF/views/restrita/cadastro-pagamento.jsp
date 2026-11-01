@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List, com.model.Contrato" %>
 <% List<Contrato> contratosDisponiveis = (List<Contrato>) request.getAttribute("contratosDisponiveis"); String erro = (String) request.getAttribute("erro"); %>
@@ -7,9 +7,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cadastrar pagamento | FIXA</title>
-    <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
-    <link rel="stylesheet" href="../../assets/css/crud.css" />
+    <link rel="icon" href="<%= request.getContextPath() %>/assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/fontes/fontes.css" />
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css" />
   </head>
   <body data-entidade="pagamentos" data-operacao="novo">
     <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
@@ -21,11 +21,11 @@
         aria-label="Expandir menu lateral"
         aria-expanded="false"
       >
-        <img class="simbolo" src="../../assets/img/crud/simbolo-fixa.svg" alt="" />
-        <img class="logo-menu" src="../../assets/img/crud/logo-fixa.svg" alt="FIXA" />
+        <img class="simbolo" src="<%= request.getContextPath() %>/assets/img/crud/simbolo-fixa.svg" alt="" />
+        <img class="logo-menu" src="<%= request.getContextPath() %>/assets/img/crud/logo-fixa.svg" alt="FIXA" />
       </button>
       <nav class="navegacao" aria-label="Páginas do CRUD">
-        <a href="../index.html" title="Página inicial">
+        <a href="<%= request.getContextPath() %>/analiticos" title="Página inicial">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -41,7 +41,7 @@
           </svg>
           <span class="texto-menu">Página inicial</span>
         </a>
-        <a href="/instituicoes" title="Instituições">
+        <a href="<%= request.getContextPath() %>/instituicoes" title="Instituições">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -58,7 +58,7 @@
           </svg>
           <span class="texto-menu">Instituições</span>
         </a>
-        <a href="/usuarios" title="Usuários">
+        <a href="<%= request.getContextPath() %>/usuarios" title="Usuários">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -76,7 +76,7 @@
           </svg>
           <span class="texto-menu">Usuários</span>
         </a>
-        <a href="/enderecos" title="Endereços">
+        <a href="<%= request.getContextPath() %>/enderecos" title="Endereços">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -92,7 +92,7 @@
           </svg>
           <span class="texto-menu">Endereços</span>
         </a>
-        <a href="/superAdmin" title="Super administradores">
+        <a href="<%= request.getContextPath() %>/superAdmin" title="Super administradores">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -107,7 +107,7 @@
           </svg>
           <span class="texto-menu">Super administradores</span>
         </a>
-        <a href="/planos" title="Planos">
+        <a href="<%= request.getContextPath() %>/planos" title="Planos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -122,7 +122,7 @@
           </svg>
           <span class="texto-menu">Planos</span>
         </a>
-        <a href="/contratos" title="Contratos">
+        <a href="<%= request.getContextPath() %>/contratos" title="Contratos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -141,7 +141,7 @@
           </svg>
           <span class="texto-menu">Contratos</span>
         </a>
-        <a href="/pagamentos" title="Pagamentos" aria-current="page">
+        <a href="<%= request.getContextPath() %>/pagamentos" title="Pagamentos" aria-current="page">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -157,7 +157,7 @@
           </svg>
           <span class="texto-menu">Pagamentos</span>
         </a>
-        <a href="/fotoUsuario" title="Fotos de usuário">
+        <a href="<%= request.getContextPath() %>/fotoUsuario" title="Fotos de usuário">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -175,8 +175,7 @@
           <span class="texto-menu">Fotos de usuário</span>
         </a>
       </nav>
-      <div class="rodape-menu">
-        <a href="../../jsp/login.html" class="voltar-login">
+      <div class="rodape-menu"><form action="<%= request.getContextPath() %>/login-handler" method="post"><input type="hidden" name="action" value="logout" /><button class="voltar-login" type="submit">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -188,8 +187,7 @@
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path>
           </svg>
           <span class="texto-menu">Sair</span>
-        </a>
-      </div>
+        </button></form></div>
     </aside>
     <div class="pagina">
       <header class="cabecalho">
@@ -197,7 +195,7 @@
           <h1>Cadastrar pagamento</h1>
           <p>Preencha os dados do registro.</p>
         </div>
-        <a class="botao botao-secundario" href="/pagamentos">Voltar para a lista</a>
+        <a class="botao botao-secundario" href="<%= request.getContextPath() %>/pagamentos">Voltar para a lista</a>
       </header>
       <main class="conteudo" id="conteudo">
         <section class="cartao formulario-pagina" aria-labelledby="titulo-formulario">
@@ -205,7 +203,7 @@
             <h2 id="titulo-formulario">Cadastrar pagamento</h2>
           </div>
           <form
-            action="/pagamentos"
+            action="<%= request.getContextPath() %>/pagamentos"
             method="post"
             aria-describedby="aviso-formulario erro-formulario"
             id="registro-form"
@@ -255,7 +253,7 @@
               </div>
             </div>
             <div class="rodape-formulario">
-              <a class="botao botao-secundario" href="/pagamentos">Cancelar</a>
+              <a class="botao botao-secundario" href="<%= request.getContextPath() %>/pagamentos">Cancelar</a>
               <button class="botao" type="submit">Salvar</button>
             </div>
           </form>
