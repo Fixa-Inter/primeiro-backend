@@ -213,9 +213,7 @@
                 <option value="nome">Nome</option>
                 <option value="esta_ativo">Está ativo</option>
                 <option value="email">E-mail</option>
-                <option value="data_criacao">Data de criação</option>
                 <option value="cargo">Cargo</option>
-                <option value="fk_endereco_id">Endereço</option>
                 <option value="tipo_acesso">Tipo de acesso</option>
                 <option value="data_nascimento">Data de nascimento</option>
                 <option value="primeiro_acesso">Primeiro acesso</option>
