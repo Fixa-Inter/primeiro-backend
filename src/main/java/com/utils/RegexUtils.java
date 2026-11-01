@@ -28,4 +28,24 @@ public class RegexUtils {
     public static boolean validarCep(String cep) {
         return validarCampo(cep, REGEX_CEP);
     }
+
+    // senha forte: minimo 8 caracteres, com pelo menos uma letra e um numero
+    public static boolean validarSenha(String senha) {
+        if (senha == null || senha.length() < 8) {
+            return false;
+        }
+
+        boolean temLetra = false;
+        boolean temNumero = false;
+
+        for (char c : senha.toCharArray()) {
+            if (Character.isLetter(c)) {
+                temLetra = true;
+            } else if (Character.isDigit(c)) {
+                temNumero = true;
+            }
+        }
+
+        return temLetra && temNumero;
+    }
 }
