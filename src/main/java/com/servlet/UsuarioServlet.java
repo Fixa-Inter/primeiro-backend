@@ -62,6 +62,10 @@ public class UsuarioServlet extends HttpServlet{
                     request.setAttribute("usuarioDTO", dao.listarUsuariosDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
+                // lista para o dropdown de enderecos da tela de edicao
+                try (EnderecoDAO enderecoDAO = new EnderecoDAO()) {
+                    request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
+                }
                 destino = PAGINA_EDICAO;
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);
