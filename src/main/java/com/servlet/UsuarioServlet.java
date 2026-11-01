@@ -62,7 +62,11 @@ public class UsuarioServlet extends HttpServlet{
                     request.setAttribute("usuarioDTO", dao.listarUsuariosDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
+<<<<<<< HEAD
                 // lista para o dropdown de enderecos da tela de edicao
+=======
+                // opcoes do menu de endereco da tela de edicao (igual ao cadastro)
+>>>>>>> f12efb2cded18bf45fc74af79af062c8c4fab3f5
                 try (EnderecoDAO enderecoDAO = new EnderecoDAO()) {
                     request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
                 }
@@ -211,7 +215,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String nome = Parametros.obrigatorio(request, "nome");
 
-        String senha = Parametros.obrigatorio(request, "senha");
+        String senha = Parametros.senha(request, "senha");
 
         String email = request.getParameter("email");
 
@@ -228,7 +232,7 @@ public class UsuarioServlet extends HttpServlet{
 
         int fkEndereco = Parametros.inteiro(request, "fkEndereco");
 
-        LocalDate dataAniversario = Parametros.data(request, "dataAniversario");
+        LocalDate dataAniversario = Parametros.dataNaoFutura(request, "dataAniversario");
 
         Usuario usuario = new Usuario(
                 nome,
@@ -286,7 +290,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String nome = request.getParameter("nome");
 
-        String senha = request.getParameter("senha");
+        String senha = Parametros.senhaOpcional(request, "senha");
 
         boolean estaAtivo = Parametros.booleano(request, "estaAtivo");
 
@@ -305,7 +309,7 @@ public class UsuarioServlet extends HttpServlet{
 
         int fkEndereco = Parametros.inteiro(request, "fkEndereco");
 
-        LocalDate dataAniversario = Parametros.dataOpcional(request, "dataAniversario");
+        LocalDate dataAniversario = Parametros.dataNaoFuturaOpcional(request, "dataAniversario");
 
         boolean primeiroAcesso = Parametros.booleano(request, "primeiroAcesso");
 

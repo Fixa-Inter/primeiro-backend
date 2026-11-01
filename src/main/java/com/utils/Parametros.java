@@ -7,17 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-/**
- * Leitura segura dos parametros que chegam dos formularios.
- *
- * Todos os metodos recebem o request e o NOME do parametro. Quando o valor esta
- * ausente, vazio ou invalido, lancam ExcecaoDeJSP com uma mensagem amigavel.
- * Os servlets ja capturam essa excecao no doPost e devolvem o usuario ao
- * formulario exibindo a mensagem (atributo "erro"), em vez de um erro 500.
- *
- * Metodos "...Opcional" devolvem null quando o parametro nao veio ou esta vazio,
- * e so lancam excecao se vier preenchido com um valor invalido.
- */
 public class Parametros {
 
     private Parametros() {
@@ -25,7 +14,6 @@ public class Parametros {
 
     // ---------- texto ----------
 
-    /** Texto obrigatorio, sem espacos nas pontas. Vazio ou ausente lanca "preencha o campo". */
     public static String obrigatorio(HttpServletRequest request, String nome) {
         String valor = request.getParameter(nome);
 
@@ -38,7 +26,6 @@ public class Parametros {
 
     // ---------- numeros ----------
 
-    /** Numero inteiro obrigatorio (ids, chaves estrangeiras, codigos de enum, duracao...). */
     public static int inteiro(HttpServletRequest request, String nome) {
         String valor = obrigatorio(request, nome);
 
@@ -49,7 +36,7 @@ public class Parametros {
         }
     }
 
-    /** Numero inteiro opcional: null quando vazio ou ausente. */
+
     public static Integer inteiroOpcional(HttpServletRequest request, String nome) {
         String valor = request.getParameter(nome);
 
@@ -60,7 +47,6 @@ public class Parametros {
         return inteiro(request, nome);
     }
 
-    /** Numero decimal obrigatorio (aceita ponto; virgula e trocada por ponto). */
     public static double decimal(HttpServletRequest request, String nome) {
         String valor = obrigatorio(request, nome).replace(',', '.');
 
@@ -71,7 +57,7 @@ public class Parametros {
         }
     }
 
-    /** Valor monetario obrigatorio (BigDecimal), usado em pagamentos. */
+
     public static BigDecimal bigDecimal(HttpServletRequest request, String nome) {
         String valor = obrigatorio(request, nome).replace(',', '.');
 
@@ -84,7 +70,6 @@ public class Parametros {
 
     // ---------- datas ----------
 
-    /** Data obrigatoria no formato yyyy-MM-dd (o que o input type="date" envia). */
     public static LocalDate data(HttpServletRequest request, String nome) {
         String valor = obrigatorio(request, nome);
 
@@ -95,7 +80,6 @@ public class Parametros {
         }
     }
 
-    /** Data opcional: null quando vazia ou ausente. */
     public static LocalDate dataOpcional(HttpServletRequest request, String nome) {
         String valor = request.getParameter(nome);
 
@@ -106,12 +90,69 @@ public class Parametros {
         return data(request, nome);
     }
 
+    // data que nao pode estar no futuro (ex.: data de nascimento)
+    public static LocalDate dataNaoFutura(HttpServletRequest request, String nome) {
+        LocalDate valor = data(request, nome);
+
+        if (valor.isAfter(LocalDate.now())) {
+            throw ExcecaoDeJSP.dataNoFuturo(nome);
+        }
+
+        return valor;
+    }
+
+    public static LocalDate dataNaoFuturaOpcional(HttpServletRequest request, String nome) {
+        LocalDate valor = dataOpcional(request, nome);
+
+        if (valor != null && valor.isAfter(LocalDate.now())) {
+            throw ExcecaoDeJSP.dataNoFuturo(nome);
+        }
+
+        return valor;
+    }
+
+    // ---------- texto com limite ----------
+
+    public static String obrigatorio(HttpServletRequest request, String nome, int tamanhoMaximo) {
+        String valor = obrigatorio(request, nome);
+
+        if (valor.length() > tamanhoMaximo) {
+            throw ExcecaoDeJSP.tamanhoExcedido(nome, tamanhoMaximo);
+        }
+
+        return valor;
+    }
+
+    // ---------- senha ----------
+
+    // senha obrigatoria e dentro da regra. Nao usa trim: espacos fazem parte da senha
+    public static String senha(HttpServletRequest request, String nome) {
+        String valor = request.getParameter(nome);
+
+        if (valor == null || valor.isBlank()) {
+            throw ExcecaoDeJSP.notNullVazio(nome);
+        }
+
+        if (!RegexUtils.validarSenha(valor)) {
+            throw ExcecaoDeJSP.senhaFraca();
+        }
+
+        return valor;
+    }
+
+    // na edicao: em branco = manter a atual (devolve null); preenchida = precisa seguir a regra
+    public static String senhaOpcional(HttpServletRequest request, String nome) {
+        String valor = request.getParameter(nome);
+
+        if (valor == null || valor.isBlank()) {
+            return null;
+        }
+
+        return senha(request, nome);
+    }
+
     // ---------- booleano ----------
 
-    /**
-     * Checkbox: o navegador so envia o campo quando esta marcado, entao
-     * ausente significa false. Nao lanca excecao.
-     */
     public static boolean booleano(HttpServletRequest request, String nome) {
         return Boolean.parseBoolean(request.getParameter(nome));
     }

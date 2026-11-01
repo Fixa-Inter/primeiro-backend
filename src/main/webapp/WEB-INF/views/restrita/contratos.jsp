@@ -210,7 +210,6 @@
                 <option value="id">ID</option>
                 <option value="data_inicio">Data de início</option>
                 <option value="data_vencimento">Data de vencimento</option>
-                <option value="fk_endereco_id">Endereço</option>
                 <option value="fk_plano_id">Plano</option>
                 <option value="status_contrato">Status do contrato</option>
               </select>

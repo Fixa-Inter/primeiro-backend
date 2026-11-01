@@ -13,8 +13,9 @@ public class EnderecoDTO {
     private String cep;
     private String instituicaoNome;
 
-    public EnderecoDTO(Integer id, String rua, String bairro, String complemento, String cidade, String estado, String numero, String cep, String instituicaoNome) {
+    public EnderecoDTO(Integer id, String nome, String rua, String bairro, String complemento, String cidade, String estado, String numero, String cep, String instituicaoNome) {
         this.id = id;
+        this.nome = nome;
         this.rua = rua;
         this.bairro = bairro;
         this.complemento = complemento;
@@ -23,11 +24,6 @@ public class EnderecoDTO {
         this.numero = numero;
         this.cep = cep;
         this.instituicaoNome = instituicaoNome;
-    }
-
-    public EnderecoDTO(Integer id, String nome, String rua, String bairro, String complemento, String cidade, String estado, String numero, String cep, String instituicaoNome) {
-        this(id, rua, bairro, complemento, cidade, estado, numero, cep, instituicaoNome);
-        this.nome = nome;
     }
 
     public String getNome() { return nome; }

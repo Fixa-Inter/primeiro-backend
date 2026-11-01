@@ -213,7 +213,6 @@
                 <option value="cidade">Cidade</option>
                 <option value="estado">Estado (UF)</option>
                 <option value="cep">CEP</option>
-                <option value="cnpj">CNPJ</option>
                 <option value="fk_instituicao_id">Instituição</option>
               </select>
               <label class="sr-only" for="operador-filtro">Operador</label>

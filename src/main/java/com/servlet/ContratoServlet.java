@@ -78,6 +78,13 @@ public class ContratoServlet extends HttpServlet{
                     request.setAttribute("planosDisponiveis", planoDAO.buscar(null, null, null, null));
                 }
 
+                // opcoes dos menus de endereco e plano da tela de edicao (igual ao cadastro)
+                try (com.DAO.EnderecoDAO enderecoDAO = new com.DAO.EnderecoDAO();
+                     com.DAO.PlanoDAO planoDAO = new com.DAO.PlanoDAO()) {
+                    request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
+                    request.setAttribute("planosDisponiveis", planoDAO.buscar(null, null, null, null));
+                }
+
                 destino = PAGINA_EDICAO;
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -226,6 +233,12 @@ public class ContratoServlet extends HttpServlet{
     ) throws ServletException, IOException {
         LocalDate dataVencimento = Parametros.data(request, "dataVencimento");
 
+        // a data de inicio e gerada pelo banco no momento do cadastro (a data de criacao do contrato);
+        // como o contrato esta sendo criado agora, ela e a data de hoje
+        if (dataVencimento.isBefore(LocalDate.now())) {
+            throw ExcecaoDeJSP.vencimentoAntesDoInicio();
+        }
+
         int fkEndereco = Parametros.inteiro(request, "fkEndereco");
         int fkPlano = Parametros.inteiro(request, "fkPlano");
 
@@ -289,6 +302,11 @@ public class ContratoServlet extends HttpServlet{
 
             // Busca como está atualmente no banco
             Contrato original = dao.pesquisarPorId(id);
+
+            // compara com a data de inicio gravada (e nao com hoje): contrato ja vencido continua editavel
+            if (original.getDataInicio() != null && dataVencimento.isBefore(original.getDataInicio())) {
+                throw ExcecaoDeJSP.vencimentoAntesDoInicio();
+            }
 
             // Monta o objeto com os novos dados
             Contrato alterado = new Contrato(

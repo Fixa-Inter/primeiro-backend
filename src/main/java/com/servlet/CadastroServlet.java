@@ -226,6 +226,18 @@ public class CadastroServlet extends HttpServlet{
             return;
         }
 
+        // senha precisa seguir a regra (8 caracteres, uma letra e um numero)
+        if (!RegexUtils.validarSenha(senha)){
+
+            request.setAttribute("erro", ExcecaoDeJSP.MENSAGEM_SENHA_FRACA);
+
+            request
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-senha.jsp")
+                    .forward(request, response);
+
+            return;
+        }
+
         // faz o hash e guarda na DTO da sessao
         String senhaHash = HashSenha.gerarHash(senha);
         dto.setSenha(senhaHash);

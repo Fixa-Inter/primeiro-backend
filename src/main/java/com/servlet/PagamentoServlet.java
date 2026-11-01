@@ -60,7 +60,11 @@ public class PagamentoServlet extends HttpServlet {
                     request.setAttribute("pagamentoDTO", dao.listarPagamentoDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
+<<<<<<< HEAD
                 // lista para o dropdown de contratos da tela de edicao
+=======
+                // opcoes do menu de contrato da tela de edicao (igual ao cadastro)
+>>>>>>> f12efb2cded18bf45fc74af79af062c8c4fab3f5
                 try (com.DAO.ContratoDAO contratoDAO = new com.DAO.ContratoDAO()) {
                     request.setAttribute("contratosDisponiveis", contratoDAO.buscar(null, null, null, null));
                 }
