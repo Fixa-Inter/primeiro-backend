@@ -23,9 +23,9 @@ import java.util.concurrent.ExecutionException;
 @WebServlet(name = "InstituicaoServlet", value = "/instituicoes")
 public class InstituicaoServlet extends HttpServlet{
 
-    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/instituicoes.jsp";
-    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-instituicao.jsp";
-    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-instituicao.jsp";
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/restrita/instituicoes.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/restrita/cadastro-instituicao.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/restrita/editar-instituicao.jsp";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

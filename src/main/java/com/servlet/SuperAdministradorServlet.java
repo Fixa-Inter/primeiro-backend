@@ -21,9 +21,9 @@ import java.util.List;
 @WebServlet(name = "SuperAdministradorServlet", value = "/superAdmin")
 public class SuperAdministradorServlet extends HttpServlet{
 
-    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/super-admin.jsp";
-    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-super-admin.jsp";
-    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-super-admin.jsp";
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/restrita/super-admin.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/restrita/cadastro-super-admin.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/restrita/editar-super-admin.jsp";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
