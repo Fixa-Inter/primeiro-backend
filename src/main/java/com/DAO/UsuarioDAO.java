@@ -21,8 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class UsuarioDAO extends DAO{
+
+    // colunas de data e hora filtradas só pela data (o usuário digita o dia, sem a hora)
+    private static final Set<String> CAMPOS_DATA_E_HORA = Set.of("DATA_CRIACAO");
 
     // map dos campos que sao filtraveis
     public static final Map<String, String> camposFiltraveis = Map.of(
@@ -89,7 +93,7 @@ public class UsuarioDAO extends DAO{
                 case "ID", "FK_ENDERECO_ID" -> Integer.parseInt(valor);
                 case "NOME", "SENHA_HASH", "EMAIL", "CARGO" -> valor;
                 case "ESTA_ATIVO", "PRIMEIRO_ACESSO" -> Boolean.parseBoolean(valor);
-                case "DATA_CRIACAO" -> LocalDateTime.parse(valor);
+                case "DATA_CRIACAO" -> LocalDate.parse(valor);
                 case "TIPO_ACESSO" -> {
                     try {
                         yield TipoAcesso.converterEnum(valor).getCodigo();
@@ -223,7 +227,14 @@ public class UsuarioDAO extends DAO{
 
                 } else {
 
-                    sql += filtro.getCampoFiltravel() + " "
+                    String coluna = filtro.getCampoFiltravel();
+
+                    // compara só o dia, ignorando a hora
+                    if (CAMPOS_DATA_E_HORA.contains(coluna)) {
+                        coluna = "CAST(" + coluna + " AS DATE)";
+                    }
+
+                    sql += coluna + " "
                             + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
                 }
             }
@@ -523,7 +534,14 @@ public class UsuarioDAO extends DAO{
 
                 } else {
 
-                    sql += filtro.getCampoFiltravel() + " "
+                    String coluna = filtro.getCampoFiltravel();
+
+                    // compara só o dia, ignorando a hora
+                    if (CAMPOS_DATA_E_HORA.contains(coluna)) {
+                        coluna = "CAST(" + coluna + " AS DATE)";
+                    }
+
+                    sql += coluna + " "
                             + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
                 }
             }
