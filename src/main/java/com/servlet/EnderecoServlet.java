@@ -7,6 +7,7 @@ import com.model.Endereco;
 import com.model.Filtro;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
+import com.utils.Parametros;
 import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -57,13 +58,23 @@ public class EnderecoServlet extends HttpServlet{
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (EnderecoDAO dao = new EnderecoDAO()) {
                     Endereco endereco = dao.pesquisarPorId(id);
+                    if (endereco == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                        return;
+                    }
                     request.setAttribute("endereco", endereco);
                     request.setAttribute("enderecoDTO", dao.listarEnderecoDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
                 destino = PAGINA_EDICAO;
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return;
             }
             erro = false;
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         } catch (SQLException e) {
             System.err.println("Erro ao executar operação no banco:");
             e.printStackTrace(System.err);
@@ -94,6 +105,8 @@ public class EnderecoServlet extends HttpServlet{
                 atualizarEndereco(request, response);
             } else if ("delete".equals(action)){
                 deletarEndereco(request, response);
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch (ExcecaoDeJSP e) {
             request.setAttribute("erro", e.getMessage());
@@ -222,9 +235,7 @@ public class EnderecoServlet extends HttpServlet{
         cep = cep.replaceAll("\\D", "");
         cnpj = cnpj.replaceAll("\\D", "");
 
-        Integer fkInstituicao = Integer.parseInt(
-                request.getParameter("fkInstituicao")
-        );
+        Integer fkInstituicao = Parametros.inteiro(request, "fkInstituicao");
 
         Endereco endereco = new Endereco(
                 nome,
@@ -260,7 +271,7 @@ public class EnderecoServlet extends HttpServlet{
             HttpServletRequest request,
             HttpServletResponse response
     ){
-        int id = Integer.parseInt(request.getParameter("id"));
+        int id = Parametros.inteiro(request, "id");
 
         try (EnderecoDAO enderecoDAO = new EnderecoDAO()){
             enderecoDAO.remover(id, request);
@@ -281,9 +292,7 @@ public class EnderecoServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        int id = Integer.parseInt(
-                request.getParameter("id")
-        );
+        int id = Parametros.inteiro(request, "id");
 
         String nome = request.getParameter("nome");
         String rua = request.getParameter("rua");
@@ -312,9 +321,7 @@ public class EnderecoServlet extends HttpServlet{
         cep = cep.replaceAll("\\D", "");
         cnpj = cnpj.replaceAll("\\D", "");
 
-        Integer fkInstituicao = Integer.parseInt(
-                request.getParameter("fkInstituicao")
-        );
+        Integer fkInstituicao = Parametros.inteiro(request, "fkInstituicao");
 
 
         String dataCriacaoParam = request.getParameter("dataCriacao");

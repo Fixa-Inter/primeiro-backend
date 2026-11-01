@@ -7,6 +7,7 @@ import com.model.Instituicao;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoInstituicao;
 import com.service.HashSenha;
+import com.utils.Parametros;
 import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -47,11 +48,21 @@ public class InstituicaoServlet extends HttpServlet{
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (InstituicaoDAO dao = new InstituicaoDAO()) {
                     Instituicao instituicao = dao.pesquisarPorId(id);
+                    if (instituicao == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                        return;
+                    }
                     request.setAttribute("instituicao", instituicao);
                 }
                 destino = PAGINA_EDICAO;
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return;
             }
             erro = false;
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         } catch (SQLException e) {
             System.err.println("Erro ao executar operação no banco:");
             e.printStackTrace(System.err);
@@ -79,6 +90,8 @@ public class InstituicaoServlet extends HttpServlet{
                 atualizarInstituicao(request, response);
             } else if ("delete".equals(action)){
                 deletarInstituicao(request, response);
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
         }
         catch (ExcecaoDeJSP e) {
@@ -189,23 +202,17 @@ public class InstituicaoServlet extends HttpServlet{
         }
         String dominioEmail = request.getParameter("dominioEmail");
 
-        Integer tipoInstituicao = Integer.parseInt(
-                request.getParameter("tipoInstituicao")
-        );
+        Integer tipoInstituicao = Parametros.inteiro(request, "tipoInstituicao");
 
         String senha = request.getParameter("senha");
 
-        //verificações
+        //verificações (antes de converter, senão o parseInt falha primeiro)
         if (nome.isBlank()){
             throw ExcecaoDeJSP.notNullVazio("nome");
         }
 
         if (emailCorporativo.isBlank()){
             throw ExcecaoDeJSP.notNullVazio("email corporativo");
-        }
-
-        if (request.getParameter("tipoInstituicao").isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("tipo de instituicao");
         }
 
         if (senha.isBlank()){
@@ -239,7 +246,7 @@ public class InstituicaoServlet extends HttpServlet{
             HttpServletRequest request,
             HttpServletResponse response
     ){
-        int id = Integer.parseInt(request.getParameter("id"));
+        int id = Parametros.inteiro(request, "id");
 
         try (InstituicaoDAO dao = new InstituicaoDAO()){
             dao.remover(id, request);
@@ -260,9 +267,7 @@ public class InstituicaoServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException, ExcecaoDeJSP{
 
-        int id = Integer.parseInt(
-                request.getParameter("id")
-        );
+        int id = Parametros.inteiro(request, "id");
 
         String nome = request.getParameter("nome");
         String emailCorporativo = request.getParameter("emailCorporativo");
@@ -272,9 +277,7 @@ public class InstituicaoServlet extends HttpServlet{
 
         String dominioEmail = request.getParameter("dominioEmail");
 
-        Integer tipoInstituicao = Integer.parseInt(
-                request.getParameter("tipoInstituicao")
-        );
+        Integer tipoInstituicao = Parametros.inteiro(request, "tipoInstituicao");
 
         try (InstituicaoDAO dao = new InstituicaoDAO()) {
 
@@ -291,7 +294,7 @@ public class InstituicaoServlet extends HttpServlet{
                 throw ExcecaoDeJSP.dominioDuplicado();
             }
 
-            if (instituicaoApoioEmail != null && instituicaoApoioEmail.getEmailCorporativo() != emailCorporativo){
+            if (instituicaoApoioEmail != null && instituicaoApoioEmail.getId() != id){
                 throw ExcecaoDeJSP.emailDuplicado();
             }
 

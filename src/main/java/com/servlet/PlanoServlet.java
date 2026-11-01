@@ -2,6 +2,7 @@ package com.servlet;
 
 import com.DAO.PlanoDAO;
 import com.exception.ExcecaoDeJSP;
+import com.utils.Parametros;
 import com.model.Filtro;
 import com.model.Plano;
 import com.model.enums.OperacaoFiltro;
@@ -43,11 +44,21 @@ public class PlanoServlet extends HttpServlet {
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (PlanoDAO dao = new PlanoDAO()) {
                     Plano plano = dao.pesquisarPorId(id);
+                    if (plano == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                        return;
+                    }
                     request.setAttribute("plano", plano);
                 }
                 destino = PAGINA_EDICAO;
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return;
             }
             erro = false;
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         } catch (SQLException e) {
             System.err.println("Erro ao executar operação no banco:");
             e.printStackTrace(System.err);
@@ -74,6 +85,8 @@ public class PlanoServlet extends HttpServlet {
                 atualizarPlano(request, response);
             } else if ("delete".equals(action)) {
                 deletarPlano(request, response);
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
         }catch (ExcecaoDeJSP e) {
             request.setAttribute("erro", e.getMessage());
@@ -177,29 +190,15 @@ public class PlanoServlet extends HttpServlet {
 
         String nome = request.getParameter("nome");
 
-        double valor = Double.parseDouble(
-                request.getParameter("valor")
-        );
-
-        int duracao = Integer.parseInt(
-                request.getParameter("duracao")
-        );
+        double valorMensal = Parametros.decimal(request, "valorMensal");
+        int duracaoMeses = Parametros.inteiro(request, "duracaoMeses");
 
         String descricao = request.getParameter("descricao");
 
-        //verificacoes necessarias
-        if (request.getParameter("valor").isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("valor");
-        }
-
-        if (request.getParameter("duracao").isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("duracao");
-        }
-
         Plano plano = new Plano(
                 nome,
-                valor,
-                duracao,
+                valorMensal,
+                duracaoMeses,
                 descricao
         );
 
@@ -220,7 +219,7 @@ public class PlanoServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ){
-        int id = Integer.parseInt(request.getParameter("id"));
+        int id = Parametros.inteiro(request, "id");
 
         try (PlanoDAO planoDAO = new PlanoDAO()){
             planoDAO.remover(id, request);
@@ -241,19 +240,13 @@ public class PlanoServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        int id = Integer.parseInt(
-                request.getParameter("id")
-        );
+        int id = Parametros.inteiro(request, "id");
 
         String nome = request.getParameter("nome");
 
-        double valorMensal = Double.parseDouble(
-                request.getParameter("valorMensal")
-        );
+        double valorMensal = Parametros.decimal(request, "valorMensal");
 
-        int duracaoMeses = Integer.parseInt(
-                request.getParameter("duracaoMeses")
-        );
+        int duracaoMeses = Parametros.inteiro(request, "duracaoMeses");
 
         String descricao = request.getParameter("descricao");
 

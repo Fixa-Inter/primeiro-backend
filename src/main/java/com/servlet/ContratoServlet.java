@@ -3,6 +3,7 @@ package com.servlet;
 import com.DAO.ContratoDAO;
 import com.DTO.ContratoDTO;
 import com.exception.ExcecaoDeJSP;
+import com.utils.Parametros;
 import com.model.Contrato;
 import com.model.Filtro;
 import com.model.enums.OperacaoFiltro;
@@ -14,7 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -63,16 +63,26 @@ public class ContratoServlet extends HttpServlet{
 
                 try (ContratoDAO dao = new ContratoDAO()) {
                     Contrato contrato = dao.pesquisarPorId(id);
+                    if (contrato == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                        return;
+                    }
                     request.setAttribute("contrato", contrato);
                     request.setAttribute("contratoDTO", dao.listarContratoDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
 
                 destino = PAGINA_EDICAO;
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return;
             }
 
             erro = false;
 
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         } catch (SQLException e) {
             System.err.println("Erro ao executar operação no banco:");
             e.printStackTrace(System.err);
@@ -106,6 +116,8 @@ public class ContratoServlet extends HttpServlet{
                 atualizarContrato(request, response);
             } else if ("delete".equals(action)){
                 deletarContrato(request, response);
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
         }catch (ExcecaoDeJSP e) {
             request.setAttribute("erro", e.getMessage());
@@ -206,25 +218,12 @@ public class ContratoServlet extends HttpServlet{
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-        Date dataVencimentoSQL = Date.valueOf(
-                request.getParameter("DATA_VENCIMENTO")
-        );
-        LocalDate dataVencimento = (dataVencimentoSQL == null ? null : dataVencimentoSQL.toLocalDate());
+        LocalDate dataVencimento = Parametros.data(request, "dataVencimento");
 
-        int fkEndereco = Integer.parseInt(
-                request.getParameter("FK_ENDERECO_ID")
-        );
-        int fkPlano = Integer.parseInt(
-                request.getParameter("FK_PLANO_ID")
-        );
-        int statusContrato = Integer.parseInt(
-                request.getParameter("STATUS_CONTRATO")
-        );
+        int fkEndereco = Parametros.inteiro(request, "fkEndereco");
+        int fkPlano = Parametros.inteiro(request, "fkPlano");
 
-        //verificacoes necessarias
-        if (request.getParameter("statusContrato").isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("statusContrato");
-        }
+        int statusContrato = Parametros.inteiro(request, "statusContrato");
 
         Contrato contrato = new Contrato(
                 dataVencimento,
@@ -249,7 +248,7 @@ public class ContratoServlet extends HttpServlet{
             HttpServletRequest request,
             HttpServletResponse response
     ){
-        int id = Integer.parseInt(request.getParameter("id"));
+        int id = Parametros.inteiro(request, "id");
 
         try (ContratoDAO dao = new ContratoDAO()){
             dao.remover(id, request);
@@ -270,24 +269,13 @@ public class ContratoServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        int id = Integer.parseInt(
-                request.getParameter("ID")
-        );
+        int id = Parametros.inteiro(request, "id");
 
-        Date dataVencimentoSQL = Date.valueOf(
-                request.getParameter("DATA_VENCIMENTO")
-        );
-        LocalDate dataVencimento = (dataVencimentoSQL == null ? null : dataVencimentoSQL.toLocalDate());
+        LocalDate dataVencimento = Parametros.data(request, "dataVencimento");
 
-        int fkEndereco = Integer.parseInt(
-                request.getParameter("FK_ENDERECO_ID")
-        );
-        int fkPlano = Integer.parseInt(
-                request.getParameter("FK_PLANO_ID")
-        );
-        int statusContrato = Integer.parseInt(
-                request.getParameter("STATUS_CONTRATO")
-        );
+        int fkEndereco = Parametros.inteiro(request, "fkEndereco");
+        int fkPlano = Parametros.inteiro(request, "fkPlano");
+        int statusContrato = Parametros.inteiro(request, "statusContrato");
 
 
 
