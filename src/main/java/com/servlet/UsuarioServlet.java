@@ -8,6 +8,7 @@ import com.model.*;
 import com.model.enums.OperacaoFiltro;
 import com.model.enums.TipoAcesso;
 import com.service.HashSenha;
+import com.utils.Parametros;
 import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -53,13 +54,23 @@ public class UsuarioServlet extends HttpServlet{
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (UsuarioDAO dao = new UsuarioDAO()) {
                     Usuario usuario = dao.pesquisarPorId(id);
+                    if (usuario == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                        return;
+                    }
                     request.setAttribute("usuario", usuario);
                     request.setAttribute("usuarioDTO", dao.listarUsuariosDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
                 destino = PAGINA_EDICAO;
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return;
             }
             erro = false;
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         } catch (SQLException e) {
             System.err.println("Erro ao executar operação no banco:");
             e.printStackTrace(System.err);
@@ -90,6 +101,8 @@ public class UsuarioServlet extends HttpServlet{
                 atualizarUsuario(request, response);
             } else if ("delete".equals(action)){
                 deletarUsuario(request, response);
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch (ExcecaoDeJSP e) {
             request.setAttribute("erro", e.getMessage());
@@ -192,9 +205,9 @@ public class UsuarioServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        String nome = request.getParameter("nome");
+        String nome = Parametros.obrigatorio(request, "nome");
 
-        String senha = request.getParameter("senha");
+        String senha = Parametros.obrigatorio(request, "senha");
 
         String email = request.getParameter("email");
 
@@ -204,34 +217,14 @@ public class UsuarioServlet extends HttpServlet{
 
         String cargo = request.getParameter("cargo");
 
+        // o formulario envia o codigo do tipo de acesso (1 a 4)
         TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
-                request.getParameter("tipoDeAcesso")
+                Parametros.inteiro(request, "tipoDeAcesso")
         );
 
-        int fkEndereco = Integer.parseInt(
-                request.getParameter("fkEndereco")
-        );
+        int fkEndereco = Parametros.inteiro(request, "fkEndereco");
 
-        LocalDate dataAniversario = LocalDate.parse(
-                request.getParameter("dataAniversario")
-        );
-
-        //verificacoes necessarias
-        if (email.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("email");
-        }
-
-        if (senha.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("senha");
-        }
-
-        if (nome.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("nome");
-        }
-
-        if (request.getParameter("tipoDeAcesso").isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("tipoDeAcesso");
-        }
+        LocalDate dataAniversario = Parametros.data(request, "dataAniversario");
 
         Usuario usuario = new Usuario(
                 nome,
@@ -264,7 +257,7 @@ public class UsuarioServlet extends HttpServlet{
             HttpServletRequest request,
             HttpServletResponse response
     ){
-        int id = Integer.parseInt(request.getParameter("id"));
+        int id = Parametros.inteiro(request, "id");
 
         try (UsuarioDAO usuarioDAO = new UsuarioDAO()){
             usuarioDAO.remover(id, request);
@@ -285,17 +278,13 @@ public class UsuarioServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        int id = Integer.parseInt(
-                request.getParameter("id")
-        );
+        int id = Parametros.inteiro(request, "id");
 
         String nome = request.getParameter("nome");
 
         String senha = request.getParameter("senha");
 
-        boolean estaAtivo = Boolean.parseBoolean(
-                request.getParameter("estaAtivo")
-        );
+        boolean estaAtivo = Parametros.booleano(request, "estaAtivo");
 
         String email = request.getParameter("email");
 
@@ -305,25 +294,16 @@ public class UsuarioServlet extends HttpServlet{
 
         String cargo = request.getParameter("cargo");
 
+        // o formulario envia o codigo do tipo de acesso (1 a 4)
         TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
-                request.getParameter("tipoDeAcesso")
+                Parametros.inteiro(request, "tipoDeAcesso")
         );
 
-        int fkEndereco = Integer.parseInt(
-                request.getParameter("fkEndereco")
-        );
+        int fkEndereco = Parametros.inteiro(request, "fkEndereco");
 
-        String dataAniversarioParam = request.getParameter("dataAniversario");
+        LocalDate dataAniversario = Parametros.dataOpcional(request, "dataAniversario");
 
-        LocalDate dataAniversario = null;
-
-        if (dataAniversarioParam != null && !dataAniversarioParam.isBlank()) {
-            dataAniversario = LocalDate.parse(dataAniversarioParam);
-        }
-
-        boolean primeiroAcesso = Boolean.parseBoolean(
-                request.getParameter("primeiroAcesso")
-        );
+        boolean primeiroAcesso = Parametros.booleano(request, "primeiroAcesso");
 
         try (UsuarioDAO dao = new UsuarioDAO()) {
 

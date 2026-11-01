@@ -3,6 +3,7 @@ package com.servlet;
 import com.DAO.PagamentoDAO;
 import com.DTO.PagamentoDTO;
 import com.exception.ExcecaoDeJSP;
+import com.utils.Parametros;
 import com.model.Filtro;
 import com.model.Pagamento;
 import com.model.enums.MetodoPagamento;
@@ -51,13 +52,23 @@ public class PagamentoServlet extends HttpServlet {
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (PagamentoDAO dao = new PagamentoDAO()) {
                     Pagamento pagamento = dao.pesquisarPorId(id);
+                    if (pagamento == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                        return;
+                    }
                     request.setAttribute("pagamento", pagamento);
                     request.setAttribute("pagamentoDTO", dao.listarPagamentoDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
                 destino = PAGINA_EDICAO;
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return;
             }
             erro = false;
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         } catch (SQLException e) {
             System.err.println("Erro ao executar operação no banco:");
             e.printStackTrace(System.err);
@@ -85,6 +96,8 @@ public class PagamentoServlet extends HttpServlet {
                 atualizarPagamento(request, response);
             } else if ("delete".equals(action)){
                 deletarPagamento(request, response);
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch (ExcecaoDeJSP e) {
             request.setAttribute("erro", e.getMessage());
@@ -186,22 +199,14 @@ public class PagamentoServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
 
+        // o formulario envia o codigo do metodo de pagamento (1 a 3)
         MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(
-                request.getParameter("metodoPagamento")
+                Parametros.inteiro(request, "metodoPagamento")
         );
 
-        Integer fkContrato = Integer.parseInt(
-                request.getParameter("fkContrato")
-        );
+        Integer fkContrato = Parametros.inteiro(request, "fkContrato");
 
-        BigDecimal valor = new BigDecimal(
-                request.getParameter("valor")
-        );
-
-        //verificacoes necessarias
-        if (request.getParameter("metodoPagamento").isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("metodoPagamento");
-        }
+        BigDecimal valor = Parametros.bigDecimal(request, "valor");
 
         Pagamento pagamento = new Pagamento(
           metodoPagamento,
@@ -226,7 +231,7 @@ public class PagamentoServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ){
-        int id = Integer.parseInt(request.getParameter("id"));
+        int id = Parametros.inteiro(request, "id");
 
         try (PagamentoDAO pagamentoDAO = new PagamentoDAO()){
             pagamentoDAO.remover(id, request);
@@ -247,26 +252,19 @@ public class PagamentoServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        int id = Integer.parseInt(
-                request.getParameter("id")
-        );
+        int id = Parametros.inteiro(request, "id");
 
+        // o formulario envia o codigo do metodo de pagamento (1 a 3)
         MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(
-                request.getParameter("metodoPagamento")
+                Parametros.inteiro(request, "metodoPagamento")
         );
 
-        Integer fkContrato = Integer.parseInt(
-                request.getParameter("fkContrato")
-        );
+        Integer fkContrato = Parametros.inteiro(request, "fkContrato");
 
-        BigDecimal valor = new BigDecimal(
-                request.getParameter("valor")
-        );
+        BigDecimal valor = Parametros.bigDecimal(request, "valor");
 
 
-        boolean foiRealizado = Boolean.parseBoolean(
-                request.getParameter("foiRealizado")
-        );
+        boolean foiRealizado = Parametros.booleano(request, "foiRealizado");
 
 
 

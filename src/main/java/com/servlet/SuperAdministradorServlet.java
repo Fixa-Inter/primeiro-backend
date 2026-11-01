@@ -6,6 +6,7 @@ import com.model.Filtro;
 import com.model.SuperAdministrador;
 import com.model.enums.OperacaoFiltro;
 import com.service.HashSenha;
+import com.utils.Parametros;
 import com.utils.RegexUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -45,11 +46,21 @@ public class SuperAdministradorServlet extends HttpServlet{
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (SuperAdministradorDAO dao = new SuperAdministradorDAO()) {
                     SuperAdministrador superAdministrador = dao.pesquisarPorId(id);
+                    if (superAdministrador == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                        return;
+                    }
                     request.setAttribute("superAdmin", superAdministrador);
                 }
                 destino = PAGINA_EDICAO;
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return;
             }
             erro = false;
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         } catch (SQLException e) {
             System.err.println("Erro ao executar operação no banco:");
             e.printStackTrace(System.err);
@@ -76,6 +87,8 @@ public class SuperAdministradorServlet extends HttpServlet{
                 atualizarAdmin(request, response);
             } else if ("delete".equals(action)){
                 deletarAdmin(request, response);
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
         }catch (ExcecaoDeJSP e) {
             request.setAttribute("erro", e.getMessage());
@@ -175,28 +188,14 @@ public class SuperAdministradorServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        String nome = request.getParameter("nome");
+        String nome = Parametros.obrigatorio(request, "nome");
 
-        String email = request.getParameter("email");
+        String email = Parametros.obrigatorio(request, "email");
         if (!RegexUtils.validarEmail(email)) {
             throw ExcecaoDeJSP.valorInvalido("email");
         }
 
-        String senha = request.getParameter("senha");
-
-        //verificacoes necessarias
-
-        if (email.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("email");
-        }
-
-        if (senha.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("senha");
-        }
-
-        if (nome.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("nome");
-        }
+        String senha = Parametros.obrigatorio(request, "senha");
 
         SuperAdministrador superAdministrador = new SuperAdministrador(
                 nome,
@@ -225,7 +224,7 @@ public class SuperAdministradorServlet extends HttpServlet{
             HttpServletRequest request,
             HttpServletResponse response
     ){
-        int id = Integer.parseInt(request.getParameter("id"));
+        int id = Parametros.inteiro(request, "id");
 
         try (SuperAdministradorDAO dao = new SuperAdministradorDAO()){
             dao.remover(id, request);
@@ -246,9 +245,7 @@ public class SuperAdministradorServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        int id = Integer.parseInt(
-                request.getParameter("id")
-        );
+        int id = Parametros.inteiro(request, "id");
 
         String nome = request.getParameter("nome");
 

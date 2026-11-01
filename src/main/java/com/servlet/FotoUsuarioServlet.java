@@ -4,6 +4,7 @@ import com.DAO.FotoUsuarioDAO;
 import com.DAO.SuperAdministradorDAO;
 import com.DTO.FotoUsuarioDTO;
 import com.exception.ExcecaoDeJSP;
+import com.utils.Parametros;
 import com.model.Filtro;
 import com.model.FotoUsuario;
 import com.model.SuperAdministrador;
@@ -52,13 +53,23 @@ public class FotoUsuarioServlet extends HttpServlet{
                 int id = Integer.parseInt(request.getParameter("id"));
                 try (FotoUsuarioDAO dao = new FotoUsuarioDAO()) {
                     FotoUsuario fotoUsuario = dao.pesquisarPorId(id);
+                    if (fotoUsuario == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                        return;
+                    }
                     request.setAttribute("fotoUsuario", fotoUsuario);
                     request.setAttribute("fotoUsuarioDTO", dao.listarFotoUsuarioDTO(null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
                 destino = PAGINA_EDICAO;
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return;
             }
             erro = false;
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         } catch (SQLException e) {
             System.err.println("Erro ao executar operação no banco:");
             e.printStackTrace(System.err);
@@ -89,6 +100,8 @@ public class FotoUsuarioServlet extends HttpServlet{
                 atualizarFotoUsuario(request, response);
             } else if ("delete".equals(action)){
                 deletarFotoUsuario(request, response);
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch (ExcecaoDeJSP e) {
             request.setAttribute("erro", e.getMessage());
@@ -117,10 +130,9 @@ public class FotoUsuarioServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        String fkUsuarioParam = request.getParameter("fkUsuario");
-        String url = request.getParameter("url");
+        String url = Parametros.obrigatorio(request, "url");
 
-        int fkUsuario = Integer.parseInt(fkUsuarioParam);
+        int fkUsuario = Parametros.inteiro(request, "fkUsuario");
 
 
         FotoUsuario fotoUsuario = new FotoUsuario(
@@ -145,7 +157,7 @@ public class FotoUsuarioServlet extends HttpServlet{
             HttpServletRequest request,
             HttpServletResponse response
     ){
-        int id = Integer.parseInt(request.getParameter("id"));
+        int id = Parametros.inteiro(request, "id");
 
         try (FotoUsuarioDAO dao = new FotoUsuarioDAO()){
             dao.remover(id, request);
@@ -166,14 +178,7 @@ public class FotoUsuarioServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        int id = Integer.parseInt(
-                request.getParameter("id")
-        );
-
-        String nome = request.getParameter("nome");
-
-        String email = request.getParameter("email");
-
+        int id = Parametros.inteiro(request, "id");
 
         try (FotoUsuarioDAO dao = new FotoUsuarioDAO()) {
 
@@ -181,7 +186,7 @@ public class FotoUsuarioServlet extends HttpServlet{
             FotoUsuario original = dao.pesquisarPorId(id);
 
             // Monta o objeto com os novos dados
-            int fkUsuario = Integer.parseInt(request.getParameter("fkUsuario"));
+            int fkUsuario = Parametros.inteiro(request, "fkUsuario");
 
             String url = request.getParameter("url");
 
