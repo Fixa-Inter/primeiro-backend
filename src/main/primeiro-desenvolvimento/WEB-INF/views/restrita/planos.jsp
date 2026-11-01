@@ -1,15 +1,18 @@
-﻿<!DOCTYPE html>
+﻿<%@ page import="java.util.List" %>
+<%@ page import="com.Model.Plano" %>
+<% List<Plano> planos = (List<Plano>) request.getAttribute("planos"); %>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pagamentos | FIXA</title>
+    <title>Planos | FIXA</title>
     <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
     <link rel="stylesheet" href="../../assets/css/crud.css" />
-    <script src="../../assets/js/crud.js" defer></script>
+    <script src="../../assets/js/operadores-filtro.js" defer></script>
   </head>
-  <body data-entidade="pagamentos">
+  <body data-entidade="planos">
     <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
     <aside class="menu-lateral" aria-label="Menu administrativo">
       <button
@@ -39,7 +42,7 @@
           </svg>
           <span class="texto-menu">Página inicial</span>
         </a>
-        <a href="instituicoes.html" title="Instituições">
+        <a href="/instituicoes" title="Instituições">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -56,7 +59,7 @@
           </svg>
           <span class="texto-menu">Instituições</span>
         </a>
-        <a href="usuarios.html" title="Usuários">
+        <a href="/usuarios" title="Usuários">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -74,7 +77,7 @@
           </svg>
           <span class="texto-menu">Usuários</span>
         </a>
-        <a href="enderecos.html" title="Endereços">
+        <a href="/enderecos" title="Endereços">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -90,7 +93,7 @@
           </svg>
           <span class="texto-menu">Endereços</span>
         </a>
-        <a href="super-admin.html" title="Super administradores">
+        <a href="/superAdmin" title="Super administradores">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -105,7 +108,7 @@
           </svg>
           <span class="texto-menu">Super administradores</span>
         </a>
-        <a href="planos.html" title="Planos">
+        <a href="/planos" title="Planos" aria-current="page">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -120,7 +123,7 @@
           </svg>
           <span class="texto-menu">Planos</span>
         </a>
-        <a href="contratos.html" title="Contratos">
+        <a href="/contratos" title="Contratos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -139,7 +142,7 @@
           </svg>
           <span class="texto-menu">Contratos</span>
         </a>
-        <a href="pagamentos.html" title="Pagamentos" aria-current="page">
+        <a href="/pagamentos" title="Pagamentos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -155,7 +158,7 @@
           </svg>
           <span class="texto-menu">Pagamentos</span>
         </a>
-        <a href="foto-usuario.html" title="Fotos de usuário">
+        <a href="/fotoUsuario" title="Fotos de usuário">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -192,26 +195,25 @@
     <div class="pagina">
       <header class="cabecalho">
         <div>
-          <h1>Pagamentos</h1>
-          <p>Consulte, filtre e edite os registros de pagamentos.</p>
+          <h1>Planos</h1>
+          <p>Consulte, filtre e edite os registros de planos.</p>
         </div>
         <div class="acoes">
-          <a class="botao" id="novo" href="cadastro-pagamento.html">+ Novo</a>
+          <a class="botao" id="novo" href="/planos?action=create">+ Novo</a>
         </div>
       </header>
       <main class="conteudo" id="conteudo">
-        <section class="cartao lista" aria-label="Registros de pagamentos">
+        <section class="cartao lista" aria-label="Registros de planos">
           <div class="barra-tabela">
-            <strong id="contagem" role="status">1 registro</strong>
-            <form novalidate id="filtro-form" class="filtros" role="search" action="pagamentos.html" method="get">
+            <strong id="contagem" role="status"><%= planos == null ? 0 : planos.size() %> <%= planos != null && planos.size() == 1 ? "registro" : "registros" %></strong>
+            <form id="filtro-form" class="filtros" role="search" action="/planos" method="get"><input type="hidden" name="action" value="read" />
               <label class="sr-only" for="campo-filtro">Campo</label>
               <select id="campo-filtro" name="campo">
                 <option value="id">ID</option>
-                <option value="valor">Valor (R$)</option>
-                <option value="data_pagamento">Data/hora do pagamento</option>
-                <option value="foi_realizado">Foi realizado</option>
-                <option value="fk_contrato_id">Contrato</option>
-                <option value="metodo_pagamento">Método de pagamento</option>
+                <option value="nome">Nome</option>
+                <option value="valor_mensal">Valor mensal (R$)</option>
+                <option value="duracao_meses">Duração (meses)</option>
+                <option value="descricao">Descrição</option>
               </select>
               <label class="sr-only" for="operador-filtro">Operador</label>
               <select id="operador-filtro" name="operador">
@@ -226,37 +228,16 @@
               />
               <button class="botao botao-secundario" type="button">+ Filtro</button>
             </form>
-            <div class="pesquisa">
-              <span aria-hidden="true">
-                <svg
-                  class="icone"
-                  viewbox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                >
-                  <circle cx="10.5" cy="10.5" r="6.5"></circle>
-                  <path d="m16 16 5 5"></path>
-                </svg>
-              </span>
-              <label class="sr-only" for="pesquisa">Pesquisar em todos os campos</label>
-              <input
-                id="pesquisa"
-                type="search"
-                placeholder="Pesquisar em todos os campos"
-                autocomplete="off"
-              />
             </div>
-          </div>
           <div
             class="tabela-rolagem"
             tabindex="0"
             role="region"
-            aria-label="Tabela de pagamentos, com rolagem horizontal e vertical"
+            aria-label="Tabela de planos, com rolagem horizontal e vertical"
           >
             <table>
               <caption class="sr-only">
-                Pagamentos. Clique nos cabeçalhos com setas para alternar entre ordem crescente,
+                Planos. Clique nos cabeçalhos com setas para alternar entre ordem crescente,
                 decrescente e padrão por ID.
               </caption>
               <thead>
@@ -279,9 +260,9 @@
                       </svg>
                     </button>
                   </th>
-                  <th scope="col" data-campo="valor" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="valor">
-                      Valor (R$)
+                  <th scope="col" data-campo="nome" aria-sort="none">
+                    <button type="button" class="ordenar" data-ordenar="nome">
+                      Nome
                       <svg
                         class="icone-ordenacao"
                         viewBox="0 0 12 18"
@@ -297,9 +278,9 @@
                       </svg>
                     </button>
                   </th>
-                  <th scope="col" data-campo="data_pagamento" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="data_pagamento">
-                      Data/hora do pagamento
+                  <th scope="col" data-campo="valor_mensal" aria-sort="none">
+                    <button type="button" class="ordenar" data-ordenar="valor_mensal">
+                      Valor mensal (R$)
                       <svg
                         class="icone-ordenacao"
                         viewBox="0 0 12 18"
@@ -315,9 +296,9 @@
                       </svg>
                     </button>
                   </th>
-                  <th scope="col" data-campo="foi_realizado" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="foi_realizado">
-                      Foi realizado
+                  <th scope="col" data-campo="duracao_meses" aria-sort="none">
+                    <button type="button" class="ordenar" data-ordenar="duracao_meses">
+                      Duração (meses)
                       <svg
                         class="icone-ordenacao"
                         viewBox="0 0 12 18"
@@ -333,27 +314,9 @@
                       </svg>
                     </button>
                   </th>
-                  <th scope="col" data-campo="contrato" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="contrato">
-                      Contrato
-                      <svg
-                        class="icone-ordenacao"
-                        viewBox="0 0 12 18"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path class="seta-cima" d="m2 6 4-4 4 4"></path>
-                        <path class="seta-baixo" d="m2 12 4 4 4-4"></path>
-                      </svg>
-                    </button>
-                  </th>
-                  <th scope="col" data-campo="metodo_pagamento" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="metodo_pagamento">
-                      Método de pagamento
+                  <th scope="col" data-campo="descricao" aria-sort="none">
+                    <button type="button" class="ordenar" data-ordenar="descricao">
+                      Descrição
                       <svg
                         class="icone-ordenacao"
                         viewBox="0 0 12 18"
@@ -387,72 +350,30 @@
                       </svg>
                     </button>
                   </th>
-                  <th scope="col" data-campo="status_contrato" class="coluna-relacionada">
-                    Status do contrato
-                  </th>
-                  <th scope="col" data-campo="data_vencimento" class="coluna-relacionada">
-                    Data de vencimento
-                  </th>
-                  <th scope="col" data-campo="plano" class="coluna-relacionada">Plano</th>
-                  <th scope="col" data-campo="estado" class="coluna-relacionada">Estado (UF)</th>
-                  <th scope="col" data-campo="instituicao" class="coluna-relacionada">
-                    Instituição
-                  </th>
-                  <th scope="col" data-campo="em_dia" class="coluna-relacionada">Em dia?</th>
                   <th scope="col" class="coluna-acoes">Ações</th>
                 </tr>
               </thead>
               <tbody id="registros">
-                <tr data-temporario="true">
-                  <td><button disabled type="button" class="consultar" data-acao="consultar" data-id="1" aria-label="Consultar registro #1">#1</button></td>
-                  <td>R$ 299,90</td>
-                  <td>23/10/2026 10:00</td>
-                  <td><span class="etiqueta etiqueta-verde">Sim</span></td>
-                  <td>Contrato #1 — Essencial</td>
-                  <td>Pix</td>
-                  <td>23/10/2026 10:00</td>
-                  <td class="coluna-relacionada"><span class="etiqueta etiqueta-verde">Ativo</span></td>
-                  <td class="coluna-relacionada">23/10/2027</td>
-                  <td class="coluna-relacionada">Essencial</td>
-                  <td class="coluna-relacionada">SP</td>
-                  <td class="coluna-relacionada">Escola Exemplo</td>
-                  <td class="coluna-relacionada"><span class="etiqueta etiqueta-verde">Sim</span></td>
-                  <td class="coluna-acoes">
-                    <div class="acoes-linha">
-                      <a class="editar" href="editar-pagamento.html?id=1" aria-label="Editar registro #1">
-                        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                          <path d="M16 3l5 5L8 21H3v-5L16 3Z M14 5l5 5"></path>
-                        </svg>
-                        Editar
-                      </a>
-                      <a class="excluir" href="?action=excluir&id=1" aria-label="Excluir registro #1">
-                        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                          <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"></path>
-                        </svg>
-                        Excluir
-                      </a>
-                    </div>
-                  </td>
-                </tr>
+                                    <%
+        if (planos != null && !planos.isEmpty()) {
+            for (Plano plano : planos) {
+    %>
+                  <tr>
+                    <td><%= plano.getId() %></td><td><%= plano.getNome() %></td><td><%= plano.getValorMensal() %></td><td><%= plano.getDuracaoMeses() %></td><td><%= plano.getDescricao() %></td><td><%= plano.getDataCriacao() %></td>
+                    <td class="coluna-acoes"><div class="acoes-linha"><a class="editar" href="/planos?action=update&id=<%= plano.getId() %>">Editar</a><form action="/planos" method="post" class="form-excluir"><input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value="<%= plano.getId() %>" /><button class="excluir" type="submit">Excluir</button></form></div></td>
+                  </tr>
+    <% } } else { %>
+                  <tr><td class="vazio" colspan="7">Nenhum registro encontrado.</td></tr>
+    <% } %>
               </tbody>
             </table>
           </div>
-          <footer class="rodape-tabela" id="rodape-tabela">1 de 1 registros</footer>
+          <footer class="rodape-tabela" id="rodape-tabela"><%= planos == null ? 0 : planos.size() %> de <%= planos == null ? 0 : planos.size() %> <%= planos != null && planos.size() == 1 ? "registro" : "registros" %></footer>
         </section>
 
         <p class="mensagem" id="mensagem" role="status" aria-live="polite"></p>
       </main>
     </div>
-    <dialog id="consulta-dialog" class="modal" aria-labelledby="titulo-consulta">
-      <div class="titulo-cartao">
-        <h2 id="titulo-consulta">Consultar registro</h2>
-        <button type="button" class="fechar" data-fechar aria-label="Fechar consulta">×</button>
-      </div>
-      <dl class="dados-registro" id="dados-consulta"></dl>
-      <div class="rodape-formulario">
-        <button type="button" class="botao botao-secundario" data-fechar>Fechar</button>
-      </div>
-    </dialog>
   </body>
 </html>
 

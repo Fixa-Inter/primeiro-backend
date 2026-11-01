@@ -1,15 +1,18 @@
-﻿<!DOCTYPE html>
+﻿<%@ page import="java.util.List" %>
+<%@ page import="com.DTO.FotoUsuarioDTO" %>
+<% List<FotoUsuarioDTO> fotos = (List<FotoUsuarioDTO>) request.getAttribute("fotos"); %>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cadastrar foto de usuário | FIXA</title>
+    <title>Fotos de usuário | FIXA</title>
     <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
     <link rel="stylesheet" href="../../assets/css/crud.css" />
-    <script src="../../assets/js/crud.js" defer></script>
+    <script src="../../assets/js/operadores-filtro.js" defer></script>
   </head>
-  <body data-entidade="fotos-usuario" data-operacao="novo">
+  <body data-entidade="fotos-usuario">
     <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
     <aside class="menu-lateral" aria-label="Menu administrativo">
       <button
@@ -39,7 +42,7 @@
           </svg>
           <span class="texto-menu">Página inicial</span>
         </a>
-        <a href="instituicoes.html" title="Instituições">
+        <a href="/instituicoes" title="Instituições">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -56,7 +59,7 @@
           </svg>
           <span class="texto-menu">Instituições</span>
         </a>
-        <a href="usuarios.html" title="Usuários">
+        <a href="/usuarios" title="Usuários">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -74,7 +77,7 @@
           </svg>
           <span class="texto-menu">Usuários</span>
         </a>
-        <a href="enderecos.html" title="Endereços">
+        <a href="/enderecos" title="Endereços">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -90,7 +93,7 @@
           </svg>
           <span class="texto-menu">Endereços</span>
         </a>
-        <a href="super-admin.html" title="Super administradores">
+        <a href="/superAdmin" title="Super administradores">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -105,7 +108,7 @@
           </svg>
           <span class="texto-menu">Super administradores</span>
         </a>
-        <a href="planos.html" title="Planos">
+        <a href="/planos" title="Planos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -120,7 +123,7 @@
           </svg>
           <span class="texto-menu">Planos</span>
         </a>
-        <a href="contratos.html" title="Contratos">
+        <a href="/contratos" title="Contratos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -139,7 +142,7 @@
           </svg>
           <span class="texto-menu">Contratos</span>
         </a>
-        <a href="pagamentos.html" title="Pagamentos">
+        <a href="/pagamentos" title="Pagamentos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -155,7 +158,7 @@
           </svg>
           <span class="texto-menu">Pagamentos</span>
         </a>
-        <a href="foto-usuario.html" title="Fotos de usuário" aria-current="page">
+        <a href="/fotoUsuario" title="Fotos de usuário" aria-current="page">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -192,53 +195,91 @@
     <div class="pagina">
       <header class="cabecalho">
         <div>
-          <h1>Cadastrar foto de usuário</h1>
-          <p>Preencha os dados do registro.</p>
+          <h1>Fotos de usuário</h1>
+          <p>Consulte, filtre e edite os registros de fotos de usuário.</p>
         </div>
-        <a class="botao botao-secundario" href="foto-usuario.html">Voltar para a lista</a>
+        <div class="acoes">
+          <a class="botao" id="novo" href="/fotoUsuario?action=create">+ Novo</a>
+        </div>
       </header>
       <main class="conteudo" id="conteudo">
-        <section class="cartao formulario-pagina" aria-labelledby="titulo-formulario">
-          <div class="titulo-cartao">
-            <h2 id="titulo-formulario">Cadastrar foto de usuário</h2>
-          </div>
-          <form novalidate
-            action="foto-usuario.html"
-            method="post"
-            aria-describedby="aviso-formulario"
-            id="registro-form"
+        <section class="cartao lista" aria-label="Registros de fotos de usuário">
+          <div class="barra-tabela">
+            <strong id="contagem" role="status"><%= fotos == null ? 0 : fotos.size() %> <%= fotos != null && fotos.size() == 1 ? "registro" : "registros" %></strong>
+            <form id="filtro-form" class="filtros" role="search" action="/fotoUsuario" method="get"><input type="hidden" name="action" value="read" />
+              <label class="sr-only" for="campo-filtro">Campo</label>
+              <select id="campo-filtro" name="campo">
+                <option value="id">ID</option>
+                <option value="fk_usuario_id">Usuário</option>
+              </select>
+              <label class="sr-only" for="operador-filtro">Operador</label>
+              <select id="operador-filtro" name="operador">
+                <option value="IGUAL">=</option>
+              </select>
+              <label class="sr-only" for="valor-filtro">Valor do filtro</label>
+              <input
+                type="number"
+                id="valor-filtro"
+                name="valor"
+                placeholder="Valor"
+              />
+              <button class="botao botao-secundario" type="button">+ Filtro</button>
+            </form>
+            </div>
+          <div
+            class="tabela-rolagem"
+            tabindex="0"
+            role="region"
+            aria-label="Tabela de fotos de usuário, com rolagem horizontal e vertical"
           >
-            <input type="hidden" name="id" value="" />
-            <input type="hidden" name="operacao" value="novo" />
-            <div class="corpo-formulario">
-              <p class="orientacao" id="aviso-formulario">Campos com * são obrigatórios.</p>
-              <div class="campo">
-                <label for="data_registro">Data de registro</label>
-                <input type="datetime-local" id="data_registro" name="data_registro" value="" />
-              </div>
-              <div class="campo">
-                <label for="url">URL da foto *</label>
-                <input
-                  type="url"
-                  id="url"
-                  name="url"
-                  placeholder="Ex: https://minhaescola.com.br/fotos/joao.jpg"
-                  value=""
-                />
-              </div>
-              <div class="campo">
-                <label for="fk_usuario_id">Usuário</label>
-                <select id="fk_usuario_id" name="fk_usuario_id">
-                  <option value="">Sem vínculo</option>
-                </select>
-              </div>
-            </div>
-            <div class="rodape-formulario">
-              <a class="botao botao-secundario" href="foto-usuario.html">Cancelar</a>
-              <a class="botao" href="foto-usuario.html">Salvar</a>
-            </div>
-          </form>
+            <table>
+              <caption class="sr-only">Fotos de usuário, ordenadas por ID crescente.</caption>
+              <thead>
+                <tr>
+                  <th scope="col" data-campo="id" aria-sort="ascending">
+                    ID
+                    <svg
+                      class="icone-ordenacao"
+                      viewBox="0 0 12 18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path class="seta-cima" d="m2 6 4-4 4 4"></path>
+                    </svg>
+                  </th>
+                  <th scope="col" data-campo="data_registro">Data de registro</th>
+                  <th scope="col" data-campo="url">URL da foto</th>
+                  <th scope="col" data-campo="usuario_nome" class="coluna-relacionada">
+                    Nome do usuário
+                  </th>
+                  <th scope="col" data-campo="email_usuario" class="coluna-relacionada">
+                    E-mail do usuário
+                  </th>
+                  <th scope="col" class="coluna-acoes">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="registros">
+                                    <%
+        if (fotos != null && !fotos.isEmpty()) {
+            for (FotoUsuarioDTO foto : fotos) {
+    %>
+                  <tr>
+                    <td><%= foto.getId() %></td><td><%= foto.getDataRegistro() %></td><td><%= foto.getUrl() %></td><td class="coluna-relacionada"><%= foto.getUsuarioNome() %></td><td class="coluna-relacionada"><%= foto.getUsuarioEmail() %></td>
+                    <td class="coluna-acoes"><div class="acoes-linha"><a class="editar" href="/fotoUsuario?action=update&id=<%= foto.getId() %>">Editar</a><form action="/fotoUsuario" method="post" class="form-excluir"><input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value="<%= foto.getId() %>" /><button class="excluir" type="submit">Excluir</button></form></div></td>
+                  </tr>
+    <% } } else { %>
+                  <tr><td class="vazio" colspan="6">Nenhum registro encontrado.</td></tr>
+    <% } %>
+              </tbody>
+            </table>
+          </div>
+          <footer class="rodape-tabela" id="rodape-tabela"><%= fotos == null ? 0 : fotos.size() %> de <%= fotos == null ? 0 : fotos.size() %> <%= fotos != null && fotos.size() == 1 ? "registro" : "registros" %></footer>
         </section>
+
         <p class="mensagem" id="mensagem" role="status" aria-live="polite"></p>
       </main>
     </div>

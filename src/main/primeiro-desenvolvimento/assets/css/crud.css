@@ -1,4 +1,4 @@
-﻿* {
+* {
   box-sizing: border-box;
 }
 
@@ -826,7 +826,8 @@ th.coluna-relacionada {
 }
 
 td.coluna-relacionada {
-  color: #4b5a7a;
+  color: #3b82f6;
+  font-style: italic;
 }
 
 .formulario-pagina {

@@ -1,15 +1,30 @@
-﻿<!DOCTYPE html>
+﻿<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.model.Plano" %>
+
+<%
+    Plano plano = (Plano) request.getAttribute("plano");
+
+    String erro = (String) request.getAttribute("erro");
+%>
+<%!
+    private String escaparHtml(Object valor) {
+        if (valor == null) return "";
+        return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
+                .replace("<", "&lt;").replace(">", "&gt;");
+    }
+%>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Editar foto de usuário | FIXA</title>
+    <title>Editar plano | FIXA</title>
     <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
     <link rel="stylesheet" href="../../assets/css/crud.css" />
-    <script src="../../assets/js/crud.js" defer></script>
   </head>
-  <body data-entidade="fotos-usuario" data-operacao="editar">
+  <body data-entidade="planos" data-operacao="editar">
     <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
     <aside class="menu-lateral" aria-label="Menu administrativo">
       <button
@@ -39,7 +54,7 @@
           </svg>
           <span class="texto-menu">Página inicial</span>
         </a>
-        <a href="instituicoes.html" title="Instituições">
+        <a href="/instituicoes" title="Instituições">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -56,7 +71,7 @@
           </svg>
           <span class="texto-menu">Instituições</span>
         </a>
-        <a href="usuarios.html" title="Usuários">
+        <a href="/usuarios" title="Usuários">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -74,7 +89,7 @@
           </svg>
           <span class="texto-menu">Usuários</span>
         </a>
-        <a href="enderecos.html" title="Endereços">
+        <a href="/enderecos" title="Endereços">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -90,7 +105,7 @@
           </svg>
           <span class="texto-menu">Endereços</span>
         </a>
-        <a href="super-admin.html" title="Super administradores">
+        <a href="/superAdmin" title="Super administradores">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -105,7 +120,7 @@
           </svg>
           <span class="texto-menu">Super administradores</span>
         </a>
-        <a href="planos.html" title="Planos">
+        <a href="/planos" title="Planos" aria-current="page">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -120,7 +135,7 @@
           </svg>
           <span class="texto-menu">Planos</span>
         </a>
-        <a href="contratos.html" title="Contratos">
+        <a href="/contratos" title="Contratos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -139,7 +154,7 @@
           </svg>
           <span class="texto-menu">Contratos</span>
         </a>
-        <a href="pagamentos.html" title="Pagamentos">
+        <a href="/pagamentos" title="Pagamentos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -155,7 +170,7 @@
           </svg>
           <span class="texto-menu">Pagamentos</span>
         </a>
-        <a href="foto-usuario.html" title="Fotos de usuário" aria-current="page">
+        <a href="/fotoUsuario" title="Fotos de usuário">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -192,50 +207,71 @@
     <div class="pagina">
       <header class="cabecalho">
         <div>
-          <h1>Editar foto de usuário</h1>
+          <h1>Editar plano</h1>
           <p>Atualize os dados do registro.</p>
         </div>
-        <a class="botao botao-secundario" href="foto-usuario.html">Voltar para a lista</a>
+        <a class="botao botao-secundario" href="/planos">Voltar para a lista</a>
       </header>
       <main class="conteudo" id="conteudo">
         <section class="cartao formulario-pagina" aria-labelledby="titulo-formulario">
           <div class="titulo-cartao">
-            <h2 id="titulo-formulario">Editar foto de usuário</h2>
+            <h2 id="titulo-formulario">Editar plano</h2>
           </div>
-          <form novalidate
-            action="foto-usuario.html"
+          <form
+            action="/planos"
             method="post"
-            aria-describedby="aviso-formulario"
+            aria-describedby="aviso-formulario erro-formulario"
             id="registro-form"
           >
-            <input type="hidden" name="id" value="" />
-            <input type="hidden" name="operacao" value="editar" />
+            <input type="hidden" name="id" value="<%= plano.getId() %>" />
+            <input type="hidden" name="action" value="update" />
             <div class="corpo-formulario">
               <p class="orientacao" id="aviso-formulario">Campos com * são obrigatórios.</p>
+              <p class="mensagem erro" id="erro-formulario" role="alert" aria-live="assertive"><%= escaparHtml(erro) %></p>
               <div class="campo">
-                <label for="data_registro">Data de registro</label>
-                <input type="datetime-local" id="data_registro" name="data_registro" value="" />
-              </div>
-              <div class="campo">
-                <label for="url">URL da foto *</label>
+                <label for="nome">Nome *</label>
                 <input
-                  type="url"
-                  id="url"
-                  name="url"
-                  placeholder="Ex: https://minhaescola.com.br/fotos/joao.jpg"
-                  value=""
+                  type="text"
+                  id="nome"
+                  name="nome" required
+                  autocomplete="name"
+                  placeholder="Ex: Plano Essencial"
+                  value="<%= escaparHtml(plano.getNome()) %>"
                 />
               </div>
               <div class="campo">
-                <label for="fk_usuario_id">Usuário</label>
-                <select id="fk_usuario_id" name="fk_usuario_id">
-                  <option value="">Sem vínculo</option>
-                </select>
+                <label for="valor_mensal">Valor mensal (R$) *</label>
+                <input
+                  type="number"
+                  id="valor_mensal"
+                  name="valorMensal" required
+                  placeholder="Ex: 299.90"
+                  value="<%= escaparHtml(plano.getValorMensal()) %>"
+                />
+              </div>
+              <div class="campo">
+                <label for="duracao_meses">Duração (meses) *</label>
+                <input
+                  type="number"
+                  id="duracao_meses"
+                  name="duracaoMeses" required
+                  placeholder="Ex: 12"
+                  value="<%= escaparHtml(plano.getDuracaoMeses()) %>"
+                />
+              </div>
+              <div class="campo">
+                <label for="descricao">Descrição</label>
+                <textarea
+                  id="descricao"
+                  name="descricao"
+                  placeholder="Ex: Até 3 usuários gestores, suporte prioritário."
+                  rows="3"
+                ><%= escaparHtml(plano.getDescricao()) %></textarea>
               </div>
             </div>
             <div class="rodape-formulario">
-              <a class="botao botao-secundario" href="foto-usuario.html">Cancelar</a>
-              <a class="botao" href="foto-usuario.html">Salvar</a>
+              <a class="botao botao-secundario" href="/planos">Cancelar</a>
+              <button class="botao" type="submit">Salvar</button>
             </div>
           </form>
         </section>

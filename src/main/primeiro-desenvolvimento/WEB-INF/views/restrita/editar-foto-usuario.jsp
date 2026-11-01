@@ -1,15 +1,30 @@
-﻿<!DOCTYPE html>
+﻿<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.model.FotoUsuario" %>
+<%@ page import="com.model.Usuario" %>
+<%
+    FotoUsuario fotoUsuario = (FotoUsuario) request.getAttribute("fotoUsuario");
+    List<Usuario> usuariosDisponiveis = (List<Usuario>) request.getAttribute("usuariosDisponiveis");
+    String erro = (String) request.getAttribute("erro");
+%>
+<%!
+    private String escaparHtml(Object valor) {
+        if (valor == null) return "";
+        return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
+                .replace("<", "&lt;").replace(">", "&gt;");
+    }
+%>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cadastrar plano | FIXA</title>
+    <title>Editar foto de usuário | FIXA</title>
     <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
     <link rel="stylesheet" href="../../assets/css/crud.css" />
-    <script src="../../assets/js/crud.js" defer></script>
   </head>
-  <body data-entidade="planos" data-operacao="novo">
+  <body data-entidade="fotos-usuario" data-operacao="editar">
     <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
     <aside class="menu-lateral" aria-label="Menu administrativo">
       <button
@@ -39,7 +54,7 @@
           </svg>
           <span class="texto-menu">Página inicial</span>
         </a>
-        <a href="instituicoes.html" title="Instituições">
+        <a href="/instituicoes" title="Instituições">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -56,7 +71,7 @@
           </svg>
           <span class="texto-menu">Instituições</span>
         </a>
-        <a href="usuarios.html" title="Usuários">
+        <a href="/usuarios" title="Usuários">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -74,7 +89,7 @@
           </svg>
           <span class="texto-menu">Usuários</span>
         </a>
-        <a href="enderecos.html" title="Endereços">
+        <a href="/enderecos" title="Endereços">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -90,7 +105,7 @@
           </svg>
           <span class="texto-menu">Endereços</span>
         </a>
-        <a href="super-admin.html" title="Super administradores">
+        <a href="/superAdmin" title="Super administradores">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -105,7 +120,7 @@
           </svg>
           <span class="texto-menu">Super administradores</span>
         </a>
-        <a href="planos.html" title="Planos" aria-current="page">
+        <a href="/planos" title="Planos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -120,7 +135,7 @@
           </svg>
           <span class="texto-menu">Planos</span>
         </a>
-        <a href="contratos.html" title="Contratos">
+        <a href="/contratos" title="Contratos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -139,7 +154,7 @@
           </svg>
           <span class="texto-menu">Contratos</span>
         </a>
-        <a href="pagamentos.html" title="Pagamentos">
+        <a href="/pagamentos" title="Pagamentos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -155,7 +170,7 @@
           </svg>
           <span class="texto-menu">Pagamentos</span>
         </a>
-        <a href="foto-usuario.html" title="Fotos de usuário">
+        <a href="/fotoUsuario" title="Fotos de usuário" aria-current="page">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -192,70 +207,56 @@
     <div class="pagina">
       <header class="cabecalho">
         <div>
-          <h1>Cadastrar plano</h1>
-          <p>Preencha os dados do registro.</p>
+          <h1>Editar foto de usuário</h1>
+          <p>Atualize os dados do registro.</p>
         </div>
-        <a class="botao botao-secundario" href="planos.html">Voltar para a lista</a>
+        <a class="botao botao-secundario" href="/fotoUsuario">Voltar para a lista</a>
       </header>
       <main class="conteudo" id="conteudo">
         <section class="cartao formulario-pagina" aria-labelledby="titulo-formulario">
           <div class="titulo-cartao">
-            <h2 id="titulo-formulario">Cadastrar plano</h2>
+            <h2 id="titulo-formulario">Editar foto de usuário</h2>
           </div>
-          <form novalidate
-            action="planos.html"
+          <form
+            action="/fotoUsuario"
             method="post"
-            aria-describedby="aviso-formulario"
+            aria-describedby="aviso-formulario erro-formulario"
             id="registro-form"
           >
-            <input type="hidden" name="id" value="" />
-            <input type="hidden" name="operacao" value="novo" />
+            <input type="hidden" name="id" value="<%= fotoUsuario.getId() %>" />
+            <input type="hidden" name="action" value="update" />
             <div class="corpo-formulario">
               <p class="orientacao" id="aviso-formulario">Campos com * são obrigatórios.</p>
+              <p class="mensagem erro" id="erro-formulario" role="alert" aria-live="assertive"><%= escaparHtml(erro) %></p>
               <div class="campo">
-                <label for="nome">Nome *</label>
+                <label for="data_registro">Data de registro (gerada automaticamente)</label>
+                <input type="datetime-local" id="data_registro" disabled value="<%= escaparHtml(fotoUsuario.getDataRegistro() == null ? "" : fotoUsuario.getDataRegistro().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))) %>" />
+              </div>
+              <div class="campo">
+                <label for="url">URL da foto *</label>
                 <input
-                  type="text"
-                  id="nome"
-                  name="nome"
-                  autocomplete="name"
-                  placeholder="Ex: Plano Essencial"
-                  value=""
+                  type="url"
+                  id="url"
+                  name="url" required
+                  placeholder="Ex: https://minhaescola.com.br/fotos/joao.jpg"
+                  value="<%= escaparHtml(fotoUsuario.getUrl()) %>"
                 />
               </div>
               <div class="campo">
-                <label for="valor_mensal">Valor mensal (R$) *</label>
-                <input
-                  type="number"
-                  id="valor_mensal"
-                  name="valor_mensal"
-                  placeholder="Ex: 299.90"
-                  value=""
-                />
-              </div>
-              <div class="campo">
-                <label for="duracao_meses">Duração (meses) *</label>
-                <input
-                  type="number"
-                  id="duracao_meses"
-                  name="duracao_meses"
-                  placeholder="Ex: 12"
-                  value=""
-                />
-              </div>
-              <div class="campo">
-                <label for="descricao">Descrição</label>
-                <textarea
-                  id="descricao"
-                  name="descricao"
-                  placeholder="Ex: Até 3 usuários gestores, suporte prioritário."
-                  rows="3"
-                ></textarea>
+                <label for="fk_usuario_id">Usuário</label>
+                <select id="fk_usuario_id" name="fkUsuario" required>
+                  <option value="">Selecione um usuário</option>
+                  <% if (usuariosDisponiveis != null) {
+                    for (Usuario usuarioOpcao : usuariosDisponiveis) { %>
+                      <option value="<%= usuarioOpcao.getId() %>" <%= usuarioOpcao.getId().equals(fotoUsuario.getFkUsuario()) ? "selected" : "" %>><%= escaparHtml(usuarioOpcao.getNome()) %> — <%= escaparHtml(usuarioOpcao.getEmail()) %></option>
+                  <%  }
+                  } %>
+                </select>
               </div>
             </div>
             <div class="rodape-formulario">
-              <a class="botao botao-secundario" href="planos.html">Cancelar</a>
-              <a class="botao" href="planos.html">Salvar</a>
+              <a class="botao botao-secundario" href="/fotoUsuario">Cancelar</a>
+              <button class="botao" type="submit">Salvar</button>
             </div>
           </form>
         </section>

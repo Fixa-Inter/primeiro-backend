@@ -1,17 +1,16 @@
 ﻿<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<% String erro = (String) request.getAttribute("erro"); %>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cadastrar usuário | FIXA</title>
+    <title>Cadastrar plano | FIXA</title>
     <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
     <link rel="stylesheet" href="../../assets/css/crud.css" />
-    <script src="../../assets/js/crud.js" defer></script>
-      <link rel="stylesheet" href="../../assets/css/senha.css">
-    <script src="../../assets/js/senha.js" defer></script>
-</head>
-  <body data-entidade="usuarios" data-operacao="novo">
+  </head>
+  <body data-entidade="planos" data-operacao="novo">
     <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
     <aside class="menu-lateral" aria-label="Menu administrativo">
       <button
@@ -41,7 +40,7 @@
           </svg>
           <span class="texto-menu">Página inicial</span>
         </a>
-        <a href="instituicoes.html" title="Instituições">
+        <a href="/instituicoes" title="Instituições">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -58,7 +57,7 @@
           </svg>
           <span class="texto-menu">Instituições</span>
         </a>
-        <a href="usuarios.html" title="Usuários" aria-current="page">
+        <a href="/usuarios" title="Usuários">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -76,7 +75,7 @@
           </svg>
           <span class="texto-menu">Usuários</span>
         </a>
-        <a href="enderecos.html" title="Endereços">
+        <a href="/enderecos" title="Endereços">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -92,7 +91,7 @@
           </svg>
           <span class="texto-menu">Endereços</span>
         </a>
-        <a href="super-admin.html" title="Super administradores">
+        <a href="/superAdmin" title="Super administradores">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -107,7 +106,7 @@
           </svg>
           <span class="texto-menu">Super administradores</span>
         </a>
-        <a href="planos.html" title="Planos">
+        <a href="/planos" title="Planos" aria-current="page">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -122,7 +121,7 @@
           </svg>
           <span class="texto-menu">Planos</span>
         </a>
-        <a href="contratos.html" title="Contratos">
+        <a href="/contratos" title="Contratos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -141,7 +140,7 @@
           </svg>
           <span class="texto-menu">Contratos</span>
         </a>
-        <a href="pagamentos.html" title="Pagamentos">
+        <a href="/pagamentos" title="Pagamentos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -157,7 +156,7 @@
           </svg>
           <span class="texto-menu">Pagamentos</span>
         </a>
-        <a href="foto-usuario.html" title="Fotos de usuário">
+        <a href="/fotoUsuario" title="Fotos de usuário">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -194,124 +193,71 @@
     <div class="pagina">
       <header class="cabecalho">
         <div>
-          <h1>Cadastrar usuário</h1>
+          <h1>Cadastrar plano</h1>
           <p>Preencha os dados do registro.</p>
         </div>
-        <a class="botao botao-secundario" href="usuarios.html">Voltar para a lista</a>
+        <a class="botao botao-secundario" href="/planos">Voltar para a lista</a>
       </header>
       <main class="conteudo" id="conteudo">
         <section class="cartao formulario-pagina" aria-labelledby="titulo-formulario">
           <div class="titulo-cartao">
-            <h2 id="titulo-formulario">Cadastrar usuário</h2>
+            <h2 id="titulo-formulario">Cadastrar plano</h2>
           </div>
-          <form novalidate
-            action="usuarios.html"
+          <form
+            action="/planos"
             method="post"
-            aria-describedby="aviso-formulario"
+            aria-describedby="aviso-formulario erro-formulario"
             id="registro-form"
           >
             <input type="hidden" name="id" value="" />
-            <input type="hidden" name="operacao" value="novo" />
+            <input type="hidden" name="action" value="create" />
             <div class="corpo-formulario">
               <p class="orientacao" id="aviso-formulario">Campos com * são obrigatórios.</p>
+              <p class="mensagem erro" id="erro-formulario" role="alert" aria-live="assertive"><%= erro == null ? "" : erro %></p>
               <div class="campo">
                 <label for="nome">Nome *</label>
                 <input
                   type="text"
                   id="nome"
-                  name="nome"
+                  name="nome" required
                   autocomplete="name"
-                  placeholder="Ex: João Pereira"
+                  placeholder="Ex: Plano Essencial"
                   value=""
                 />
               </div>
               <div class="campo">
-                <label for="senha">Senha *</label>
-                <div class="campo-senha">
-                  <input
-                    type="password"
-                    id="senha"
-                    name="senha"
-                    aria-describedby="ajuda-senha"
-                    placeholder="Digite uma senha segura"
-                    autocomplete="new-password"
-                    value=""
-                  />
-                  <button class="mostrar-senha" type="button" data-campo="senha" aria-controls="senha" aria-label="Mostrar senha" aria-pressed="false" title="Mostrar senha">
-                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                      <path class="risco-senha" d="m3 3 18 18"></path>
-                    </svg>
-                  </button>
-                </div>
-                <small class="ajuda" id="ajuda-senha">Use pelo menos 6 caracteres.</small>
-              </div>
-              <div class="campo">
-                <label class="alternancia" for="esta_ativo">
-                  <input type="checkbox" id="esta_ativo" name="esta_ativo" value="true" />
-                  Está ativo
-                </label>
-              </div>
-              <div class="campo">
-                <label for="email">E-mail *</label>
+                <label for="valor_mensal">Valor mensal (R$) *</label>
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  aria-describedby="ajuda-email"
-                  placeholder="Ex: joao@suainstituicao.com.br"
-                  autocomplete="email"
+                  type="number"
+                  id="valor_mensal"
+                  name="valor" required
+                  placeholder="Ex: 299.90"
                   value=""
                 />
-                <small class="ajuda" id="ajuda-email">Informe um valor único.</small>
               </div>
               <div class="campo">
-                <label for="cargo">Cargo</label>
+                <label for="duracao_meses">Duração (meses) *</label>
                 <input
-                  type="text"
-                  id="cargo"
-                  name="cargo"
-                  placeholder="Ex: Zelador"
+                  type="number"
+                  id="duracao_meses"
+                  name="duracao" required
+                  placeholder="Ex: 12"
                   value=""
                 />
               </div>
               <div class="campo">
-                <label for="tipo_acesso">Tipo de acesso *</label>
-                <select id="tipo_acesso" name="tipo_acesso">
-                  <option value="">Selecione</option>
-                  <option value="1">Administrador</option>
-                  <option value="2">Gestor</option>
-                  <option value="3">Técnico</option>
-                  <option value="4">Solicitante</option>
-                </select>
-              </div>
-              <div class="campo">
-                <label for="fk_endereco_id">Endereço</label>
-                <select id="fk_endereco_id" name="fk_endereco_id">
-                  <option value="">Sem vínculo</option>
-                </select>
-              </div>
-              <div class="campo">
-                <label for="data_nascimento">Data de nascimento</label>
-                <input type="date" id="data_nascimento" name="data_nascimento" value="" />
-              </div>
-              <div class="campo">
-                <label class="alternancia" for="primeiro_acesso">
-                  <input
-                    type="checkbox"
-                    id="primeiro_acesso"
-                    name="primeiro_acesso"
-                    value="true"
-                    checked
-                  />
-                  Primeiro acesso
-                </label>
+                <label for="descricao">Descrição</label>
+                <textarea
+                  id="descricao"
+                  name="descricao"
+                  placeholder="Ex: Até 3 usuários gestores, suporte prioritário."
+                  rows="3"
+                ></textarea>
               </div>
             </div>
             <div class="rodape-formulario">
-              <a class="botao botao-secundario" href="usuarios.html">Cancelar</a>
-              <a class="botao" href="usuarios.html">Salvar</a>
+              <a class="botao botao-secundario" href="/planos">Cancelar</a>
+              <button class="botao" type="submit">Salvar</button>
             </div>
           </form>
         </section>
