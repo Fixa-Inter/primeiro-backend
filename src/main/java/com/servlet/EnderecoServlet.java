@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -208,7 +207,7 @@ public class EnderecoServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        String nome = request.getParameter("nome");
+        String nome = Parametros.obrigatorio(request, "nome");
         String rua = request.getParameter("rua");
 
         String bairro = request.getParameter("bairro");
@@ -221,9 +220,9 @@ public class EnderecoServlet extends HttpServlet{
 
         String numero = request.getParameter("numero");
 
-        String cep = request.getParameter("cep");
+        String cep = Parametros.obrigatorio(request, "cep");
 
-        String cnpj = request.getParameter("cnpj");
+        String cnpj = Parametros.obrigatorio(request, "cnpj");
 
         if (!RegexUtils.validarCep(cep)) {
             throw ExcecaoDeJSP.valorInvalido("cep");
@@ -294,7 +293,7 @@ public class EnderecoServlet extends HttpServlet{
 
         int id = Parametros.inteiro(request, "id");
 
-        String nome = request.getParameter("nome");
+        String nome = Parametros.obrigatorio(request, "nome");
         String rua = request.getParameter("rua");
 
         String bairro = request.getParameter("bairro");
@@ -307,9 +306,9 @@ public class EnderecoServlet extends HttpServlet{
 
         String numero = request.getParameter("numero");
 
-        String cep = request.getParameter("cep");
+        String cep = Parametros.obrigatorio(request, "cep");
 
-        String cnpj = request.getParameter("cnpj");
+        String cnpj = Parametros.obrigatorio(request, "cnpj");
 
         if (!RegexUtils.validarCep(cep)) {
             throw ExcecaoDeJSP.valorInvalido("cep");
@@ -322,15 +321,6 @@ public class EnderecoServlet extends HttpServlet{
         cnpj = cnpj.replaceAll("\\D", "");
 
         Integer fkInstituicao = Parametros.inteiro(request, "fkInstituicao");
-
-
-        String dataCriacaoParam = request.getParameter("dataCriacao");
-
-        LocalDateTime dataCriacao = null;
-
-        if (dataCriacaoParam != null && !dataCriacaoParam.isBlank()) {
-            dataCriacao = LocalDateTime.parse(dataCriacaoParam);
-        }
 
         try (EnderecoDAO dao = new EnderecoDAO()) {
 

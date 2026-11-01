@@ -180,11 +180,6 @@ public class FotoUsuarioServlet extends HttpServlet{
 
         int id = Parametros.inteiro(request, "id");
 
-        String nome = request.getParameter("nome");
-
-        String email = request.getParameter("email");
-
-
         try (FotoUsuarioDAO dao = new FotoUsuarioDAO()) {
 
             // Busca como está atualmente no banco
