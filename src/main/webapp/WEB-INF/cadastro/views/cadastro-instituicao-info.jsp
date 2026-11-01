@@ -26,10 +26,10 @@
     <label for="tipoInstituicao">Tipo de instituição:</label>
     <select id="tipoInstituicao" name="tipoInstituicao" required>
         <option value="">Selecione...</option>
-        <option value="Escola">Escola</option>
-        <option value="Faculdade">Faculdade</option>
-        <option value="Empresa">Empresa</option>
-        <option value="Órgão público">Órgão público</option>
+        <option value="1">Escola</option>
+        <option value="2">Faculdade</option>
+        <option value="3">Empresa</option>
+        <option value="4">Órgão público</option>
     </select>
     <br><br>
 

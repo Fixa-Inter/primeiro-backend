@@ -139,26 +139,11 @@
                 do seu enum MetodoPagamento.
             -->
 
-            <option value="PIX"
-                    <%= "PIX".equals(
-                            pagamento.getMetodoPagamento().name()
-                    ) ? "selected" : "" %>>
-                PIX
-            </option>
+            <option value="3" <%= pagamento.getMetodoPagamento().getCodigo() == 3 ? "selected" : "" %>>Pix</option>
 
-            <option value="CARTAO"
-                    <%= "CARTAO".equals(
-                            pagamento.getMetodoPagamento().name()
-                    ) ? "selected" : "" %>>
-                Cartão
-            </option>
+            <option value="1" <%= pagamento.getMetodoPagamento().getCodigo() == 1 ? "selected" : "" %>>Crédito</option>
 
-            <option value="BOLETO"
-                    <%= "BOLETO".equals(
-                            pagamento.getMetodoPagamento().name()
-                    ) ? "selected" : "" %>>
-                Boleto
-            </option>
+            <option value="2" <%= pagamento.getMetodoPagamento().getCodigo() == 2 ? "selected" : "" %>>Débito</option>
 
         </select>
 
