@@ -71,12 +71,6 @@ public class ContratoServlet extends HttpServlet{
                     request.setAttribute("contratoDTO", dao.listarContratoDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
-                // listas para os dropdowns de endereco e plano da tela de edicao
-                try (com.DAO.EnderecoDAO enderecoDAO = new com.DAO.EnderecoDAO();
-                     com.DAO.PlanoDAO planoDAO = new com.DAO.PlanoDAO()) {
-                    request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
-                    request.setAttribute("planosDisponiveis", planoDAO.buscar(null, null, null, null));
-                }
 
                 // opcoes dos menus de endereco e plano da tela de edicao (igual ao cadastro)
                 try (com.DAO.EnderecoDAO enderecoDAO = new com.DAO.EnderecoDAO();

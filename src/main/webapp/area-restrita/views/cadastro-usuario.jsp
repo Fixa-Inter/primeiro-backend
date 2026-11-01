@@ -1,0 +1,142 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List,com.model.Endereco" %>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Usuário</title>
+</head>
+
+<body>
+
+<h1>Cadastrar Usuário</h1>
+
+<% String erro = (String) request.getAttribute("erro"); %>
+<form action="${pageContext.request.contextPath}/usuarios"
+      method="post">
+            <% if (erro != null && !erro.isBlank()) { %>
+            <p>
+                <%= erro %>
+            </p>
+            <% } %>
+
+
+    <input type="hidden"
+           name="action"
+           value="create">
+
+    <label for="nome">
+        Nome:
+    </label>
+
+    <input type="text"
+           id="nome"
+           name="nome"
+           required>
+
+    <br><br>
+
+    <label for="senha">
+        Senha:
+    </label>
+
+    <input type="password"
+           id="senha"
+           name="senha"
+           required>
+
+    <br><br>
+
+    <label for="email">
+        Email:
+    </label>
+
+    <input type="email"
+           id="email"
+           name="email"
+           required>
+
+    <br><br>
+
+    <label for="cargo">
+        Cargo:
+    </label>
+
+    <input type="text"
+           id="cargo"
+           name="cargo"
+           required>
+
+    <br><br>
+
+    <label for="tipoDeAcesso">
+        Tipo de acesso:
+    </label>
+
+    <select id="tipoDeAcesso"
+            name="tipoDeAcesso"
+            required>
+
+        <option value="">
+            Selecione
+        </option>
+
+        <option value="1">
+            Administrador
+        </option>
+
+        <option value="2">
+            Gestor
+        </option>
+
+        <option value="3">
+            Técnico
+        </option>
+
+        <option value="4">
+            Solicitante
+        </option>
+
+    </select>
+
+    <br><br>
+
+    <label for="fkEndereco">
+        ID do endereço:
+    </label>
+
+    <select id="fkEndereco" name="fkEndereco" required>
+        <option value="">Selecione um endereço</option>
+        <% for (Endereco endereco : (List<Endereco>) request.getAttribute("enderecosDisponiveis")) { %>
+        <option value="<%= endereco.getId() %>"><%= endereco.getRua() %>, <%= endereco.getNumero() %> - <%= endereco.getCidade() %>/<%= endereco.getEstado() %></option>
+        <% } %>
+    </select>
+
+    <br><br>
+
+    <label for="dataAniversario">
+        Data de nascimento:
+    </label>
+
+    <input type="date"
+           id="dataAniversario"
+           name="dataAniversario"
+           required>
+
+    <br><br>
+
+    <button type="submit">
+        Cadastrar
+    </button>
+
+</form>
+
+<br>
+
+<a href="${pageContext.request.contextPath}/usuarios">
+    Voltar
+</a>
+
+</body>
+</html>

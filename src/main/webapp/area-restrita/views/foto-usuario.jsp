@@ -1,0 +1,147 @@
+<%@ page import="java.util.List" %>
+<%@ page import="com.DTO.FotoUsuarioDTO" %>
+
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%
+    List<FotoUsuarioDTO> fotos =
+            (List<FotoUsuarioDTO>) request.getAttribute("fotos");
+
+    String contexto = request.getContextPath();
+%>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Fotos dos Usuários</title>
+</head>
+
+<body>
+
+<% if (session.getAttribute("ULTIMO_COMANDO_DESFAZER_SISTEMA") != null) { %>
+<div id="alerta-desfazer" style="background: #fff3cd; padding: 10px; margin: 10px 0; border: 1px solid #ffeeba;">
+    <span>Ação realizada com sucesso!</span>
+    <a href="${pageContext.request.contextPath}/DesfazerController" class="btn btn-warning btn-sm" style="margin-left: 15px;">
+        ↩️ Desfazer Última Ação
+    </a>
+</div>
+<% } %>
+
+<a href="${pageContext.request.contextPath}/area-restrita/index.jsp">Voltar ao painel</a>
+
+<h1>Fotos dos Usuários</h1>
+
+<a href="<%= contexto %>/fotoUsuario?action=create">
+    Cadastrar Foto
+</a>
+
+<form method="get" action="<%= contexto %>/fotoUsuario">
+    <input type="hidden" name="action" value="read">
+    <input type="search" name="pesquisa" value="${param.pesquisa}" placeholder="Pesquisar...">
+    <button type="submit">Pesquisar</button>
+</form>
+
+<hr>
+
+<table border="1">
+
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Data de registro</th>
+        <th>URL</th>
+        <th>Nome do usuário</th>
+        <th>E-mail</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <%
+        if (fotos != null && !fotos.isEmpty()) {
+
+            for (FotoUsuarioDTO foto : fotos) {
+    %>
+
+    <tr>
+
+        <td>
+            <%= foto.getId() %>
+        </td>
+
+        <td>
+            <%= foto.getDataRegistro() %>
+        </td>
+
+        <td>
+            <%= foto.getUrl() %>
+        </td>
+
+        <td>
+            <%= foto.getUsuarioNome() %>
+        </td>
+
+        <td>
+            <%= foto.getUsuarioEmail() %>
+        </td>
+
+        <td>
+
+            <a href="<%= contexto %>/fotoUsuario?action=update&id=<%= foto.getId() %>">
+                Editar
+            </a>
+
+            <form
+                    action="<%= contexto %>/fotoUsuario"
+                    method="post"
+                    style="display:inline"
+            >
+
+                <input
+                        type="hidden"
+                        name="action"
+                        value="delete"
+                >
+
+                <input
+                        type="hidden"
+                        name="id"
+                        value="<%= foto.getId() %>"
+                >
+
+                <button type="submit">
+                    Excluir
+                </button>
+
+            </form>
+
+        </td>
+
+    </tr>
+
+    <%
+        }
+
+    } else {
+    %>
+
+    <tr>
+        <td colspan="6">
+            Nenhuma foto cadastrada.
+        </td>
+    </tr>
+
+    <%
+        }
+    %>
+
+    </tbody>
+
+</table>
+
+</body>
+
+</html>
