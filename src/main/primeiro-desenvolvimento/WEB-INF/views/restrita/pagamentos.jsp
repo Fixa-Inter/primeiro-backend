@@ -213,8 +213,6 @@
                 <option value="valor">Valor (R$)</option>
                 <option value="data_pagamento">Data/hora do pagamento</option>
                 <option value="foi_realizado">Foi realizado</option>
-                <option value="fk_contrato_id">Contrato</option>
-                <option value="metodo_pagamento">Método de pagamento</option>
               </select>
               <label class="sr-only" for="operador-filtro">Operador</label>
               <select id="operador-filtro" name="operador">
