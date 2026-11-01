@@ -31,7 +31,15 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        String action = req.getParameter("action").trim();
+        String action = req.getParameter("action");
+
+        // sem action o pedido esta mal formado (400), em vez de estourar NullPointerException
+        if (action == null || action.isBlank()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        action = action.trim();
+
         HttpSession session = req.getSession();
 
         String destino = null;
@@ -39,13 +47,6 @@ public class LoginServlet extends HttpServlet {
         try {
             switch (action) {
                 case "login" -> {
-
-                    String tipoLogin = req.getParameter("tipoLogin");
-
-                    if ("admin".equals(tipoLogin)){
-                        SuperAdminDTO usuario = login(req);
-                    }
-
                     SuperAdminDTO usuario = login(req);
                     session.setAttribute("usuario", usuario);
                 }
@@ -56,7 +57,10 @@ public class LoginServlet extends HttpServlet {
                     return;
                 }
 
-                default -> throw new RuntimeException("valor inválido para o parâmetro 'action': " + action);
+                default -> {
+                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                    return;
+                }
             }
 
             destino = AREA_RESTRITA;
@@ -95,7 +99,11 @@ public class LoginServlet extends HttpServlet {
             throw ExcecaoDeJSP.valorInvalido("email");
         }
         email = email.trim();
-        String senha = req.getParameter("senha").trim();
+        String senhaParam = req.getParameter("senha");
+        if (senhaParam == null || senhaParam.isBlank()) {
+            throw ExcecaoDeJSP.notNullVazio("senha");
+        }
+        String senha = senhaParam.trim();
         LoginDTO credenciais = new LoginDTO(email, senha);
 
         try (LoginDAO dao = new LoginDAO()) {
