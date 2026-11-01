@@ -67,6 +67,11 @@ public class ContratoServlet extends HttpServlet{
                     request.setAttribute("contratoDTO", dao.listarContratoDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
+                try (com.DAO.EnderecoDAO enderecoDAO = new com.DAO.EnderecoDAO();
+                     com.DAO.PlanoDAO planoDAO = new com.DAO.PlanoDAO()) {
+                    request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
+                    request.setAttribute("planosDisponiveis", planoDAO.buscar(null, null, null, null));
+                }
 
                 destino = PAGINA_EDICAO;
             }
@@ -217,15 +222,13 @@ public class ContratoServlet extends HttpServlet{
         int fkPlano = Integer.parseInt(
                 request.getParameter("FK_PLANO_ID")
         );
-        int statusContrato = Integer.parseInt(
-                request.getParameter("STATUS_CONTRATO")
-        );
+        String statusContratoParam = request.getParameter("STATUS_CONTRATO");
+        if (statusContratoParam == null || statusContratoParam.isBlank()) {
+            throw ExcecaoDeJSP.notNullVazio("STATUS_CONTRATO");
+        }
+        int statusContrato = Integer.parseInt(statusContratoParam);
 
         //verificacoes necessarias
-        if (request.getParameter("statusContrato").isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("statusContrato");
-        }
-
         Contrato contrato = new Contrato(
                 dataVencimento,
                 fkPlano,

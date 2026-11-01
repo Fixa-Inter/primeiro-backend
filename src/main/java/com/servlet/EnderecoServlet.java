@@ -61,6 +61,9 @@ public class EnderecoServlet extends HttpServlet{
                     request.setAttribute("enderecoDTO", dao.listarEnderecoDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
+                try (com.DAO.InstituicaoDAO instituicaoDAO = new com.DAO.InstituicaoDAO()) {
+                    request.setAttribute("instituicoesDisponiveis", instituicaoDAO.listar(null, null, null, null));
+                }
                 destino = PAGINA_EDICAO;
             }
             erro = false;

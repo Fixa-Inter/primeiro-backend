@@ -57,6 +57,9 @@ public class UsuarioServlet extends HttpServlet{
                     request.setAttribute("usuarioDTO", dao.listarUsuariosDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
+                try (EnderecoDAO enderecoDAO = new EnderecoDAO()) {
+                    request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
+                }
                 destino = PAGINA_EDICAO;
             }
             erro = false;
@@ -204,9 +207,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String cargo = request.getParameter("cargo");
 
-        TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
-                request.getParameter("tipoDeAcesso")
-        );
+        TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(Integer.parseInt(request.getParameter("tipoDeAcesso")));
 
         int fkEndereco = Integer.parseInt(
                 request.getParameter("fkEndereco")
@@ -305,9 +306,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String cargo = request.getParameter("cargo");
 
-        TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
-                request.getParameter("tipoDeAcesso")
-        );
+        TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(Integer.parseInt(request.getParameter("tipoDeAcesso")));
 
         int fkEndereco = Integer.parseInt(
                 request.getParameter("fkEndereco")

@@ -55,6 +55,9 @@ public class PagamentoServlet extends HttpServlet {
                     request.setAttribute("pagamentoDTO", dao.listarPagamentoDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
+                try (com.DAO.ContratoDAO contratoDAO = new com.DAO.ContratoDAO()) {
+                    request.setAttribute("contratosDisponiveis", contratoDAO.buscar(null, null, null, null));
+                }
                 destino = PAGINA_EDICAO;
             }
             erro = false;
@@ -186,9 +189,7 @@ public class PagamentoServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(
-                request.getParameter("metodoPagamento")
-        );
+        MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(Integer.parseInt(request.getParameter("metodoPagamento")));
 
         Integer fkContrato = Integer.parseInt(
                 request.getParameter("fkContrato")
@@ -251,9 +252,7 @@ public class PagamentoServlet extends HttpServlet {
                 request.getParameter("id")
         );
 
-        MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(
-                request.getParameter("metodoPagamento")
-        );
+        MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(Integer.parseInt(request.getParameter("metodoPagamento")));
 
         Integer fkContrato = Integer.parseInt(
                 request.getParameter("fkContrato")

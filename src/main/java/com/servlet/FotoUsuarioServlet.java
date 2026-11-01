@@ -56,6 +56,9 @@ public class FotoUsuarioServlet extends HttpServlet{
                     request.setAttribute("fotoUsuarioDTO", dao.listarFotoUsuarioDTO(null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
+                try (com.DAO.UsuarioDAO usuarioDAO = new com.DAO.UsuarioDAO()) {
+                    request.setAttribute("usuariosDisponiveis", usuarioDAO.listar(null, null, null, null));
+                }
                 destino = PAGINA_EDICAO;
             }
             erro = false;
