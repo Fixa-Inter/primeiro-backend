@@ -195,7 +195,7 @@ public class SuperAdministradorServlet extends HttpServlet{
             throw ExcecaoDeJSP.valorInvalido("email");
         }
 
-        String senha = Parametros.obrigatorio(request, "senha");
+        String senha = Parametros.senha(request, "senha");
 
         SuperAdministrador superAdministrador = new SuperAdministrador(
                 nome,
@@ -254,11 +254,10 @@ public class SuperAdministradorServlet extends HttpServlet{
             throw ExcecaoDeJSP.valorInvalido("email");
         }
 
-        String senha = request.getParameter("senha");
+        // em branco = null (mantem a atual); preenchida = ja validada pela regra de senha
+        String senha = Parametros.senhaOpcional(request, "senha");
 
-        if (senha != null && senha.isBlank()) {
-            senha = null;
-        } else if (senha != null) {
+        if (senha != null) {
             senha = HashSenha.gerarHash(senha);
         }
 

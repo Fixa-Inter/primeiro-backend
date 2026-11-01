@@ -210,7 +210,7 @@ public class EnderecoServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        String nome = Parametros.obrigatorio(request, "nome");
+        String nome = Parametros.obrigatorio(request, "nome", 50);
         String rua = request.getParameter("rua");
 
         String bairro = request.getParameter("bairro");
@@ -296,7 +296,7 @@ public class EnderecoServlet extends HttpServlet{
 
         int id = Parametros.inteiro(request, "id");
 
-        String nome = Parametros.obrigatorio(request, "nome");
+        String nome = Parametros.obrigatorio(request, "nome", 50);
         String rua = request.getParameter("rua");
 
         String bairro = request.getParameter("bairro");

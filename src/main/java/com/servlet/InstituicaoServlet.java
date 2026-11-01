@@ -206,7 +206,7 @@ public class InstituicaoServlet extends HttpServlet{
 
         Integer tipoInstituicao = Parametros.inteiro(request, "tipoInstituicao");
 
-        String senha = Parametros.obrigatorio(request, "senha");
+        String senha = Parametros.senha(request, "senha");
 
         Instituicao instituicao = new Instituicao(nome, emailCorporativo, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail, HashSenha.gerarHash(senha));
 
@@ -275,8 +275,8 @@ public class InstituicaoServlet extends HttpServlet{
             Instituicao original = dao.pesquisarPorId(id);
 
             // senha em branco = mantem a atual; preenchida = troca (so o hash e guardado)
-            String senha = request.getParameter("senha");
-            String senhaHash = (senha == null || senha.isBlank())
+            String senha = Parametros.senhaOpcional(request, "senha");
+            String senhaHash = (senha == null)
                     ? original.getSenhaHash()
                     : HashSenha.gerarHash(senha);
 
