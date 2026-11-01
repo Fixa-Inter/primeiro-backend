@@ -195,29 +195,18 @@ public class InstituicaoServlet extends HttpServlet{
     ) throws ServletException, IOException, ExcecaoDeJSP{
 
 
-        String nome = request.getParameter("nome");
-        String emailCorporativo = request.getParameter("emailCorporativo");
+        String nome = Parametros.obrigatorio(request, "nome");
+        String emailCorporativo = Parametros.obrigatorio(request, "emailCorporativo");
         if (!RegexUtils.validarEmail(emailCorporativo)) {
             throw ExcecaoDeJSP.valorInvalido("emailCorporativo");
         }
-        String dominioEmail = request.getParameter("dominioEmail");
+
+        // o dominio nao e digitado: sai do e-mail (mesma regra do cadastro publico)
+        String dominioEmail = emailCorporativo.substring(emailCorporativo.indexOf("@") + 1);
 
         Integer tipoInstituicao = Parametros.inteiro(request, "tipoInstituicao");
 
-        String senha = request.getParameter("senha");
-
-        //verificações (antes de converter, senão o parseInt falha primeiro)
-        if (nome.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("nome");
-        }
-
-        if (emailCorporativo.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("email corporativo");
-        }
-
-        if (senha.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("senha");
-        }
+        String senha = Parametros.obrigatorio(request, "senha");
 
         Instituicao instituicao = new Instituicao(nome, emailCorporativo, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail, HashSenha.gerarHash(senha));
 
@@ -269,13 +258,14 @@ public class InstituicaoServlet extends HttpServlet{
 
         int id = Parametros.inteiro(request, "id");
 
-        String nome = request.getParameter("nome");
-        String emailCorporativo = request.getParameter("emailCorporativo");
+        String nome = Parametros.obrigatorio(request, "nome");
+        String emailCorporativo = Parametros.obrigatorio(request, "emailCorporativo");
         if (!RegexUtils.validarEmail(emailCorporativo)) {
             throw ExcecaoDeJSP.valorInvalido("emailCorporativo");
         }
 
-        String dominioEmail = request.getParameter("dominioEmail");
+        // o dominio nao e digitado: sai do e-mail (mesma regra do cadastro publico)
+        String dominioEmail = emailCorporativo.substring(emailCorporativo.indexOf("@") + 1);
 
         Integer tipoInstituicao = Parametros.inteiro(request, "tipoInstituicao");
 
@@ -284,8 +274,14 @@ public class InstituicaoServlet extends HttpServlet{
             // Busca como está atualmente no banco
             Instituicao original = dao.pesquisarPorId(id);
 
+            // senha em branco = mantem a atual; preenchida = troca (so o hash e guardado)
+            String senha = request.getParameter("senha");
+            String senhaHash = (senha == null || senha.isBlank())
+                    ? original.getSenhaHash()
+                    : HashSenha.gerarHash(senha);
+
             // Monta o objeto com os novos dados
-            Instituicao alterado = new Instituicao(id, nome, emailCorporativo, original.getDataCadastro(), TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail, original.getSenhaHash());
+            Instituicao alterado = new Instituicao(id, nome, emailCorporativo, original.getDataCadastro(), TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail, senhaHash);
 
             Instituicao instituicaoApoioDominio = dao.pesquisarPorDominioEmail(dominioEmail);
             Instituicao instituicaoApoioEmail = dao.pesquisarPorEmailCorporativo(emailCorporativo);

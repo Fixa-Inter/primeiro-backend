@@ -188,28 +188,14 @@ public class SuperAdministradorServlet extends HttpServlet{
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        String nome = request.getParameter("nome");
+        String nome = Parametros.obrigatorio(request, "nome");
 
-        String email = request.getParameter("email");
+        String email = Parametros.obrigatorio(request, "email");
         if (!RegexUtils.validarEmail(email)) {
             throw ExcecaoDeJSP.valorInvalido("email");
         }
 
-        String senha = request.getParameter("senha");
-
-        //verificacoes necessarias
-
-        if (email.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("email");
-        }
-
-        if (senha.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("senha");
-        }
-
-        if (nome.isBlank()){
-            throw ExcecaoDeJSP.notNullVazio("nome");
-        }
+        String senha = Parametros.obrigatorio(request, "senha");
 
         SuperAdministrador superAdministrador = new SuperAdministrador(
                 nome,
