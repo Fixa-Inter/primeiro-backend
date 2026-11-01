@@ -72,6 +72,13 @@ public class ContratoServlet extends HttpServlet{
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
 
+                // opcoes dos menus de endereco e plano da tela de edicao (igual ao cadastro)
+                try (com.DAO.EnderecoDAO enderecoDAO = new com.DAO.EnderecoDAO();
+                     com.DAO.PlanoDAO planoDAO = new com.DAO.PlanoDAO()) {
+                    request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
+                    request.setAttribute("planosDisponiveis", planoDAO.buscar(null, null, null, null));
+                }
+
                 destino = PAGINA_EDICAO;
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);
