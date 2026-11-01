@@ -135,30 +135,30 @@
             name="tipoDeAcesso"
             required>
 
-        <option value="ADMINISTRADOR"
+        <option value="1"
                 <%= usuario.getTipoDeAcesso() != null
-                        && usuario.getTipoDeAcesso().name().equals("ADMINISTRADOR")
+                        && usuario.getTipoDeAcesso().getCodigo() == 1
                         ? "selected" : "" %>>
             Administrador
         </option>
 
-        <option value="GESTOR"
+        <option value="2"
                 <%= usuario.getTipoDeAcesso() != null
-                        && usuario.getTipoDeAcesso().name().equals("GESTOR")
+                        && usuario.getTipoDeAcesso().getCodigo() == 2
                         ? "selected" : "" %>>
             Gestor
         </option>
 
-        <option value="TECNICO"
+        <option value="3"
                 <%= usuario.getTipoDeAcesso() != null
-                        && usuario.getTipoDeAcesso().name().equals("TECNICO")
+                        && usuario.getTipoDeAcesso().getCodigo() == 3
                         ? "selected" : "" %>>
             Técnico
         </option>
 
-        <option value="SOLICITANTE"
+        <option value="4"
                 <%= usuario.getTipoDeAcesso() != null
-                        && usuario.getTipoDeAcesso().name().equals("SOLICITANTE")
+                        && usuario.getTipoDeAcesso().getCodigo() == 4
                         ? "selected" : "" %>>
             Solicitante
         </option>

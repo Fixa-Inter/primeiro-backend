@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿<%@ page import="java.util.List" %>
+<%@ page import="com.Model.SuperAdministrador" %>
+<% List<SuperAdministrador> superAdmins = (List<SuperAdministrador>) request.getAttribute("superAdmins"); %>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -7,7 +10,7 @@
     <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
     <link rel="stylesheet" href="../../assets/css/crud.css" />
-    <script src="../../assets/js/crud.js" defer></script>
+    <script src="../../assets/js/operadores-filtro.js" defer></script>
   </head>
   <body data-entidade="super-administradores">
     <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
@@ -39,7 +42,7 @@
           </svg>
           <span class="texto-menu">Página inicial</span>
         </a>
-        <a href="instituicoes.html" title="Instituições">
+        <a href="/instituicoes" title="Instituições">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -56,7 +59,7 @@
           </svg>
           <span class="texto-menu">Instituições</span>
         </a>
-        <a href="usuarios.html" title="Usuários">
+        <a href="/usuarios" title="Usuários">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -74,7 +77,7 @@
           </svg>
           <span class="texto-menu">Usuários</span>
         </a>
-        <a href="enderecos.html" title="Endereços">
+        <a href="/enderecos" title="Endereços">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -90,7 +93,7 @@
           </svg>
           <span class="texto-menu">Endereços</span>
         </a>
-        <a href="super-admin.html" title="Super administradores" aria-current="page">
+        <a href="/superAdmin" title="Super administradores" aria-current="page">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -105,7 +108,7 @@
           </svg>
           <span class="texto-menu">Super administradores</span>
         </a>
-        <a href="planos.html" title="Planos">
+        <a href="/planos" title="Planos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -120,7 +123,7 @@
           </svg>
           <span class="texto-menu">Planos</span>
         </a>
-        <a href="contratos.html" title="Contratos">
+        <a href="/contratos" title="Contratos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -139,7 +142,7 @@
           </svg>
           <span class="texto-menu">Contratos</span>
         </a>
-        <a href="pagamentos.html" title="Pagamentos">
+        <a href="/pagamentos" title="Pagamentos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -155,7 +158,7 @@
           </svg>
           <span class="texto-menu">Pagamentos</span>
         </a>
-        <a href="foto-usuario.html" title="Fotos de usuário">
+        <a href="/fotoUsuario" title="Fotos de usuário">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -196,14 +199,14 @@
           <p>Consulte, filtre e edite os registros de super administradores.</p>
         </div>
         <div class="acoes">
-          <a class="botao" id="novo" href="cadastro-super-admin.html">+ Novo</a>
+          <a class="botao" id="novo" href="/superAdmin?action=create">+ Novo</a>
         </div>
       </header>
       <main class="conteudo" id="conteudo">
         <section class="cartao lista" aria-label="Registros de super administradores">
           <div class="barra-tabela">
-            <strong id="contagem" role="status">1 registro</strong>
-            <form novalidate id="filtro-form" class="filtros" role="search" action="super-admin.html" method="get">
+            <strong id="contagem" role="status"><%= superAdmins == null ? 0 : superAdmins.size() %> <%= superAdmins != null && superAdmins.size() == 1 ? "registro" : "registros" %></strong>
+            <form id="filtro-form" class="filtros" role="search" action="/superAdmin" method="get"><input type="hidden" name="action" value="read" />
               <label class="sr-only" for="campo-filtro">Campo</label>
               <select id="campo-filtro" name="campo">
                 <option value="id">ID</option>
@@ -223,28 +226,7 @@
               />
               <button class="botao botao-secundario" type="button">+ Filtro</button>
             </form>
-            <div class="pesquisa">
-              <span aria-hidden="true">
-                <svg
-                  class="icone"
-                  viewbox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                >
-                  <circle cx="10.5" cy="10.5" r="6.5"></circle>
-                  <path d="m16 16 5 5"></path>
-                </svg>
-              </span>
-              <label class="sr-only" for="pesquisa">Pesquisar em todos os campos</label>
-              <input
-                id="pesquisa"
-                type="search"
-                placeholder="Pesquisar em todos os campos"
-                autocomplete="off"
-              />
             </div>
-          </div>
           <div
             class="tabela-rolagem"
             tabindex="0"
@@ -316,46 +298,26 @@
                 </tr>
               </thead>
               <tbody id="registros">
-                <tr data-temporario="true">
-                  <td><button disabled type="button" class="consultar" data-acao="consultar" data-id="1" aria-label="Consultar registro #1">#1</button></td>
-                  <td>Administrador FIXA</td>
-                  <td>admin@fixa.example</td>
-                  <td class="coluna-acoes">
-                    <div class="acoes-linha">
-                      <a class="editar" href="editar-super-admin.html?id=1" aria-label="Editar registro #1">
-                        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                          <path d="M16 3l5 5L8 21H3v-5L16 3Z M14 5l5 5"></path>
-                        </svg>
-                        Editar
-                      </a>
-                      <a class="excluir" href="?action=excluir&id=1" aria-label="Excluir registro #1">
-                        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                          <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"></path>
-                        </svg>
-                        Excluir
-                      </a>
-                    </div>
-                  </td>
-                </tr>
+                                    <%
+        if (superAdmins != null && !superAdmins.isEmpty()) {
+            for (SuperAdministrador adm : superAdmins) {
+    %>
+                  <tr>
+                    <td><%= adm.getId() %></td><td><%= adm.getNome() %></td><td><%= adm.getEmail() %></td>
+                    <td class="coluna-acoes"><div class="acoes-linha"><a class="editar" href="/superAdmin?action=update&id=<%= adm.getId() %>">Editar</a><form action="/superAdmin" method="post" class="form-excluir"><input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value="<%= adm.getId() %>" /><button class="excluir" type="submit">Excluir</button></form></div></td>
+                  </tr>
+    <% } } else { %>
+                  <tr><td class="vazio" colspan="4">Nenhum registro encontrado.</td></tr>
+    <% } %>
               </tbody>
             </table>
           </div>
-          <footer class="rodape-tabela" id="rodape-tabela">1 de 1 registros</footer>
+          <footer class="rodape-tabela" id="rodape-tabela"><%= superAdmins == null ? 0 : superAdmins.size() %> de <%= superAdmins == null ? 0 : superAdmins.size() %> <%= superAdmins != null && superAdmins.size() == 1 ? "registro" : "registros" %></footer>
         </section>
 
         <p class="mensagem" id="mensagem" role="status" aria-live="polite"></p>
       </main>
     </div>
-    <dialog id="consulta-dialog" class="modal" aria-labelledby="titulo-consulta">
-      <div class="titulo-cartao">
-        <h2 id="titulo-consulta">Consultar registro</h2>
-        <button type="button" class="fechar" data-fechar aria-label="Fechar consulta">×</button>
-      </div>
-      <dl class="dados-registro" id="dados-consulta"></dl>
-      <div class="rodape-formulario">
-        <button type="button" class="botao botao-secundario" data-fechar>Fechar</button>
-      </div>
-    </dialog>
   </body>
 </html>
 

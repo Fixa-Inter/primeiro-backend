@@ -1,15 +1,17 @@
 ﻿<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.List, com.model.Instituicao" %>
+<% List<Instituicao> instituicoesDisponiveis = (List<Instituicao>) request.getAttribute("instituicoesDisponiveis"); String erro = (String) request.getAttribute("erro"); %>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Editar contrato | FIXA</title>
+    <title>Cadastrar endereço | FIXA</title>
     <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
     <link rel="stylesheet" href="../../assets/css/crud.css" />
-    <script src="../../assets/js/crud.js" defer></script>
   </head>
-  <body data-entidade="contratos" data-operacao="editar">
+  <body data-entidade="enderecos" data-operacao="novo">
     <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
     <aside class="menu-lateral" aria-label="Menu administrativo">
       <button
@@ -39,7 +41,7 @@
           </svg>
           <span class="texto-menu">Página inicial</span>
         </a>
-        <a href="instituicoes.html" title="Instituições">
+        <a href="/instituicoes" title="Instituições">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -56,7 +58,7 @@
           </svg>
           <span class="texto-menu">Instituições</span>
         </a>
-        <a href="usuarios.html" title="Usuários">
+        <a href="/usuarios" title="Usuários">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -74,7 +76,7 @@
           </svg>
           <span class="texto-menu">Usuários</span>
         </a>
-        <a href="enderecos.html" title="Endereços">
+        <a href="/enderecos" title="Endereços" aria-current="page">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -90,7 +92,7 @@
           </svg>
           <span class="texto-menu">Endereços</span>
         </a>
-        <a href="super-admin.html" title="Super administradores">
+        <a href="/superAdmin" title="Super administradores">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -105,7 +107,7 @@
           </svg>
           <span class="texto-menu">Super administradores</span>
         </a>
-        <a href="planos.html" title="Planos">
+        <a href="/planos" title="Planos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -120,7 +122,7 @@
           </svg>
           <span class="texto-menu">Planos</span>
         </a>
-        <a href="contratos.html" title="Contratos" aria-current="page">
+        <a href="/contratos" title="Contratos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -139,7 +141,7 @@
           </svg>
           <span class="texto-menu">Contratos</span>
         </a>
-        <a href="pagamentos.html" title="Pagamentos">
+        <a href="/pagamentos" title="Pagamentos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -155,7 +157,7 @@
           </svg>
           <span class="texto-menu">Pagamentos</span>
         </a>
-        <a href="foto-usuario.html" title="Fotos de usuário">
+        <a href="/fotoUsuario" title="Fotos de usuário">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -192,68 +194,157 @@
     <div class="pagina">
       <header class="cabecalho">
         <div>
-          <h1>Editar contrato</h1>
-          <p>Atualize os dados do registro.</p>
+          <h1>Cadastrar endereço</h1>
+          <p>Preencha os dados do registro.</p>
         </div>
-        <a class="botao botao-secundario" href="contratos.html">Voltar para a lista</a>
+        <a class="botao botao-secundario" href="/enderecos">Voltar para a lista</a>
       </header>
       <main class="conteudo" id="conteudo">
         <section class="cartao formulario-pagina" aria-labelledby="titulo-formulario">
           <div class="titulo-cartao">
-            <h2 id="titulo-formulario">Editar contrato</h2>
+            <h2 id="titulo-formulario">Cadastrar endereço</h2>
           </div>
-          <form novalidate
-            action="contratos.html"
+          <form
+            action="/enderecos"
             method="post"
-            aria-describedby="aviso-formulario"
+            aria-describedby="aviso-formulario erro-formulario"
             id="registro-form"
           >
             <input type="hidden" name="id" value="" />
-            <input type="hidden" name="operacao" value="editar" />
+            <input type="hidden" name="action" value="create" />
             <div class="corpo-formulario">
               <p class="orientacao" id="aviso-formulario">Campos com * são obrigatórios.</p>
+              <p class="mensagem erro" id="erro-formulario" role="alert" aria-live="assertive"><%= erro == null ? "" : erro %></p>
               <div class="campo">
-                <label for="data_inicio">Data de início</label>
-                <input type="date" id="data_inicio" name="data_inicio" value="" />
+                <label for="nome">Nome do endereço *</label>
+                <input
+                  type="text"
+                  id="nome"
+                  name="nome" required
+                  autocomplete="name"
+                  placeholder="Ex: Unidade Centro"
+                />
               </div>
               <div class="campo">
-                <label for="data_vencimento">Data de vencimento</label>
+                <label for="rua">Rua *</label>
                 <input
-                  type="date"
-                  id="data_vencimento"
-                  name="data_vencimento"
-                  aria-describedby="ajuda-data_vencimento"
+                  type="text"
+                  id="rua"
+                  name="rua" required
+                  placeholder="Ex: Av. das Palmeiras"
                   value=""
                 />
-                <small class="ajuda" id="ajuda-data_vencimento">
-                  Deve ser posterior à data de início.
-                </small>
               </div>
               <div class="campo">
-                <label for="fk_plano_id">Plano</label>
-                <select id="fk_plano_id" name="fk_plano_id">
-                  <option value="">Sem vínculo</option>
-                </select>
+                <label for="numero">Número</label>
+                <input
+                  type="text"
+                  id="numero"
+                  name="numero" required
+                  placeholder="Ex: 450"
+                  value=""
+                />
               </div>
               <div class="campo">
-                <label for="fk_endereco_id">Endereço</label>
-                <select id="fk_endereco_id" name="fk_endereco_id">
-                  <option value="">Sem vínculo</option>
-                </select>
+                <label for="bairro">Bairro</label>
+                <input
+                  type="text"
+                  id="bairro"
+                  name="bairro" required
+                  placeholder="Ex: Centro"
+                  value=""
+                />
               </div>
               <div class="campo">
-                <label for="status_contrato">Status do contrato *</label>
-                <select id="status_contrato" name="status_contrato">
+                <label for="complemento">Complemento</label>
+                <input
+                  type="text"
+                  id="complemento"
+                  name="complemento"
+                  placeholder="Ex: Bloco B, apto 12"
+                  value=""
+                />
+              </div>
+              <div class="campo">
+                <label for="cidade">Cidade</label>
+                <input
+                  type="text"
+                  id="cidade"
+                  name="cidade" required
+                  placeholder="Ex: Campinas"
+                  value=""
+                />
+              </div>
+              <div class="campo">
+                <label for="estado">Estado (UF)</label>
+                <select id="estado" name="estado" required>
                   <option value="">Selecione</option>
-                  <option value="1">Ativo</option>
-                  <option value="2">Inativo</option>
-                  <option value="3">Cancelado</option>
+                  <option value="AC">AC</option>
+                  <option value="AL">AL</option>
+                  <option value="AP">AP</option>
+                  <option value="AM">AM</option>
+                  <option value="BA">BA</option>
+                  <option value="CE">CE</option>
+                  <option value="DF">DF</option>
+                  <option value="ES">ES</option>
+                  <option value="GO">GO</option>
+                  <option value="MA">MA</option>
+                  <option value="MT">MT</option>
+                  <option value="MS">MS</option>
+                  <option value="MG">MG</option>
+                  <option value="PA">PA</option>
+                  <option value="PB">PB</option>
+                  <option value="PR">PR</option>
+                  <option value="PE">PE</option>
+                  <option value="PI">PI</option>
+                  <option value="RJ">RJ</option>
+                  <option value="RN">RN</option>
+                  <option value="RS">RS</option>
+                  <option value="RO">RO</option>
+                  <option value="RR">RR</option>
+                  <option value="SC">SC</option>
+                  <option value="SP">SP</option>
+                  <option value="SE">SE</option>
+                  <option value="TO">TO</option>
                 </select>
+              </div>
+              <div class="campo">
+                <label for="cep">CEP</label>
+                <input
+                  type="text"
+                  id="cep"
+                  name="cep" required
+                  aria-describedby="ajuda-cep"
+                  inputmode="numeric"
+                  value=""
+                />
+                <small class="ajuda" id="ajuda-cep">Informe somente os 8 dígitos, sem pontuação.</small>
+              </div>
+              <div class="campo">
+                <label for="fk_instituicao_id">Instituição</label>
+                <select id="fk_instituicao_id" name="fkInstituicao" required>
+                  <option value="">Selecione uma instituição</option>
+                  <% if (instituicoesDisponiveis != null) { for (Instituicao instituicao : instituicoesDisponiveis) { %>
+                  <option value="<%= instituicao.getId() %>"><%= instituicao.getNome() %></option>
+                  <% } } %>
+                </select>
+              </div>
+              <div class="campo">
+                <label for="cnpj">CNPJ</label>
+                <input
+                  type="text"
+                  id="cnpj"
+                  name="cnpj" required
+                  aria-describedby="ajuda-cnpj"
+                  inputmode="numeric"
+                  value=""
+                />
+                <small class="ajuda" id="ajuda-cnpj">Informe um valor único.</small>
               </div>
             </div>
             <div class="rodape-formulario">
-              <a class="botao botao-secundario" href="contratos.html">Cancelar</a>
-              <a class="botao" href="contratos.html">Salvar</a>
+              <a class="botao botao-secundario" href="/enderecos">Cancelar</a>
+              <button class="botao" type="submit">Salvar</button>
             </div>
           </form>
         </section>

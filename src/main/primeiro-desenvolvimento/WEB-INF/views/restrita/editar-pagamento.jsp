@@ -1,15 +1,30 @@
-﻿<!DOCTYPE html>
+﻿<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.model.Pagamento" %>
+<%@ page import="com.model.Contrato" %>
+<%
+    Pagamento pagamento = (Pagamento) request.getAttribute("pagamento");
+    List<Contrato> contratosDisponiveis = (List<Contrato>) request.getAttribute("contratosDisponiveis");
+    String erro = (String) request.getAttribute("erro");
+%>
+<%!
+    private String escaparHtml(Object valor) {
+        if (valor == null) return "";
+        return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
+                .replace("<", "&lt;").replace(">", "&gt;");
+    }
+%>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cadastrar pagamento | FIXA</title>
+    <title>Editar pagamento | FIXA</title>
     <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
     <link rel="stylesheet" href="../../assets/css/crud.css" />
-    <script src="../../assets/js/crud.js" defer></script>
   </head>
-  <body data-entidade="pagamentos" data-operacao="novo">
+  <body data-entidade="pagamentos" data-operacao="editar">
     <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
     <aside class="menu-lateral" aria-label="Menu administrativo">
       <button
@@ -39,7 +54,7 @@
           </svg>
           <span class="texto-menu">Página inicial</span>
         </a>
-        <a href="instituicoes.html" title="Instituições">
+        <a href="/instituicoes" title="Instituições">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -56,7 +71,7 @@
           </svg>
           <span class="texto-menu">Instituições</span>
         </a>
-        <a href="usuarios.html" title="Usuários">
+        <a href="/usuarios" title="Usuários">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -74,7 +89,7 @@
           </svg>
           <span class="texto-menu">Usuários</span>
         </a>
-        <a href="enderecos.html" title="Endereços">
+        <a href="/enderecos" title="Endereços">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -90,7 +105,7 @@
           </svg>
           <span class="texto-menu">Endereços</span>
         </a>
-        <a href="super-admin.html" title="Super administradores">
+        <a href="/superAdmin" title="Super administradores">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -105,7 +120,7 @@
           </svg>
           <span class="texto-menu">Super administradores</span>
         </a>
-        <a href="planos.html" title="Planos">
+        <a href="/planos" title="Planos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -120,7 +135,7 @@
           </svg>
           <span class="texto-menu">Planos</span>
         </a>
-        <a href="contratos.html" title="Contratos">
+        <a href="/contratos" title="Contratos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -139,7 +154,7 @@
           </svg>
           <span class="texto-menu">Contratos</span>
         </a>
-        <a href="pagamentos.html" title="Pagamentos" aria-current="page">
+        <a href="/pagamentos" title="Pagamentos" aria-current="page">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -155,7 +170,7 @@
           </svg>
           <span class="texto-menu">Pagamentos</span>
         </a>
-        <a href="foto-usuario.html" title="Fotos de usuário">
+        <a href="/fotoUsuario" title="Fotos de usuário">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -192,65 +207,71 @@
     <div class="pagina">
       <header class="cabecalho">
         <div>
-          <h1>Cadastrar pagamento</h1>
-          <p>Preencha os dados do registro.</p>
+          <h1>Editar pagamento</h1>
+          <p>Atualize os dados do registro.</p>
         </div>
-        <a class="botao botao-secundario" href="pagamentos.html">Voltar para a lista</a>
+        <a class="botao botao-secundario" href="/pagamentos">Voltar para a lista</a>
       </header>
       <main class="conteudo" id="conteudo">
         <section class="cartao formulario-pagina" aria-labelledby="titulo-formulario">
           <div class="titulo-cartao">
-            <h2 id="titulo-formulario">Cadastrar pagamento</h2>
+            <h2 id="titulo-formulario">Editar pagamento</h2>
           </div>
-          <form novalidate
-            action="pagamentos.html"
+          <form
+            action="/pagamentos"
             method="post"
-            aria-describedby="aviso-formulario"
+            aria-describedby="aviso-formulario erro-formulario"
             id="registro-form"
           >
-            <input type="hidden" name="id" value="" />
-            <input type="hidden" name="operacao" value="novo" />
+            <input type="hidden" name="id" value="<%= pagamento.getId() %>" />
+            <input type="hidden" name="action" value="update" />
             <div class="corpo-formulario">
               <p class="orientacao" id="aviso-formulario">Campos com * são obrigatórios.</p>
+              <p class="mensagem erro" id="erro-formulario" role="alert" aria-live="assertive"><%= escaparHtml(erro) %></p>
               <div class="campo">
                 <label for="valor">Valor (R$) *</label>
                 <input
                   type="number"
                   id="valor"
-                  name="valor"
+                  name="valor" required
                   placeholder="Ex: 299.90"
-                  value=""
+                  value="<%= escaparHtml(pagamento.getValor()) %>"
                 />
               </div>
               <div class="campo">
-                <label for="data_pagamento">Data/hora do pagamento</label>
-                <input type="datetime-local" id="data_pagamento" name="data_pagamento" value="" />
+                <label for="data_pagamento">Data/hora do pagamento (gerada automaticamente)</label>
+                <input type="datetime-local" id="data_pagamento" disabled value="<%= escaparHtml(pagamento.getDataPagamento() == null ? "" : pagamento.getDataPagamento().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))) %>" />
               </div>
               <div class="campo">
                 <label class="alternancia" for="foi_realizado">
-                  <input type="checkbox" id="foi_realizado" name="foi_realizado" value="true" />
+                  <input type="checkbox" id="foi_realizado" name="foiRealizado" value="true" <%= Boolean.TRUE.equals(pagamento.getFoiRealizado()) ? "checked" : "" %> />
                   Foi realizado
                 </label>
               </div>
               <div class="campo">
                 <label for="fk_contrato_id">Contrato</label>
-                <select id="fk_contrato_id" name="fk_contrato_id">
-                  <option value="">Sem vínculo</option>
+                <select id="fk_contrato_id" name="fkContrato" required>
+                  <option value="">Selecione um contrato</option>
+                  <% if (contratosDisponiveis != null) {
+                    for (Contrato contratoOpcao : contratosDisponiveis) { %>
+                      <option value="<%= contratoOpcao.getId() %>" <%= contratoOpcao.getId().equals(pagamento.getFkContrato()) ? "selected" : "" %>>Contrato #<%= contratoOpcao.getId() %></option>
+                  <%  }
+                  } %>
                 </select>
               </div>
               <div class="campo">
                 <label for="metodo_pagamento">Método de pagamento *</label>
-                <select id="metodo_pagamento" name="metodo_pagamento">
+                <select id="metodo_pagamento" name="metodoPagamento" required>
                   <option value="">Selecione</option>
-                  <option value="1">Crédito</option>
-                  <option value="2">Débito</option>
-                  <option value="3">Pix</option>
+                  <option value="1" <%= pagamento.getMetodoPagamento() != null && pagamento.getMetodoPagamento().getCodigo() == 1 ? "selected" : "" %>>Crédito</option>
+                  <option value="2" <%= pagamento.getMetodoPagamento() != null && pagamento.getMetodoPagamento().getCodigo() == 2 ? "selected" : "" %>>Débito</option>
+                  <option value="3" <%= pagamento.getMetodoPagamento() != null && pagamento.getMetodoPagamento().getCodigo() == 3 ? "selected" : "" %>>Pix</option>
                 </select>
               </div>
             </div>
             <div class="rodape-formulario">
-              <a class="botao botao-secundario" href="pagamentos.html">Cancelar</a>
-              <a class="botao" href="pagamentos.html">Salvar</a>
+              <a class="botao botao-secundario" href="/pagamentos">Cancelar</a>
+              <button class="botao" type="submit">Salvar</button>
             </div>
           </form>
         </section>

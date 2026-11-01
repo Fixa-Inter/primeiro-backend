@@ -74,9 +74,9 @@
                 enum MetodoPagamento.
             -->
 
-            <option value="PIX">PIX</option>
-            <option value="CARTAO">Cartão</option>
-            <option value="BOLETO">Boleto</option>
+            <option value="1">Crédito</option>
+            <option value="2">Débito</option>
+            <option value="3">Pix</option>
 
         </select>
     </div>

@@ -1,17 +1,32 @@
-﻿<!DOCTYPE html>
+﻿<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.model.Usuario" %>
+<%@ page import="com.model.Endereco" %>
+<%
+    Usuario usuario = (Usuario) request.getAttribute("usuario");
+    List<Endereco> enderecosDisponiveis = (List<Endereco>) request.getAttribute("enderecosDisponiveis");
+    String erro = (String) request.getAttribute("erro");
+%>
+<%!
+    private String escaparHtml(Object valor) {
+        if (valor == null) return "";
+        return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
+                .replace("<", "&lt;").replace(">", "&gt;");
+    }
+%>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cadastrar instituição | FIXA</title>
+    <title>Editar usuário | FIXA</title>
     <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
     <link rel="stylesheet" href="../../assets/css/crud.css" />
-    <script src="../../assets/js/crud.js" defer></script>
       <link rel="stylesheet" href="../../assets/css/senha.css">
     <script src="../../assets/js/senha.js" defer></script>
 </head>
-  <body data-entidade="instituicoes" data-operacao="novo">
+  <body data-entidade="usuarios" data-operacao="editar">
     <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
     <aside class="menu-lateral" aria-label="Menu administrativo">
       <button
@@ -41,7 +56,7 @@
           </svg>
           <span class="texto-menu">Página inicial</span>
         </a>
-        <a href="instituicoes.html" title="Instituições" aria-current="page">
+        <a href="/instituicoes" title="Instituições">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -58,7 +73,7 @@
           </svg>
           <span class="texto-menu">Instituições</span>
         </a>
-        <a href="usuarios.html" title="Usuários">
+        <a href="/usuarios" title="Usuários" aria-current="page">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -76,7 +91,7 @@
           </svg>
           <span class="texto-menu">Usuários</span>
         </a>
-        <a href="enderecos.html" title="Endereços">
+        <a href="/enderecos" title="Endereços">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -92,7 +107,7 @@
           </svg>
           <span class="texto-menu">Endereços</span>
         </a>
-        <a href="super-admin.html" title="Super administradores">
+        <a href="/superAdmin" title="Super administradores">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -107,7 +122,7 @@
           </svg>
           <span class="texto-menu">Super administradores</span>
         </a>
-        <a href="planos.html" title="Planos">
+        <a href="/planos" title="Planos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -122,7 +137,7 @@
           </svg>
           <span class="texto-menu">Planos</span>
         </a>
-        <a href="contratos.html" title="Contratos">
+        <a href="/contratos" title="Contratos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -141,7 +156,7 @@
           </svg>
           <span class="texto-menu">Contratos</span>
         </a>
-        <a href="pagamentos.html" title="Pagamentos">
+        <a href="/pagamentos" title="Pagamentos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -157,7 +172,7 @@
           </svg>
           <span class="texto-menu">Pagamentos</span>
         </a>
-        <a href="foto-usuario.html" title="Fotos de usuário">
+        <a href="/fotoUsuario" title="Fotos de usuário">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -194,84 +209,49 @@
     <div class="pagina">
       <header class="cabecalho">
         <div>
-          <h1>Cadastrar instituição</h1>
-          <p>Preencha os dados do registro.</p>
+          <h1>Editar usuário</h1>
+          <p>Atualize os dados do registro.</p>
         </div>
-        <a class="botao botao-secundario" href="instituicoes.html">Voltar para a lista</a>
+        <a class="botao botao-secundario" href="/usuarios">Voltar para a lista</a>
       </header>
       <main class="conteudo" id="conteudo">
         <section class="cartao formulario-pagina" aria-labelledby="titulo-formulario">
           <div class="titulo-cartao">
-            <h2 id="titulo-formulario">Cadastrar instituição</h2>
+            <h2 id="titulo-formulario">Editar usuário</h2>
           </div>
-          <form novalidate
-            action="instituicoes.html"
+          <form
+            action="/usuarios"
             method="post"
-            aria-describedby="aviso-formulario"
+            aria-describedby="aviso-formulario erro-formulario"
             id="registro-form"
           >
-            <input type="hidden" name="id" value="" />
-            <input type="hidden" name="operacao" value="novo" />
+            <input type="hidden" name="id" value="<%= usuario.getId() %>" />
+            <input type="hidden" name="action" value="update" />
             <div class="corpo-formulario">
               <p class="orientacao" id="aviso-formulario">Campos com * são obrigatórios.</p>
+              <p class="mensagem erro" id="erro-formulario" role="alert" aria-live="assertive"><%= escaparHtml(erro) %></p>
               <div class="campo">
                 <label for="nome">Nome *</label>
                 <input
                   type="text"
                   id="nome"
-                  name="nome"
+                  name="nome" required
                   autocomplete="name"
-                  placeholder="Ex: Colégio Aurora"
-                  value=""
+                  placeholder="Ex: João Pereira"
+                  value="<%= escaparHtml(usuario.getNome()) %>"
                 />
               </div>
               <div class="campo">
-                <label for="email_corporativo">E-mail corporativo *</label>
-                <input
-                  type="email"
-                  id="email_corporativo"
-                  name="email_corporativo"
-                  placeholder="Ex: contato@suainstituicao.com.br"
-                  autocomplete="email"
-                  value=""
-                />
-              </div>
-              <div class="campo">
-                <label for="data_cadastro">Data de cadastro</label>
-                <input type="date" id="data_cadastro" name="data_cadastro" value="" />
-              </div>
-              <div class="campo">
-                <label for="dominio_email">Domínio do e-mail</label>
-                <input
-                  type="text"
-                  id="dominio_email"
-                  name="dominio_email"
-                  aria-describedby="ajuda-dominio_email"
-                  placeholder="Ex: aurora.edu.br"
-                  value=""
-                />
-                <small class="ajuda" id="ajuda-dominio_email">Informe um valor único.</small>
-              </div>
-              <div class="campo">
-                <label for="tipo_instituicao">Tipo de instituição *</label>
-                <select id="tipo_instituicao" name="tipo_instituicao">
-                  <option value="">Selecione</option>
-                  <option value="1">Escola</option>
-                  <option value="2">Faculdade</option>
-                  <option value="3">Empresa</option>
-                  <option value="4">Órgão Público</option>
-                </select>
-              </div>
-              <div class="campo">
-                <label for="senha">Senha *</label>
+                <label for="senha">Senha</label>
                 <div class="campo-senha">
                   <input
                     type="password"
                     id="senha"
                     name="senha"
-                    autocomplete="new-password"
-                    placeholder="Digite uma senha segura"
                     aria-describedby="ajuda-senha"
+                    placeholder="Deixe em branco para manter a senha"
+                    autocomplete="new-password"
+                    value=""
                   />
                   <button class="mostrar-senha" type="button" data-campo="senha" aria-controls="senha" aria-label="Mostrar senha" aria-pressed="false" title="Mostrar senha">
                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -281,14 +261,80 @@
                     </svg>
                   </button>
                 </div>
-                <small class="ajuda" id="ajuda-senha">
-                  Use pelo menos 6 caracteres.
-                </small>
+                <small class="ajuda" id="ajuda-senha">Deixe em branco para manter a senha atual.</small>
+              </div>
+              <div class="campo">
+                <label class="alternancia" for="esta_ativo">
+                  <input type="checkbox" id="esta_ativo" name="estaAtivo" value="true" <%= Boolean.TRUE.equals(usuario.getEstaAtivo()) ? "checked" : "" %> />
+                  Está ativo
+                </label>
+              </div>
+              <div class="campo">
+                <label for="email">E-mail *</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email" required
+                  aria-describedby="ajuda-email"
+                  placeholder="Ex: joao@suainstituicao.com.br"
+                  autocomplete="email"
+                  value="<%= escaparHtml(usuario.getEmail()) %>"
+                />
+                <small class="ajuda" id="ajuda-email">Informe um valor único.</small>
+              </div>
+              <div class="campo">
+                <label for="cargo">Cargo</label>
+                <input
+                  type="text"
+                  id="cargo"
+                  name="cargo"
+                  placeholder="Ex: Zelador"
+                  value="<%= escaparHtml(usuario.getCargo()) %>"
+                />
+              </div>
+              <div class="campo">
+                <label for="tipo_acesso">Tipo de acesso *</label>
+                <select id="tipo_acesso" name="tipoDeAcesso" required>
+                  <option value="">Selecione</option>
+                  <option value="1" <%= usuario.getTipoDeAcesso() != null && usuario.getTipoDeAcesso().getCodigo() == 1 ? "selected" : "" %>>Administrador</option>
+                  <option value="2" <%= usuario.getTipoDeAcesso() != null && usuario.getTipoDeAcesso().getCodigo() == 2 ? "selected" : "" %>>Gestor</option>
+                  <option value="3" <%= usuario.getTipoDeAcesso() != null && usuario.getTipoDeAcesso().getCodigo() == 3 ? "selected" : "" %>>Técnico</option>
+                  <option value="4" <%= usuario.getTipoDeAcesso() != null && usuario.getTipoDeAcesso().getCodigo() == 4 ? "selected" : "" %>>Solicitante</option>
+                </select>
+              </div>
+              <div class="campo">
+                <label for="fk_endereco_id">Endereço</label>
+                <select id="fk_endereco_id" name="fkEndereco" required>
+                  <option value="">Selecione um endereço</option>
+                  <% if (enderecosDisponiveis != null) {
+                    for (Endereco enderecoOpcao : enderecosDisponiveis) { %>
+                      <option value="<%= enderecoOpcao.getId() %>" <%= enderecoOpcao.getId().equals(usuario.getFkEndereco()) ? "selected" : "" %>>
+                        <%= escaparHtml(enderecoOpcao.getNome()) %> — <%= escaparHtml(enderecoOpcao.getRua()) %>, <%= escaparHtml(enderecoOpcao.getNumero()) %>
+                      </option>
+                  <%  }
+                  } %>
+                </select>
+              </div>
+              <div class="campo">
+                <label for="data_nascimento">Data de nascimento</label>
+                <input type="date" id="data_nascimento" name="dataAniversario" value="<%= escaparHtml(usuario.getDataAniversario()) %>" />
+              </div>
+              <div class="campo">
+                <label class="alternancia" for="primeiro_acesso">
+                  <input
+                    type="checkbox"
+                    id="primeiro_acesso"
+                    name="primeiroAcesso"
+                    value="true"
+                    <%= Boolean.TRUE.equals(usuario.getPrimeiroAcesso()) ? "checked" : "" %>
+                  />
+                  Primeiro acesso
+                </label>
               </div>
             </div>
             <div class="rodape-formulario">
-              <a class="botao botao-secundario" href="instituicoes.html">Cancelar</a>
-              <a class="botao" href="instituicoes.html">Salvar</a>
+              <a class="botao botao-secundario" href="/usuarios">Cancelar</a>
+              <button class="botao" type="submit">Salvar</button>
             </div>
           </form>
         </section>

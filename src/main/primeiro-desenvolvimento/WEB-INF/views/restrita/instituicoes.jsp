@@ -1,15 +1,18 @@
-﻿<!DOCTYPE html>
+﻿<%@ page import="java.util.List" %>
+<%@ page import="com.Model.Instituicao" %>
+<% List<Instituicao> instituicoes = (List<Instituicao>) request.getAttribute("instituicoes"); %>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Usuários | FIXA</title>
+    <title>Instituições | FIXA</title>
     <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
     <link rel="stylesheet" href="../../assets/css/crud.css" />
-    <script src="../../assets/js/crud.js" defer></script>
+    <script src="../../assets/js/operadores-filtro.js" defer></script>
   </head>
-  <body data-entidade="usuarios">
+  <body data-entidade="instituicoes">
     <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
     <aside class="menu-lateral" aria-label="Menu administrativo">
       <button
@@ -39,7 +42,7 @@
           </svg>
           <span class="texto-menu">Página inicial</span>
         </a>
-        <a href="instituicoes.html" title="Instituições">
+        <a href="/instituicoes" title="Instituições" aria-current="page">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -56,7 +59,7 @@
           </svg>
           <span class="texto-menu">Instituições</span>
         </a>
-        <a href="usuarios.html" title="Usuários" aria-current="page">
+        <a href="/usuarios" title="Usuários">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -74,7 +77,7 @@
           </svg>
           <span class="texto-menu">Usuários</span>
         </a>
-        <a href="enderecos.html" title="Endereços">
+        <a href="/enderecos" title="Endereços">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -90,7 +93,7 @@
           </svg>
           <span class="texto-menu">Endereços</span>
         </a>
-        <a href="super-admin.html" title="Super administradores">
+        <a href="/superAdmin" title="Super administradores">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -105,7 +108,7 @@
           </svg>
           <span class="texto-menu">Super administradores</span>
         </a>
-        <a href="planos.html" title="Planos">
+        <a href="/planos" title="Planos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -120,7 +123,7 @@
           </svg>
           <span class="texto-menu">Planos</span>
         </a>
-        <a href="contratos.html" title="Contratos">
+        <a href="/contratos" title="Contratos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -139,7 +142,7 @@
           </svg>
           <span class="texto-menu">Contratos</span>
         </a>
-        <a href="pagamentos.html" title="Pagamentos">
+        <a href="/pagamentos" title="Pagamentos">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -155,7 +158,7 @@
           </svg>
           <span class="texto-menu">Pagamentos</span>
         </a>
-        <a href="foto-usuario.html" title="Fotos de usuário">
+        <a href="/fotoUsuario" title="Fotos de usuário">
           <svg
             class="icone"
             viewbox="0 0 24 24"
@@ -192,30 +195,26 @@
     <div class="pagina">
       <header class="cabecalho">
         <div>
-          <h1>Usuários</h1>
-          <p>Consulte, filtre e edite os registros de usuários.</p>
+          <h1>Instituições</h1>
+          <p>Consulte, filtre e edite os registros de instituições.</p>
         </div>
         <div class="acoes">
-          <a class="botao" id="novo" href="cadastro-usuario.html">+ Novo</a>
+          <a class="botao" id="novo" href="/instituicoes?action=create">+ Novo</a>
         </div>
       </header>
       <main class="conteudo" id="conteudo">
-        <section class="cartao lista" aria-label="Registros de usuários">
+        <section class="cartao lista" aria-label="Registros de instituições">
           <div class="barra-tabela">
-            <strong id="contagem" role="status">1 registro</strong>
-            <form novalidate id="filtro-form" class="filtros" role="search" action="usuarios.html" method="get">
+            <strong id="contagem" role="status"><%= instituicoes == null ? 0 : instituicoes.size() %> <%= instituicoes != null && instituicoes.size() == 1 ? "registro" : "registros" %></strong>
+            <form id="filtro-form" class="filtros" role="search" action="/instituicoes" method="get"><input type="hidden" name="action" value="read" />
               <label class="sr-only" for="campo-filtro">Campo</label>
               <select id="campo-filtro" name="campo">
                 <option value="id">ID</option>
                 <option value="nome">Nome</option>
-                <option value="esta_ativo">Está ativo</option>
-                <option value="email">E-mail</option>
-                <option value="data_criacao">Data de criação</option>
-                <option value="cargo">Cargo</option>
-                <option value="fk_endereco_id">Endereço</option>
-                <option value="tipo_acesso">Tipo de acesso</option>
-                <option value="data_nascimento">Data de nascimento</option>
-                <option value="primeiro_acesso">Primeiro acesso</option>
+                <option value="email_corporativo">E-mail corporativo</option>
+                <option value="data_cadastro">Data de cadastro</option>
+                <option value="tipo_instituicao">Tipo de instituição</option>
+                <option value="dominio_email">Domínio do e-mail</option>
               </select>
               <label class="sr-only" for="operador-filtro">Operador</label>
               <select id="operador-filtro" name="operador">
@@ -230,37 +229,16 @@
               />
               <button class="botao botao-secundario" type="button">+ Filtro</button>
             </form>
-            <div class="pesquisa">
-              <span aria-hidden="true">
-                <svg
-                  class="icone"
-                  viewbox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                >
-                  <circle cx="10.5" cy="10.5" r="6.5"></circle>
-                  <path d="m16 16 5 5"></path>
-                </svg>
-              </span>
-              <label class="sr-only" for="pesquisa">Pesquisar em todos os campos</label>
-              <input
-                id="pesquisa"
-                type="search"
-                placeholder="Pesquisar em todos os campos"
-                autocomplete="off"
-              />
             </div>
-          </div>
           <div
             class="tabela-rolagem"
             tabindex="0"
             role="region"
-            aria-label="Tabela de usuários, com rolagem horizontal e vertical"
+            aria-label="Tabela de instituições, com rolagem horizontal e vertical"
           >
             <table>
               <caption class="sr-only">
-                Usuários. Clique nos cabeçalhos com setas para alternar entre ordem crescente,
+                Instituições. Clique nos cabeçalhos com setas para alternar entre ordem crescente,
                 decrescente e padrão por ID.
               </caption>
               <thead>
@@ -301,9 +279,9 @@
                       </svg>
                     </button>
                   </th>
-                  <th scope="col" data-campo="esta_ativo" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="esta_ativo">
-                      Está ativo
+                  <th scope="col" data-campo="email_corporativo" aria-sort="none">
+                    <button type="button" class="ordenar" data-ordenar="email_corporativo">
+                      E-mail corporativo
                       <svg
                         class="icone-ordenacao"
                         viewBox="0 0 12 18"
@@ -319,9 +297,9 @@
                       </svg>
                     </button>
                   </th>
-                  <th scope="col" data-campo="email" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="email">
-                      E-mail
+                  <th scope="col" data-campo="data_cadastro" aria-sort="none">
+                    <button type="button" class="ordenar" data-ordenar="data_cadastro">
+                      Data de cadastro
                       <svg
                         class="icone-ordenacao"
                         viewBox="0 0 12 18"
@@ -337,9 +315,9 @@
                       </svg>
                     </button>
                   </th>
-                  <th scope="col" data-campo="data_criacao" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="data_criacao">
-                      Data de criação
+                  <th scope="col" data-campo="dominio_email" aria-sort="none">
+                    <button type="button" class="ordenar" data-ordenar="dominio_email">
+                      Domínio do e-mail
                       <svg
                         class="icone-ordenacao"
                         viewBox="0 0 12 18"
@@ -355,9 +333,9 @@
                       </svg>
                     </button>
                   </th>
-                  <th scope="col" data-campo="cargo" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="cargo">
-                      Cargo
+                  <th scope="col" data-campo="tipo_instituicao" aria-sort="none">
+                    <button type="button" class="ordenar" data-ordenar="tipo_instituicao">
+                      Tipo de instituição
                       <svg
                         class="icone-ordenacao"
                         viewBox="0 0 12 18"
@@ -372,136 +350,31 @@
                         <path class="seta-baixo" d="m2 12 4 4 4-4"></path>
                       </svg>
                     </button>
-                  </th>
-                  <th scope="col" data-campo="tipo_acesso" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="tipo_acesso">
-                      Tipo de acesso
-                      <svg
-                        class="icone-ordenacao"
-                        viewBox="0 0 12 18"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path class="seta-cima" d="m2 6 4-4 4 4"></path>
-                        <path class="seta-baixo" d="m2 12 4 4 4-4"></path>
-                      </svg>
-                    </button>
-                  </th>
-                  <th scope="col" data-campo="endereco" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="endereco">
-                      Endereço
-                      <svg
-                        class="icone-ordenacao"
-                        viewBox="0 0 12 18"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path class="seta-cima" d="m2 6 4-4 4 4"></path>
-                        <path class="seta-baixo" d="m2 12 4 4 4-4"></path>
-                      </svg>
-                    </button>
-                  </th>
-                  <th scope="col" data-campo="data_nascimento" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="data_nascimento">
-                      Data de nascimento
-                      <svg
-                        class="icone-ordenacao"
-                        viewBox="0 0 12 18"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path class="seta-cima" d="m2 6 4-4 4 4"></path>
-                        <path class="seta-baixo" d="m2 12 4 4 4-4"></path>
-                      </svg>
-                    </button>
-                  </th>
-                  <th scope="col" data-campo="primeiro_acesso" aria-sort="none">
-                    <button type="button" class="ordenar" data-ordenar="primeiro_acesso">
-                      Primeiro acesso
-                      <svg
-                        class="icone-ordenacao"
-                        viewBox="0 0 12 18"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path class="seta-cima" d="m2 6 4-4 4 4"></path>
-                        <path class="seta-baixo" d="m2 12 4 4 4-4"></path>
-                      </svg>
-                    </button>
-                  </th>
-                  <th scope="col" data-campo="estado" class="coluna-relacionada">Estado (UF)</th>
-                  <th scope="col" data-campo="instituicao" class="coluna-relacionada">
-                    Instituição
                   </th>
                   <th scope="col" class="coluna-acoes">Ações</th>
                 </tr>
               </thead>
               <tbody id="registros">
-                <tr data-temporario="true">
-                  <td><button disabled type="button" class="consultar" data-acao="consultar" data-id="1" aria-label="Consultar registro #1">#1</button></td>
-                  <td>Ana Souza</td>
-                  <td><span class="etiqueta etiqueta-verde">Sim</span></td>
-                  <td>ana@escola.example</td>
-                  <td>23/10/2026 10:00</td>
-                  <td>Técnica de manutenção</td>
-                  <td>Técnico</td>
-                  <td>Unidade Centro</td>
-                  <td>15/04/1998</td>
-                  <td><span class="etiqueta">Não</span></td>
-                  <td class="coluna-relacionada">SP</td>
-                  <td class="coluna-relacionada">Escola Exemplo</td>
-                  <td class="coluna-acoes">
-                    <div class="acoes-linha">
-                      <a class="editar" href="editar-usuario.html?id=1" aria-label="Editar registro #1">
-                        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                          <path d="M16 3l5 5L8 21H3v-5L16 3Z M14 5l5 5"></path>
-                        </svg>
-                        Editar
-                      </a>
-                      <a class="excluir" href="?action=excluir&id=1" aria-label="Excluir registro #1">
-                        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                          <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"></path>
-                        </svg>
-                        Excluir
-                      </a>
-                    </div>
-                  </td>
-                </tr>
+                                    <%
+        if (instituicoes != null && !instituicoes.isEmpty()) {
+            for (Instituicao instituicao : instituicoes) {
+    %>
+                  <tr>
+                    <td><%= instituicao.getId() %></td><td><%= instituicao.getNome() %></td><td><%= instituicao.getEmailCorporativo() %></td><td><%= instituicao.getDataCadastro() %></td><td><%= instituicao.getDominioEmail() %></td><td><%= instituicao.getTipoInstituicao().getNome() %></td>
+                    <td class="coluna-acoes"><div class="acoes-linha"><a class="editar" href="/instituicoes?action=update&id=<%= instituicao.getId() %>">Editar</a><form action="/instituicoes" method="post" class="form-excluir"><input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value="<%= instituicao.getId() %>" /><button class="excluir" type="submit">Excluir</button></form></div></td>
+                  </tr>
+    <% } } else { %>
+                  <tr><td class="vazio" colspan="7">Nenhum registro encontrado.</td></tr>
+    <% } %>
               </tbody>
             </table>
           </div>
-          <footer class="rodape-tabela" id="rodape-tabela">1 de 1 registros</footer>
+          <footer class="rodape-tabela" id="rodape-tabela"><%= instituicoes == null ? 0 : instituicoes.size() %> de <%= instituicoes == null ? 0 : instituicoes.size() %> <%= instituicoes != null && instituicoes.size() == 1 ? "registro" : "registros" %></footer>
         </section>
 
         <p class="mensagem" id="mensagem" role="status" aria-live="polite"></p>
       </main>
     </div>
-    <dialog id="consulta-dialog" class="modal" aria-labelledby="titulo-consulta">
-      <div class="titulo-cartao">
-        <h2 id="titulo-consulta">Consultar registro</h2>
-        <button type="button" class="fechar" data-fechar aria-label="Fechar consulta">×</button>
-      </div>
-      <dl class="dados-registro" id="dados-consulta"></dl>
-      <div class="rodape-formulario">
-        <button type="button" class="botao botao-secundario" data-fechar>Fechar</button>
-      </div>
-    </dialog>
   </body>
 </html>
 

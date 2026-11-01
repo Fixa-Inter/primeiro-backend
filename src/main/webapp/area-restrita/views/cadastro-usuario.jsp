@@ -82,19 +82,19 @@
             Selecione
         </option>
 
-        <option value="ADMINISTRADOR">
+        <option value="1">
             Administrador
         </option>
 
-        <option value="GESTOR">
+        <option value="2">
             Gestor
         </option>
 
-        <option value="TECNICO">
+        <option value="3">
             Técnico
         </option>
 
-        <option value="SOLICITANTE">
+        <option value="4">
             Solicitante
         </option>
 

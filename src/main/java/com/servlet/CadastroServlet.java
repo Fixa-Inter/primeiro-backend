@@ -363,7 +363,7 @@ public class CadastroServlet extends HttpServlet{
         Instituicao instituicao = new Instituicao(
                 dto.getNome(),
                 dto.getEmailCorporativo(),
-                TipoInstituicao.converterEnum(dto.getTipoInstituicao()),
+                TipoInstituicao.converterEnum(Integer.parseInt(dto.getTipoInstituicao())),
                 dto.getDominioEmail(),
                 dto.getSenha()
         );
