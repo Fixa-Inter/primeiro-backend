@@ -23,7 +23,7 @@ public class GerenciadorDesfazer extends HttpServlet {
                 && referer.contains(contextPath + "/")) {
             response.sendRedirect(referer);
         } else {
-            response.sendRedirect(contextPath + "/area-restrita/index.jsp");
+            response.sendRedirect(contextPath + "/analiticos");
         }
     }
 

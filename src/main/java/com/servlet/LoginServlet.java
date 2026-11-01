@@ -19,7 +19,8 @@ import java.sql.SQLException;
 @WebServlet({"/login-handler", "/login"})
 public class LoginServlet extends HttpServlet {
 
-    private static final String AREA_RESTRITA = "/area-restrita/index.jsp";
+    // rota do servlet: o redirect do navegador nao alcanca arquivos dentro de WEB-INF
+    private static final String AREA_RESTRITA = "/analiticos";
     private static final String PAGINA_LOGIN = "/WEB-INF/views/publico/login.jsp";
 
     @Override

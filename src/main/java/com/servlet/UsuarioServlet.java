@@ -24,9 +24,9 @@ import java.util.List;
 @WebServlet(name = "UsuarioServlet", value = "/usuarios")
 public class UsuarioServlet extends HttpServlet{
 
-    private static final String PAGINA_PRINCIPAL = "/area-restrita/views/usuarios.jsp";
-    private static final String PAGINA_CADASTRO = "/area-restrita/views/cadastro-usuario.jsp";
-    private static final String PAGINA_EDICAO = "/area-restrita/views/editar-usuario.jsp";
+    private static final String PAGINA_PRINCIPAL = "/WEB-INF/views/restrita/usuarios.jsp";
+    private static final String PAGINA_CADASTRO = "/WEB-INF/views/restrita/cadastro-usuario.jsp";
+    private static final String PAGINA_EDICAO = "/WEB-INF/views/restrita/editar-usuario.jsp";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

@@ -15,7 +15,7 @@ import java.util.List;
 @WebServlet("/analiticos")
 public class AnaliticosServlet extends HttpServlet {
 
-    private static final String AREA_RESTRITA = "/area-restrita/index.jsp";
+    private static final String AREA_RESTRITA = "/WEB-INF/views/restrita/index.jsp";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
