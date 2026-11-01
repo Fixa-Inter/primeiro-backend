@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.SuperAdministradorDAO;
+import com.DTO.SuperAdminDTO;
 import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.SuperAdministrador;
@@ -223,15 +224,32 @@ public class SuperAdministradorServlet extends HttpServlet{
     private void deletarAdmin(
             HttpServletRequest request,
             HttpServletResponse response
-    ){
+    ) throws ServletException, IOException {
         int id = Parametros.inteiro(request, "id");
 
         try (SuperAdministradorDAO dao = new SuperAdministradorDAO()){
+
+            // nao pode excluir a propria conta (a sessao continuaria aberta com uma conta que nao existe mais)
+            SuperAdminDTO logado = (SuperAdminDTO) request.getSession().getAttribute("usuario");
+            if (logado != null && logado.getId() == id) {
+                throw ExcecaoDeJSP.naoPodeExcluirPropriaConta();
+            }
+
+            // nao pode excluir o unico administrador (ninguem mais entraria na area restrita)
+            if (dao.buscar(null, null, null, null).size() <= 1) {
+                throw ExcecaoDeJSP.naoPodeExcluirUltimoAdmin();
+            }
+
             dao.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/superAdmin"
             );
+        } catch (ExcecaoDeJSP e) {
+            // volta para a lista mostrando o motivo (o doGet responderia 400 para action=delete)
+            request.setAttribute("erro", e.getMessage());
+            listarAdmins(request, response);
+            request.getRequestDispatcher(PAGINA_PRINCIPAL).forward(request, response);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
