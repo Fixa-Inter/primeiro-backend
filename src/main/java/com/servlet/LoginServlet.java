@@ -25,6 +25,15 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        HttpSession session = req.getSession(false);
+
+        if (session != null && session.getAttribute("usuario") != null) {
+            // Redireciona direto para a área restrita (analiticos)
+            resp.sendRedirect(req.getContextPath() + AREA_RESTRITA);
+            return; // Encerra a execução do método aqui
+        }
+
         RequestDispatcher dispatcher = req.getRequestDispatcher(PAGINA_LOGIN);
         dispatcher.forward(req, resp);
     }
