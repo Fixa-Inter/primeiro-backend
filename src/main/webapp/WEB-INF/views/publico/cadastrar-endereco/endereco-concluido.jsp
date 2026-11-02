@@ -46,7 +46,17 @@
           </span>
         </div>
       </div>
-      <img class="mascote-cadastro" src="${pageContext.request.contextPath}/assets/img/cadastro/manu-cadastro.svg" alt="Manu comemorando o endereço adicionado">
+      <div class="manu-fala-cadastro">
+        <img class="mascote-cadastro" src="${pageContext.request.contextPath}/assets/img/cadastro/manu-cadastro.svg" alt="Manu comemorando o endereço adicionado">
+        <div class="balao-cadastro">
+          <p class="rotulo-cadastro">
+            MANU · ASSISTENTE
+          </p>
+          <p>
+            Endereço adicionado! Agora você já pode registrar solicitações nessa unidade.
+          </p>
+        </div>
+      </div>
       <h1>
         Endereço adicionado!
       </h1>
@@ -65,7 +75,7 @@
         Adicionar outro endereço
       </a>
       <a class="voltar-cadastro" href="${pageContext.request.contextPath}/cadastrar-endereco?action=logout">
-        Sair
+        Voltar ao site
       </a>
     </main>
   </body>

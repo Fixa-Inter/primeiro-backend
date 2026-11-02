@@ -26,7 +26,7 @@ import java.util.Objects;
 
 public class InstituicaoDAO extends DAO{
 
-    // map dos campos que sao filtraveis
+    // map dos campos que são filtráveis
     public static final Map<String, String> camposFiltraveis = Map.of(
             "ID", "Id",
             "NOME", "Nome",
@@ -107,7 +107,7 @@ public class InstituicaoDAO extends DAO{
         Integer tipoInstituicao = instituicao.getTipoInstituicao().getCodigo();
         String senhaHash = instituicao.getSenhaHash();
 
-        // tira as coluna id e data_cadastro pois o default do bd já preenche eles automaticamente
+        // tira as colunas id e data_cadastro pois o default do bd já preenche eles automaticamente
 
 
         String sql = """
@@ -292,8 +292,7 @@ public class InstituicaoDAO extends DAO{
         return i;
     }
 
-    // select dominio email para o servlet, pois como a tabela dominio email e unique, precisa de um metodo para verificar se já existe um dominio email igual e mostrar
-    // uma excecao com mensagem pra isso, e retorna null caso n tenha esse dominio de email registrado, liberando para o registro no sistema
+    // select por email corporativo, retorna null caso não tenha nenhuma instituição registrada com esse email
     public Instituicao pesquisarPorEmailCorporativo(String emailCorporativo) throws SQLException{
 
         String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao, senha_hash FROM instituicao WHERE email_corporativo = ?";
@@ -327,8 +326,8 @@ public class InstituicaoDAO extends DAO{
 
     }
 
-    // select dominio email para o servlet, pois como a tabela dominio email e unique, precisa de um metodo para verificar se já existe um dominio email igual e mostrar
-    // uma excecao com mensagem pra isso, e retorna null caso n tenha esse dominio de email registrado, liberando para o registro no sistema
+    // select domínio email para o servlet, pois como a tabela domínio email é unique, precisa de um método para verificar se já existe um domínio email igual e mostrar
+    // uma exceção com mensagem para isso, e retorna null caso não tenha esse domínio de email registrado, liberando para o registro no sistema
     public Instituicao pesquisarPorDominioEmail(String dominioEmailInsert) throws SQLException{
 
         String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao, senha_hash FROM instituicao WHERE dominio_email = ?";

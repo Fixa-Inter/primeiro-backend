@@ -1,6 +1,6 @@
 package com.service;
 
-import java.security.SecureRandom; // random é previsivel, esse com secure não
+import java.security.SecureRandom; // random é previsível, esse com secure não
 
 public class GeradorCodigo {
 

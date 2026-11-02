@@ -23,7 +23,7 @@ public enum TipoAcesso {
         return codigo;
     }
 
-    // metodo para converter o codigo para o valor
+    // método para converter o código para o valor
     public static String getNomeComBaseCodigo(int codigo) {
 
         for (TipoAcesso tipoAcesso : TipoAcesso.values()) {
@@ -35,7 +35,7 @@ public enum TipoAcesso {
         throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
     }
 
-    // metodo para converter o valor para o codigo
+    // método para converter o valor para o código
     public static TipoAcesso converterEnum(String nome) {
         for (TipoAcesso tipoAcesso : TipoAcesso.values()) {
             if (nome.toLowerCase().equals(tipoAcesso.nome.toLowerCase())) {

@@ -10,7 +10,7 @@ public class Contrato {
     private LocalDate dataInicio;             // coluna: data_inicio
     private LocalDate dataVencimento;         // coluna: data_vencimento
     private Integer fkPlano;                  // coluna: fk_plano_id
-    private Integer fkEndereco;               // coluna: fk_endereo_id
+    private Integer fkEndereco;               // coluna: fk_endereco_id
     private StatusContrato statusContrato;    // coluna: status_contrato
 
     // construtor

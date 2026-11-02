@@ -22,7 +22,7 @@ public enum StatusContrato {
         return nome;
     }
 
-    // metodo para converter o codigo para o valor
+    // método para converter o código para o valor
     public static String getNomeComBaseCodigo(int codigo) {
         for (StatusContrato statusContrato : StatusContrato.values()) {
             if (codigo == statusContrato.codigo) {
@@ -33,7 +33,7 @@ public enum StatusContrato {
         throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
     }
 
-    // metodo para converter o enum
+    // método para converter o enum
     public static StatusContrato converterEnum(String nome) {
         for (StatusContrato statusContrato : StatusContrato.values()) {
             if (nome.toLowerCase().equals(statusContrato.nome.toLowerCase())) {

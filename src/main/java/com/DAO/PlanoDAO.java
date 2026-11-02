@@ -61,7 +61,7 @@ public class PlanoDAO extends DAO{
             )
     );
 
-    // Metodo que converte o valor de acordo com o campo que será filtrado
+    // Método que converte o valor de acordo com o campo que será filtrado
     public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
@@ -75,12 +75,12 @@ public class PlanoDAO extends DAO{
         }
     }
 
-    //construtor de DAO
+    // construtor de DAO
     public PlanoDAO() throws SQLException {
         super();
     }
 
-    //insert
+    // insert
     public int cadastrar(Plano plano) throws SQLException{
         String nome = plano.getNome();
         Double valorMensal = plano.getValorMensal();
@@ -129,7 +129,7 @@ public class PlanoDAO extends DAO{
         } catch (SQLException e) { conn.rollback(); throw e; }
     }
 
-    //select
+    // select
     public List<Plano> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException{
 
         ArrayList<Plano> resultado = new ArrayList<>();
@@ -178,7 +178,7 @@ public class PlanoDAO extends DAO{
             }
         }
 
-        // Verificando campo e direcao da ordenação
+        // Verificando campo e direção da ordenação
         if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)) {
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
@@ -228,7 +228,7 @@ public class PlanoDAO extends DAO{
         return resultado;
     }
 
-    //pesquisar por id
+    // pesquisar por id
     public Plano pesquisarPorId(int id) throws SQLException{
         String sql = "SELECT NOME, VALOR_MENSAL, DESCRICAO, DURACAO_MESES, DATA_CRIACAO FROM PLANO WHERE id = ?";
 
@@ -263,7 +263,7 @@ public class PlanoDAO extends DAO{
     }
 
 
-    //update
+    // update
     public void atualizar(Plano original, Plano alterado) throws SQLException{
         String nome = alterado.getNome();
         double valorMensal = alterado.getValorMensal();
@@ -322,7 +322,7 @@ public class PlanoDAO extends DAO{
         GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
     }
 
-    //delete
+    // delete
     public void remover(int id) throws SQLException {
 
         String sql = "DELETE FROM PLANO WHERE id = ?";

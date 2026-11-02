@@ -78,7 +78,7 @@ boolean dadosCarregados = razaoSocial != null
         <%= erro %>
       </p>
       <% } %>
-      <%-- Etapa 1: consulta o CNPJ e preenche os dados do endereco --%>
+      <%-- Etapa 1: consulta o CNPJ e preenche os dados do endereço --%>
       <form action="${pageContext.request.contextPath}/cadastro?action=buscarCnpj" method="post">
         <div class="campo-cadastro">
           <label for="cnpjBusca">

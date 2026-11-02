@@ -1,4 +1,4 @@
-// Barra de filtros das listagens: ao escolher o campo, mostra so os operadores que o backend aceita
+// Barra de filtros das listagens: ao escolher o campo, mostra só os operadores que o backend aceita
 // e troca o campo de valor pelo tipo certo (data, numero, Sim/Nao ou lista de opcoes).
 (() => {
   const operadores = {

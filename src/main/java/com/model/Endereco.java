@@ -14,7 +14,7 @@ public class Endereco {
     private String numero;              // coluna: numero
     private String cep;                 // coluna: cep
     private String cnpj;                // coluna: cnpj
-    private LocalDateTime dataCriacao;  // coluna: data
+    private LocalDateTime dataCriacao;  // coluna: data_criacao
     private Integer fkInstituicao;      // coluna: fk_instituicao_id
 
     // construtor

@@ -18,10 +18,12 @@ public class ConsultaCnpjService {
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    // consulta o cnpj na BrasilAPI e devolve os dados do endereço, ou null se o cnpj for inválido ou a API falhar
     public EnderecoViaCnpjDTO consultar(String cnpj){
 
-        String cnpjFormatado = cnpj.replaceAll("\\D", ""); // \\D siginifica para tirar qualquer caractere que nao seja numero
+        String cnpjFormatado = cnpj.replaceAll("\\D", ""); // \\D significa tirar qualquer caractere que não seja número
 
+        // confere os dígitos verificadores antes de chamar a API, para não gastar uma requisição com cnpj inválido
         if (!cnpjValido(cnpjFormatado)){
             return null;
         }
@@ -63,11 +65,13 @@ public class ConsultaCnpjService {
         return null;
     }
 
+    // devolve o texto do campo, ou null se ele não existir ou vier nulo no JSON
     private String textoOuNull(JsonNode jsonNode, String campo){
         JsonNode node = jsonNode.get(campo);
         return (node == null || node.isNull() ? null : node.asText());
     }
 
+    // valida o cnpj pelo cálculo dos dois dígitos verificadores (rejeita também os de números repetidos, como 11111111111111)
     public static  boolean cnpjValido(String cnpj){
 
         cnpj = cnpj.replaceAll("\\D", "");

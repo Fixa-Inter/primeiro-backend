@@ -65,7 +65,7 @@ boolean dadosCarregados = "confirmar".equals(request.getAttribute("etapa"));
         <%= erro %>
       </p>
       <% } %>
-      <%-- Etapa 1: consulta o CNPJ e preenche os dados do endereco --%>
+      <%-- Etapa 1: consulta o CNPJ e preenche os dados do endereço --%>
       <% if (!dadosCarregados) { %>
       <form action="${pageContext.request.contextPath}/cadastrar-endereco?action=buscarCnpj" method="post">
         <div class="campo-cadastro">
@@ -87,7 +87,7 @@ boolean dadosCarregados = "confirmar".equals(request.getAttribute("etapa"));
         </strong>
       </p>
       <% } %>
-      <%-- Etapa 2: confere/edita os dados preenchidos e salva o endereco --%>
+      <%-- Etapa 2: confere/edita os dados preenchidos e salva o endereço --%>
       <% if (dadosCarregados) { %>
       <form action="${pageContext.request.contextPath}/cadastrar-endereco?action=finalizar" method="post">
         <input type="hidden" name="cnpj" value="${cnpj}">

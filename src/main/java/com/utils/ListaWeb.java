@@ -1,7 +1,7 @@
 package com.utils;
 
-// Apoio das telas de listagem (JSP): ordenacao pelas setas e texto seguro dentro do HTML.
-// A ordenacao viaja no formato CAMPO-ASC ou CAMPO-DESC (ex: RUA-ASC), o mesmo que os servlets leem.
+// Apoio das telas de listagem (JSP): ordenação pelas setas e texto seguro dentro do HTML.
+// A ordenação viaja no formato CAMPO-ASC ou CAMPO-DESC (ex: RUA-ASC), o mesmo que os servlets leem.
 public class ListaWeb {
 
     private ListaWeb() {
@@ -20,12 +20,15 @@ public class ListaWeb {
         return "none";
     }
 
-    // ordenacao que a seta envia ao ser clicada: crescente, e decrescente se ja estiver crescente
+    // ordenação que a seta envia ao ser clicada: crescente, depois decrescente e, no terceiro clique, envia vazio (sem seta acesa) e o DAO usa a ordem padrão, ID ASC
     public static String proximaOrdenacao(String ordenacao, String campo) {
         String atual = ordenacao == null ? "" : ordenacao.toUpperCase();
 
         if ((campo + "-ASC").equals(atual)) {
             return campo + "-DESC";
+        }
+        if ((campo + "-DESC").equals(atual)) {
+            return "";
         }
         return campo + "-ASC";
     }

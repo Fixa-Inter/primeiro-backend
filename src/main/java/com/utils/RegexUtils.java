@@ -29,7 +29,7 @@ public class RegexUtils {
         return validarCampo(cep, REGEX_CEP);
     }
 
-    // senha forte: minimo 8 caracteres, com pelo menos uma letra e um numero
+    // senha forte: mínimo 8 caracteres, com pelo menos uma letra e um número
     public static boolean validarSenha(String senha) {
         if (senha == null || senha.length() < 8) {
             return false;

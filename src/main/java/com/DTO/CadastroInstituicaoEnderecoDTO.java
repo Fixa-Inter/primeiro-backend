@@ -2,7 +2,7 @@ package com.DTO;
 
 public class CadastroInstituicaoEnderecoDTO {
 
-    // dados da instituicao
+    // dados da instituição
 
     private String nome;
     private String emailCorporativo;
@@ -12,7 +12,7 @@ public class CadastroInstituicaoEnderecoDTO {
     // senha
     private String senha;
 
-    // dados do endereco
+    // dados do endereço
 
     private String cnpj;
     private String rua;

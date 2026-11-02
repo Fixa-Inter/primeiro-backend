@@ -56,7 +56,17 @@
           </span>
         </div>
       </div>
-      <img class="mascote-cadastro" src="${pageContext.request.contextPath}/assets/img/cadastro/manu-cadastro.svg" alt="Manu comemorando o cadastro">
+      <div class="manu-fala-cadastro">
+        <img class="mascote-cadastro" src="${pageContext.request.contextPath}/assets/img/cadastro/manu-cadastro.svg" alt="Manu comemorando o cadastro">
+        <div class="balao-cadastro">
+          <p class="rotulo-cadastro">
+            MANU · ASSISTENTE
+          </p>
+          <p>
+            Pronto! Agora é só começar a registrar suas solicitações. Qualquer dúvida, é só me chamar.
+          </p>
+        </div>
+      </div>
       <h1>
         Cadastro concluído!
       </h1>

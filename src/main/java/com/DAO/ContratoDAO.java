@@ -60,7 +60,7 @@ public class ContratoDAO extends DAO{
             )
     );
 
-    // Metodo que converte o valor de acordo com o campo que será filtrado
+    // Método que converte o valor de acordo com o campo que será filtrado
     public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
@@ -84,12 +84,12 @@ public class ContratoDAO extends DAO{
         }
     }
 
-    //construtor de DAO
+    // construtor de DAO
     public ContratoDAO() throws SQLException{
         super();
     }
 
-    //insert
+    // insert
     public int cadastrar(Contrato contrato) throws SQLException{
         LocalDate dataInicio = contrato.getDataInicio();
         LocalDate dataVencimento = contrato.getDataVencimento();
@@ -125,7 +125,7 @@ public class ContratoDAO extends DAO{
         return id;
     }
 
-    //select
+    // select
     public List<Contrato> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException{
 
         ArrayList<Contrato> resultado = new ArrayList<>();
@@ -164,7 +164,7 @@ public class ContratoDAO extends DAO{
             }
         }
 
-        // Verificando campo e direcao da ordenação
+        // Verificando campo e direção da ordenação
         if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)) {
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
@@ -212,7 +212,7 @@ public class ContratoDAO extends DAO{
         return resultado;
     }
 
-    //pesquisar por id
+    // pesquisar por id
     public Contrato pesquisarPorId(int id) throws SQLException {
         String sql = "SELECT DATA_INICIO,DATA_VENCIMENTO,FK_ENDERECO_ID,FK_PLANO_ID,STATUS_CONTRATO FROM CONTRATO WHERE id = ?";
         Contrato contrato;
@@ -239,12 +239,12 @@ public class ContratoDAO extends DAO{
     }
 
 
-    //alter
+    // alter
     public void atualizar(Contrato original, Contrato alterado) throws SQLException{
 
         Integer id = alterado.getId();
         LocalDate dataVencimento = alterado.getDataVencimento();
-        // data_inicio pode ser alterada? consideramos que nao
+        // data_inicio pode ser alterada? consideramos que não
         int fkEndereco = alterado.getFkEndereco();
         int fkPlano = alterado.getFkPlano();
         Integer statusContrato = alterado.getStatusContrato().getCodigo();
@@ -300,7 +300,7 @@ public class ContratoDAO extends DAO{
         GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
     }
 
-    //delete
+    // delete
     public void remover(int id) throws SQLException {
 
         String sql = "DELETE FROM CONTRATO WHERE id = ?";
@@ -387,7 +387,7 @@ public class ContratoDAO extends DAO{
         return resultado;
     }
 
-    //cadastrar completo, ignorando os default. usado para desfazer um delete
+    // cadastrar completo, ignorando os default. usado para desfazer um delete
     public int cadastrarCompleto(Contrato contrato) throws SQLException {
         String sql = "INSERT INTO contrato (id, data_inicio, data_vencimento, fk_plano_id, fk_endereco_id, status_contrato) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {

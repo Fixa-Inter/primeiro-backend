@@ -49,7 +49,7 @@ public class CadastroServlet extends HttpServlet{
                     .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp")
                     .forward(request, response);
         } else if (action.equals("enderecoInfo") || action.equals("enderecoCnpj")) {
-            // so chega nas telas de endereco quem ja passou pelo codigo e pela senha (dados na sessao)
+            // só chega nas telas de endereço quem já passou pelo código e pela senha (dados na sessão)
             if (request.getSession().getAttribute("cadastroDTO") == null) {
                 response.sendRedirect(request.getContextPath() + "/cadastro?action=iniciar");
                 return;
@@ -87,7 +87,7 @@ public class CadastroServlet extends HttpServlet{
             }
         } catch (ExcecaoDeJSP e) {
             request.setAttribute("erro", e.getMessage());
-            // cada erro volta para a tela onde o usuario estava
+            // cada erro volta para a tela onde o usuário estava
             String pagina;
             if ("enviarCodigo".equals(action)) {
                 pagina = "/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp";
@@ -116,10 +116,10 @@ public class CadastroServlet extends HttpServlet{
 
         try (InstituicaoDAO instituicaoDAO = new InstituicaoDAO()) {
 
-            // valida se esse email nao foi cadastrado antes
+            // valida se o domínio desse email já foi cadastrado antes (cada instituição tem um domínio único)
             if (instituicaoDAO.pesquisarPorDominioEmail(dominioEmail) != null){
 
-                request.setAttribute("erro", "Já existe uma instituicao com esse endereço de email");
+                request.setAttribute("erro", ExcecaoDeJSP.dominioDuplicado().getMessage());
 
                 request
                         .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp")
@@ -128,7 +128,7 @@ public class CadastroServlet extends HttpServlet{
                 return;
             }
 
-            // guarda os dados no DTO da sessao
+            // guarda os dados no DTO da sessão
 
             CadastroInstituicaoEnderecoDTO dto = new CadastroInstituicaoEnderecoDTO();
             dto.setNome(nome);
@@ -139,7 +139,7 @@ public class CadastroServlet extends HttpServlet{
             HttpSession session = request.getSession();
             session.setAttribute("cadastroDTO", dto);
 
-            // gera codigo e grava na verificacao_cadastro
+            // gera código e grava na verificacao_cadastro
             String codigo = new GeradorCodigo().gerar();
 
             try (VerificacaoCadastroDAO verificacaoCadastroDAO = new VerificacaoCadastroDAO()){
@@ -150,10 +150,10 @@ public class CadastroServlet extends HttpServlet{
 
             }
 
-            // enviar codigo por email
+            // enviar código por email
             new EnviadorEmail().enviarCodigo(emailCorporativo, nome, codigo);
 
-            // tela de digitar codigo
+            // tela de digitar código
             request
                     .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-codigo.jsp")
                     .forward(request, response);
@@ -171,7 +171,7 @@ public class CadastroServlet extends HttpServlet{
 
     private void  verificarCodigo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 
-        // o front tem um input por digito (codigo1 a codigo6), junta tudo em um codigo so
+        // o front tem um input por dígito (codigo1 a codigo6), junta tudo em um código só
         StringBuilder digitos = new StringBuilder();
         for (int i = 1; i <= 6; i++) {
             String digito = request.getParameter("codigo" + i);
@@ -182,7 +182,7 @@ public class CadastroServlet extends HttpServlet{
         HttpSession session = request.getSession();
         CadastroInstituicaoEnderecoDTO dto = (CadastroInstituicaoEnderecoDTO) session.getAttribute("cadastroDTO");
 
-        // se não tem cadastro em andamento de acordo com a sessao, volta para o inicio
+        // se não tem cadastro em andamento de acordo com a sessão, volta para o início
         if (dto == null){
             response.sendRedirect(request.getContextPath() + "/cadastro?action=iniciar");
             return;
@@ -202,7 +202,7 @@ public class CadastroServlet extends HttpServlet{
                 return;
             }
 
-            // apaga o codigo para ele nao poder ser reutilizado
+            // apaga o código para ele não poder ser reutilizado
             verificacaoCadastroDAO.invalidarPorEmail(email);
 
             request
@@ -228,13 +228,13 @@ public class CadastroServlet extends HttpServlet{
         HttpSession session = request.getSession();
         CadastroInstituicaoEnderecoDTO dto = (CadastroInstituicaoEnderecoDTO) session.getAttribute("cadastroDTO");
 
-        // se de acordo com a sessao nao tiver cadastro, volta para o inicio
+        // se de acordo com a sessão não tiver cadastro, volta para o início
         if (dto == null){
             response.sendRedirect(request.getContextPath() + "/cadastro?action=iniciar");
             return;
         }
 
-        // verifica se as senhas nao estao vazias e sao iguais
+        // verifica se as senhas não estão vazias e são iguais
         if (senha == null || senha.isBlank() || !senha.equals(confirmarSenha)){
 
             request.setAttribute("erro", "As senhas não coincidem");
@@ -246,7 +246,7 @@ public class CadastroServlet extends HttpServlet{
             return;
         }
 
-        // senha precisa seguir a regra (8 caracteres, uma letra e um numero)
+        // senha precisa seguir a regra (8 caracteres, uma letra e um número)
         if (!RegexUtils.validarSenha(senha)){
 
             request.setAttribute("erro", ExcecaoDeJSP.MENSAGEM_SENHA_FRACA);
@@ -258,13 +258,13 @@ public class CadastroServlet extends HttpServlet{
             return;
         }
 
-        // faz o hash e guarda na DTO da sessao
+        // faz o hash e guarda na DTO da sessão
         String senhaHash = HashSenha.gerarHash(senha);
         dto.setSenha(senhaHash);
 
         session.setAttribute("cadastroDTO", dto);
 
-        // vai para a tela que apresenta a etapa de endereco (depois vem a busca do CNPJ)
+        // vai para a tela que apresenta a etapa de endereço (depois vem a busca do CNPJ)
         request
                 .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-endereco-info.jsp")
                 .forward(request, response);
@@ -291,10 +291,10 @@ public class CadastroServlet extends HttpServlet{
 
         try (EnderecoDAO enderecoDAO = new EnderecoDAO()){
 
-            // verifica se esse cnpj ja esta cadastrado, e se estiver da erro
+            // verifica se esse cnpj já está cadastrado, e se estiver dá erro
             if (enderecoDAO.pesquisarPorCnpj(cnpjFormatado) != null){
 
-                request.setAttribute("erro", "Esse cnpj já está cadastrado");
+                request.setAttribute("erro", ExcecaoDeJSP.cnpjDuplicado().getMessage());
                 request.setAttribute("cnpj", cnpj);
 
                 request
@@ -309,7 +309,7 @@ public class CadastroServlet extends HttpServlet{
 
             if (dados == null) {
 
-                request.setAttribute("erro", "CNPJ inválido ou não encontrado");
+                request.setAttribute("erro", ExcecaoDeJSP.cnpjNaoEncontrado().getMessage());
                 request.setAttribute("cnpj", cnpj);
 
                 request
@@ -356,7 +356,7 @@ public class CadastroServlet extends HttpServlet{
             return;
         }
 
-        // dados do form apos chamar a API
+        // dados do form após chamar a API
         String cnpjInformado = request.getParameter("cnpj");
         String cepInformado = request.getParameter("cep");
         if (!RegexUtils.validarCnpj(cnpjInformado)) {
@@ -391,7 +391,7 @@ public class CadastroServlet extends HttpServlet{
             return;
         }
 
-        // monta instituicao
+        // monta instituição
         Instituicao instituicao = new Instituicao(
                 dto.getNome(),
                 dto.getEmailCorporativo(),
@@ -400,7 +400,7 @@ public class CadastroServlet extends HttpServlet{
                 dto.getSenha()
         );
 
-        // monta endereco
+        // monta endereço
 
         Endereco endereco = new Endereco(
             null,
@@ -417,13 +417,13 @@ public class CadastroServlet extends HttpServlet{
                 null
         );
 
-        // cadastroDAO cadastra os dois ao mesmo tempo, e dentro dele define que a fk de endereco e o id instituicao
+        // cadastroDAO cadastra os dois ao mesmo tempo, e dentro dele define que a fk de endereço é o id da instituição
         try (CadastroDAO cadastroDAO = new CadastroDAO()){
             cadastroDAO.finalizarCadastro(instituicao, endereco);
         } catch (SQLException | ClassNotFoundException e) {
             System.out.print("Erro ao tentar cadastrar instituicao e endereco no banco de dados: " + e.getMessage());
 
-            // nao vai para a tela de concluido, volta para o endereco com o que foi digitado
+            // não vai para a tela de concluido, volta para o endereço com o que foi digitado
             request.setAttribute("erro", "Não foi possível concluir o cadastro, tente novamente");
             request.setAttribute("cnpj", cnpj);
             request.setAttribute("rua", rua);

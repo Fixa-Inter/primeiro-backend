@@ -247,7 +247,7 @@ public class EnderecoDAO extends DAO{
 
             }
 
-            //comeco da pesquisa
+            // começo da pesquisa
             if (pesquisa != null && !pesquisa.isEmpty()){
                 String pesquisaNormalizada = pesquisa.toLowerCase().trim().replace(" ", "");
                 resultado.removeIf(endereco -> !endereco.toString()
@@ -256,7 +256,7 @@ public class EnderecoDAO extends DAO{
                         .replace(" ", "")
                         .contains(pesquisaNormalizada));
             }
-            //fim da pesquisa
+            // fim da pesquisa
 
         }
 
@@ -302,8 +302,8 @@ public class EnderecoDAO extends DAO{
         return e;
     }
 
-    // select cnpj para o servlet, pois como a tabela cnpj e unique, precisa de um metodo para verificar se já existe um cnpj igual e mostrar
-    // uma excecao com mensagem pra isso, e retorna null caso n tenha esse cnpj registrado, liberando para o registro no sistema
+    // select cnpj para o servlet, pois como a tabela cnpj é unique, precisa de um método para verificar se já existe um cnpj igual e mostrar
+    // uma exceção com mensagem para isso, e retorna null caso não tenha esse cnpj registrado, liberando para o registro no sistema
 
     public Endereco pesquisarPorCnpj(String cnpjInsert) throws SQLException{
 
@@ -355,7 +355,7 @@ public class EnderecoDAO extends DAO{
         String numero = alterado.getNumero();
         String cep = alterado.getCep();
         String cnpj = alterado.getCnpj();
-        // ignora data_cricao pois e um valor que nao deve ser atualizado
+        // ignora data_cricao pois é um valor que não deve ser atualizado
         Integer fkInstituicao = alterado.getFkInstituicao();
 
 
@@ -408,7 +408,7 @@ public class EnderecoDAO extends DAO{
             valores.add(fkInstituicao);
         }
 
-        // nao tem dataCriacao pois é um campo que não deve ser atualizado
+        // não tem dataCriacao pois é um campo que não deve ser atualizado
 
         if (valores.isEmpty()){
             return;
@@ -520,7 +520,7 @@ public class EnderecoDAO extends DAO{
         return resultado;
     }
 
-    //cadastrar completo, ignorando os default. usado para desfazer um delete
+    // cadastrar completo, ignorando os default. usado para desfazer um delete
     public int cadastrarCompleto(Endereco endereco) throws SQLException {
         int id = endereco.getId();
         String nome = endereco.getNome();
@@ -563,7 +563,7 @@ public class EnderecoDAO extends DAO{
 
             pstmt.executeUpdate();
 
-            //Ajusta o serial do banco caso o id do cadastro for maior que o serial atual
+            // Ajusta o serial do banco caso o id do cadastro for maior que o serial atual
             String sqlAjustarSerial = "SELECT setval(pg_get_serial_sequence('endereco', 'id'), COALESCE(max(id), 1)) FROM endereco";
             PreparedStatement stmtSerial = conn.prepareStatement(sqlAjustarSerial);
             stmtSerial.executeQuery();

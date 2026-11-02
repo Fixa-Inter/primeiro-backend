@@ -72,7 +72,7 @@ public class ContratoServlet extends HttpServlet{
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
 
-                // opcoes dos menus de endereco e plano da tela de edicao (igual ao cadastro)
+                // opções dos menus de endereço e plano da tela de edicao (igual ao cadastro)
                 try (com.DAO.EnderecoDAO enderecoDAO = new com.DAO.EnderecoDAO();
                      com.DAO.PlanoDAO planoDAO = new com.DAO.PlanoDAO()) {
                     request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
@@ -255,8 +255,8 @@ public class ContratoServlet extends HttpServlet{
     ) throws ServletException, IOException {
         LocalDate dataVencimento = Parametros.data(request, "dataVencimento");
 
-        // a data de inicio e gerada pelo banco no momento do cadastro (a data de criacao do contrato);
-        // como o contrato esta sendo criado agora, ela e a data de hoje
+        // a data de início é gerada pelo banco no momento do cadastro (a data de criação do contrato);
+        // como o contrato está sendo criado agora, ela é a data de hoje
         if (dataVencimento.isBefore(LocalDate.now())) {
             throw ExcecaoDeJSP.vencimentoAntesDoInicio();
         }
@@ -325,7 +325,7 @@ public class ContratoServlet extends HttpServlet{
             // Busca como está atualmente no banco
             Contrato original = dao.pesquisarPorId(id);
 
-            // compara com a data de inicio gravada (e nao com hoje): contrato ja vencido continua editavel
+            // compara com a data de início gravada (e não com hoje): contrato já vencido continua editável
             if (original.getDataInicio() != null && dataVencimento.isBefore(original.getDataInicio())) {
                 throw ExcecaoDeJSP.vencimentoAntesDoInicio();
             }
