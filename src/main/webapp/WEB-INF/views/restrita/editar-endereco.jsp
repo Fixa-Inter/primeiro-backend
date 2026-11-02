@@ -388,5 +388,7 @@ return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
     </div>
     <script src="${pageContext.request.contextPath}/assets/js/feedback.js" defer>
     </script>
+    <script src="${pageContext.request.contextPath}/assets/js/mascara.js" defer>
+    </script>
   </body>
 </html>

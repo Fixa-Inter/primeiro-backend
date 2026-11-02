@@ -156,5 +156,7 @@ boolean dadosCarregados = "confirmar".equals(request.getAttribute("etapa"));
     </main>
     <script src="${pageContext.request.contextPath}/assets/js/cadastro-cnpj.js" defer>
     </script>
+    <script src="${pageContext.request.contextPath}/assets/js/mascara.js" defer>
+    </script>
   </body>
 </html>

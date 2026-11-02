@@ -69,5 +69,7 @@
         Voltar
       </a>
     </main>
+    <script src="${pageContext.request.contextPath}/assets/js/mascara.js" defer>
+    </script>
   </body>
 </html>
