@@ -246,6 +246,7 @@
       .painel-graficos .colunas {
       display: flex;
       justify-content: space-around;
+      align-items: flex-end;
       gap: 12px;
       }
       .painel-graficos .coluna {
