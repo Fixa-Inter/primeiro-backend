@@ -54,6 +54,15 @@ public class ExcecaoDeJSP extends RuntimeException {
         return new ExcecaoDeJSP(msg);
     }
 
+    //exclusao de super administrador
+    public static ExcecaoDeJSP naoPodeExcluirPropriaConta() {
+        return new ExcecaoDeJSP("Você não pode excluir a sua própria conta.");
+    }
+
+    public static ExcecaoDeJSP naoPodeExcluirUltimoAdmin() {
+        return new ExcecaoDeJSP("Não é possível excluir o único administrador do sistema.");
+    }
+
     //vencimento do contrato antes da data de inicio
     public static ExcecaoDeJSP vencimentoAntesDoInicio() {
         return new ExcecaoDeJSP("A data de vencimento não pode ser anterior à data de início do contrato.");

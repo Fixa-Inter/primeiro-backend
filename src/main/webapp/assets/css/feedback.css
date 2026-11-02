@@ -1,0 +1,18 @@
+.avisos-fixa { position:fixed; z-index:200; bottom:24px; right:24px; width:max-content; max-width:calc(100% - 32px); display:flex; flex-direction:column; gap:12px; pointer-events:none; }
+.aviso-fixa { position:relative; display:flex; align-items:center; gap:14px; max-width:560px; padding:16px 18px 19px; overflow:hidden; border:1px solid #302755; border-radius:12px; background:#100a36; color:#fff; box-shadow:0 10px 28px #0b013c33; font:500 14px/21px "Inter",sans-serif; pointer-events:auto; }
+.aviso-texto { flex:1; min-width:0; }
+.aviso-fixa button { flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:7px; color:inherit; font:inherit; cursor:pointer; }
+.aviso-desfazer { padding:7px 10px; background:#ffffff12; white-space:nowrap; }
+.aviso-fechar { width:26px; height:26px; padding:0; background:transparent; font-size:21px!important; line-height:1; }
+.aviso-fixa button:hover { background:#ffffff20; }
+.aviso-fixa button:focus-visible { outline:2px solid #8ab7ff; outline-offset:2px; }
+.aviso-tempo { position:absolute; bottom:0; left:0; height:3px; width:100%; background:#8ab7ff; transform-origin:left; animation:tempo-aviso 5s linear forwards; }
+.aviso-fixa:hover .aviso-tempo, .aviso-fixa:focus-within .aviso-tempo { animation-play-state:paused; }
+.aviso-erro { border-color:#d56b83; }
+.aviso-erro .aviso-tempo { background:#f29ab0; }
+@keyframes tempo-aviso { to { transform:scaleX(0); } }
+@media (max-width:600px) {
+ .avisos-fixa { right:16px; bottom:16px; width:calc(100% - 32px); }
+ .aviso-fixa { gap:8px; padding:13px 12px 16px; font-size:12px; line-height:18px; }
+ .aviso-desfazer { padding:6px 8px; font-size:12px!important; }
+}

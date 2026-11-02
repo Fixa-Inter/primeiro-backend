@@ -70,11 +70,18 @@
     </dependencies>
 
     <build>
+        <!-- nome do arquivo gerado: target/Fixa-Backend.war -->
+        <finalName>Fixa-Backend</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
+                <configuration>
+                    <!-- front-end completo (JSPs, assets, WEB-INF/web.xml) -->
+                    <warSourceDirectory>src/main/webapp</warSourceDirectory>
+                    <failOnMissingWebXml>true</failOnMissingWebXml>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.DAO.SuperAdministradorDAO;
+import com.DTO.SuperAdminDTO;
 import com.exception.ExcecaoDeJSP;
 import com.model.Filtro;
 import com.model.SuperAdministrador;
@@ -117,7 +118,7 @@ public class SuperAdministradorServlet extends HttpServlet{
             String removerFiltroParam = request.getParameter("removerFiltro");
             Integer indiceRemover = null;
             if (removerFiltroParam != null
-                    && !removerFiltroParam.isBlank()) {
+                    && removerFiltroParam.matches("\\d+")) {
 
                 indiceRemover =
                         Integer.parseInt(removerFiltroParam);
@@ -138,14 +139,41 @@ public class SuperAdministradorServlet extends HttpServlet{
                     }
 
 
-                    String campo = campos[i];
-                    String valor = valores[i];
+                    String campo = campos[i].trim().toUpperCase();
+                    String valor = valores[i].trim();
 
-                    OperacaoFiltro operacao =
-                            OperacaoFiltro.valueOf(operacoes[i]);
+                    // ignora filtro sem valor ou com campo que não existe
+                    if (valor.isEmpty()
+                            || !SuperAdministradorDAO.camposFiltraveis.containsKey(campo)) {
+
+                        continue;
+                    }
+
+                    OperacaoFiltro operacao;
+
+                    try {
+                        operacao = OperacaoFiltro.valueOf(operacoes[i].trim().toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        continue;
+                    }
+
+                    // ignora operação que o campo não aceita
+                    List<OperacaoFiltro> operacoesPermitidas =
+                            SuperAdministradorDAO.operacoesPorCampo.get(campo);
+
+                    if (operacoesPermitidas == null
+                            || !operacoesPermitidas.contains(operacao)) {
+
+                        continue;
+                    }
 
                     Object valorConvertido =
                             dao.converterValor(campo, valor);
+
+                    // valor que não converte para o tipo do campo
+                    if (valorConvertido == null) {
+                        continue;
+                    }
 
                     filtros.add(new Filtro(
                             campo,
@@ -155,12 +183,13 @@ public class SuperAdministradorServlet extends HttpServlet{
                 }
             }
 
-            if (ordenacao != null && !ordenacao.isBlank()) {
+            if (ordenacao != null
+                    && ordenacao.toUpperCase().matches("[A-Z_]+-(ASC|DESC)")) {
 
                 String[] partesOrdenacao = ordenacao.split("-");
 
-                campoSequencia = partesOrdenacao[0];
-                direcaoSequencia = partesOrdenacao[1];
+                campoSequencia = partesOrdenacao[0].toUpperCase();
+                direcaoSequencia = partesOrdenacao[1].toUpperCase();
 
             } else {
 
@@ -223,15 +252,32 @@ public class SuperAdministradorServlet extends HttpServlet{
     private void deletarAdmin(
             HttpServletRequest request,
             HttpServletResponse response
-    ){
+    ) throws ServletException, IOException {
         int id = Parametros.inteiro(request, "id");
 
         try (SuperAdministradorDAO dao = new SuperAdministradorDAO()){
+
+            // nao pode excluir a propria conta (a sessao continuaria aberta com uma conta que nao existe mais)
+            SuperAdminDTO logado = (SuperAdminDTO) request.getSession().getAttribute("usuario");
+            if (logado != null && logado.getId() == id) {
+                throw ExcecaoDeJSP.naoPodeExcluirPropriaConta();
+            }
+
+            // nao pode excluir o unico administrador (ninguem mais entraria na area restrita)
+            if (dao.buscar(null, null, null, null).size() <= 1) {
+                throw ExcecaoDeJSP.naoPodeExcluirUltimoAdmin();
+            }
+
             dao.remover(id, request);
 
             response.sendRedirect(
                     request.getContextPath() + "/superAdmin"
             );
+        } catch (ExcecaoDeJSP e) {
+            // volta para a lista mostrando o motivo (o doGet responderia 400 para action=delete)
+            request.setAttribute("erro", e.getMessage());
+            listarAdmins(request, response);
+            request.getRequestDispatcher(PAGINA_PRINCIPAL).forward(request, response);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {

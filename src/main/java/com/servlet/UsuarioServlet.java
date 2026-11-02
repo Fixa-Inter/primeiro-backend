@@ -137,7 +137,7 @@ public class UsuarioServlet extends HttpServlet{
             String removerFiltroParam = request.getParameter("removerFiltro");
             Integer indiceRemover = null;
             if (removerFiltroParam != null
-                    && !removerFiltroParam.isBlank()) {
+                    && removerFiltroParam.matches("\\d+")) {
 
                 indiceRemover =
                         Integer.parseInt(removerFiltroParam);
@@ -158,14 +158,41 @@ public class UsuarioServlet extends HttpServlet{
                     }
 
 
-                    String campo = campos[i];
-                    String valor = valores[i];
+                    String campo = campos[i].trim().toUpperCase();
+                    String valor = valores[i].trim();
 
-                    OperacaoFiltro operacao =
-                            OperacaoFiltro.valueOf(operacoes[i]);
+                    // ignora filtro sem valor ou com campo que não existe
+                    if (valor.isEmpty()
+                            || !UsuarioDAO.camposFiltraveis.containsKey(campo)) {
+
+                        continue;
+                    }
+
+                    OperacaoFiltro operacao;
+
+                    try {
+                        operacao = OperacaoFiltro.valueOf(operacoes[i].trim().toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        continue;
+                    }
+
+                    // ignora operação que o campo não aceita
+                    List<OperacaoFiltro> operacoesPermitidas =
+                            UsuarioDAO.operacoesPorCampo.get(campo);
+
+                    if (operacoesPermitidas == null
+                            || !operacoesPermitidas.contains(operacao)) {
+
+                        continue;
+                    }
 
                     Object valorConvertido =
                             dao.converterValor(campo, valor);
+
+                    // valor que não converte para o tipo do campo
+                    if (valorConvertido == null) {
+                        continue;
+                    }
 
                     filtros.add(new Filtro(
                             campo,
@@ -175,12 +202,13 @@ public class UsuarioServlet extends HttpServlet{
                 }
             }
 
-            if (ordenacao != null && !ordenacao.isBlank()) {
+            if (ordenacao != null
+                    && ordenacao.toUpperCase().matches("[A-Z_]+-(ASC|DESC)")) {
 
                 String[] partesOrdenacao = ordenacao.split("-");
 
-                campoSequencia = partesOrdenacao[0];
-                direcaoSequencia = partesOrdenacao[1];
+                campoSequencia = partesOrdenacao[0].toUpperCase();
+                direcaoSequencia = partesOrdenacao[1].toUpperCase();
 
             } else {
 

@@ -48,6 +48,20 @@ public class CadastroServlet extends HttpServlet{
             request
                     .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp")
                     .forward(request, response);
+        } else if (action.equals("enderecoInfo") || action.equals("enderecoCnpj")) {
+            // so chega nas telas de endereco quem ja passou pelo codigo e pela senha (dados na sessao)
+            if (request.getSession().getAttribute("cadastroDTO") == null) {
+                response.sendRedirect(request.getContextPath() + "/cadastro?action=iniciar");
+                return;
+            }
+
+            String pagina = action.equals("enderecoInfo")
+                    ? "/WEB-INF/views/publico/cadastro/cadastro-endereco-info.jsp"
+                    : "/WEB-INF/views/publico/cadastro/cadastro-endereco-cnpj.jsp";
+
+            request
+                    .getRequestDispatcher(pagina)
+                    .forward(request, response);
         } else if (action.equals("concluido")) {
             request
                     .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-concluido.jsp")
@@ -73,9 +87,15 @@ public class CadastroServlet extends HttpServlet{
             }
         } catch (ExcecaoDeJSP e) {
             request.setAttribute("erro", e.getMessage());
-            String pagina = "enviarCodigo".equals(action)
-                    ? "/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp"
-                    : "/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp";
+            // cada erro volta para a tela onde o usuario estava
+            String pagina;
+            if ("enviarCodigo".equals(action)) {
+                pagina = "/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp";
+            } else if ("buscarCnpj".equals(action)) {
+                pagina = "/WEB-INF/views/publico/cadastro/cadastro-endereco-cnpj.jsp";
+            } else {
+                pagina = "/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp";
+            }
             request.getRequestDispatcher(pagina).forward(request, response);
         }
     }
@@ -244,9 +264,9 @@ public class CadastroServlet extends HttpServlet{
 
         session.setAttribute("cadastroDTO", dto);
 
-        // vai para a tela de endereco
+        // vai para a tela que apresenta a etapa de endereco (depois vem a busca do CNPJ)
         request
-                .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
+                .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-endereco-info.jsp")
                 .forward(request, response);
     }
 
@@ -278,7 +298,7 @@ public class CadastroServlet extends HttpServlet{
                 request.setAttribute("cnpj", cnpj);
 
                 request
-                        .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-endereco-cnpj.jsp")
                         .forward(request, response);
                 return;
             }
@@ -293,7 +313,7 @@ public class CadastroServlet extends HttpServlet{
                 request.setAttribute("cnpj", cnpj);
 
                 request
-                        .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
+                        .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-endereco-cnpj.jsp")
                         .forward(request, response);
                 return;
             }
@@ -320,7 +340,7 @@ public class CadastroServlet extends HttpServlet{
             request.setAttribute("cnpj", cnpj);
 
             request
-                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-endereco.jsp")
+                    .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-endereco-cnpj.jsp")
                     .forward(request, response);
         }
 

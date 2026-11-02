@@ -26,8 +26,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class PagamentoDAO extends DAO{
+
+    // colunas de data e hora filtradas só pela data (o usuário digita o dia, sem a hora)
+    private static final Set<String> CAMPOS_DATA_E_HORA = Set.of("DATA_PAGAMENTO");
 
     // map dos campos que sao filtraveis
     public static final Map<String, String> camposFiltraveis = Map.of(
@@ -76,7 +80,7 @@ public class PagamentoDAO extends DAO{
                         Integer.parseInt(valor);
 
                 case "VALOR" ->
-                        Float.parseFloat(valor);
+                        new BigDecimal(valor);
 
                 case "FOI_REALIZADO" ->
                         Boolean.parseBoolean(valor);
@@ -204,7 +208,14 @@ public class PagamentoDAO extends DAO{
 
                 } else {
 
-                    sql += filtro.getCampoFiltravel() + " "
+                    String coluna = filtro.getCampoFiltravel();
+
+                    // compara só o dia, ignorando a hora
+                    if (CAMPOS_DATA_E_HORA.contains(coluna)) {
+                        coluna = "CAST(" + coluna + " AS DATE)";
+                    }
+
+                    sql += coluna + " "
                             + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
                 }
             }
@@ -398,7 +409,9 @@ public class PagamentoDAO extends DAO{
                     throw new IllegalArgumentException("Operação inválida para o campo: " + campo);
                 }
                 if (i > 0) sql += " AND ";
-                sql += campo + " " + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
+                // compara só o dia, ignorando a hora
+                String coluna = CAMPOS_DATA_E_HORA.contains(campo) ? "CAST(" + campo + " AS DATE)" : campo;
+                sql += coluna + " " + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
             }
         }
         if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
