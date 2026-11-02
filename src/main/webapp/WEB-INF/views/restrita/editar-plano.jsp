@@ -198,7 +198,7 @@ return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
             </h2>
           </div>
           <form action="${pageContext.request.contextPath}/planos" method="post" aria-describedby="aviso-formulario erro-formulario" id="registro-form">
-            <input type="hidden" name="id" value="<%= plano.getId() %>">
+            <input type="hidden" name="id" value="<%= com.utils.ListaWeb.escapar(plano.getId()) %>">
             <input type="hidden" name="action" value="update">
             <div class="corpo-formulario">
               <p class="orientacao" id="aviso-formulario">

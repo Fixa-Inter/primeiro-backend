@@ -202,7 +202,7 @@ return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
             </h2>
           </div>
           <form action="${pageContext.request.contextPath}/contratos" method="post" aria-describedby="aviso-formulario erro-formulario" id="registro-form">
-            <input type="hidden" name="id" value="<%= contrato.getId() %>">
+            <input type="hidden" name="id" value="<%= com.utils.ListaWeb.escapar(contrato.getId()) %>">
             <input type="hidden" name="action" value="update">
             <div class="corpo-formulario">
               <p class="orientacao" id="aviso-formulario">
@@ -236,7 +236,7 @@ return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
                   </option>
                   <% if (planosDisponiveis != null) {
                   for (Plano planoOpcao : planosDisponiveis) { %>
-                  <option value="<%= planoOpcao.getId() %>" <%= planoOpcao.getId().equals(contrato.getFkPlano()) ? "selected" : "" %>>
+                  <option value="<%= com.utils.ListaWeb.escapar(planoOpcao.getId()) %>" <%= planoOpcao.getId().equals(contrato.getFkPlano()) ? "selected" : "" %>>
                     <%= escaparHtml(planoOpcao.getNome()) %>
                   </option>
                   <%  }
@@ -253,7 +253,7 @@ return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
                   </option>
                   <% if (enderecosDisponiveis != null) {
                   for (Endereco enderecoOpcao : enderecosDisponiveis) { %>
-                  <option value="<%= enderecoOpcao.getId() %>" <%= enderecoOpcao.getId().equals(contrato.getFkEndereco()) ? "selected" : "" %>>
+                  <option value="<%= com.utils.ListaWeb.escapar(enderecoOpcao.getId()) %>" <%= enderecoOpcao.getId().equals(contrato.getFkEndereco()) ? "selected" : "" %>>
                     <%= escaparHtml(enderecoOpcao.getNome()) %>
                     —
                     <%= escaparHtml(enderecoOpcao.getRua()) %>

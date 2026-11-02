@@ -65,7 +65,7 @@
       <% String erro = (String) request.getAttribute("erro"); %>
       <% if (erro != null && !erro.isBlank()) { %>
       <p class="mensagem-erro" role="alert">
-        <%= erro %>
+        <%= com.utils.ListaWeb.escapar(erro) %>
       </p>
       <% } %>
       <form action="${pageContext.request.contextPath}/cadastro?action=enviarCodigo" method="post">
@@ -108,7 +108,7 @@
         </button>
       </form>
       <p class="link-cadastro">
-        <a href="${pageContext.request.contextPath}/login">
+        <a href="https://segundo-aplicacao-website.vercel.app/login">
           Já é cadastrado? Entrar
         </a>
       </p>

@@ -200,7 +200,7 @@ return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
             </h2>
           </div>
           <form action="${pageContext.request.contextPath}/enderecos" method="post" aria-describedby="aviso-formulario erro-formulario" id="registro-form">
-            <input type="hidden" name="id" value="<%= endereco.getId() %>">
+            <input type="hidden" name="id" value="<%= com.utils.ListaWeb.escapar(endereco.getId()) %>">
             <input type="hidden" name="action" value="update">
             <div class="corpo-formulario">
               <p class="orientacao" id="aviso-formulario">
@@ -355,7 +355,7 @@ return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
                   </option>
                   <% if (instituicoesDisponiveis != null) {
                   for (Instituicao instituicao : instituicoesDisponiveis) { %>
-                  <option value="<%= instituicao.getId() %>" <%= instituicao.getId().equals(endereco.getFkInstituicao()) ? "selected" : "" %>>
+                  <option value="<%= com.utils.ListaWeb.escapar(instituicao.getId()) %>" <%= instituicao.getId().equals(endereco.getFkInstituicao()) ? "selected" : "" %>>
                     <%= escaparHtml(instituicao.getNome()) %>
                   </option>
                   <%  }
@@ -387,6 +387,8 @@ return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
       </main>
     </div>
     <script src="${pageContext.request.contextPath}/assets/js/feedback.js" defer>
+    </script>
+    <script src="${pageContext.request.contextPath}/assets/js/mascara.js" defer>
     </script>
   </body>
 </html>

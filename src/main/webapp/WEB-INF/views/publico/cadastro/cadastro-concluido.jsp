@@ -73,16 +73,8 @@
       <p class="descricao-cadastro">
         Seu cadastro foi concluído com sucesso. Tudo pronto para começar a usar o Fixa.
       </p>
-      <div class="aviso-cadastro">
-        <h2>
-          COMO ENTRAR
-        </h2>
-        <p>
-          Nos próximos acessos, use o e-mail da instituição, a senha que você criou e o CNPJ.
-        </p>
-      </div>
-      <a class="botao-principal" href="${pageContext.request.contextPath}/login">
-        Entrar
+      <a class="botao-principal" href="${pageContext.request.contextPath}/index.html">
+        Voltar ao site
       </a>
     </main>
   </body>

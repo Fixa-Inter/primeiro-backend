@@ -283,29 +283,29 @@
                 %>
                 <tr>
                   <td data-rotulo="ID" data-campo="id">
-                    <%= contrato.getId() %>
+                    <%= ListaWeb.escapar(contrato.getId()) %>
                   </td>
                   <td data-rotulo="Data de início" data-campo="data_inicio">
-                    <%= contrato.getDataInicio() %>
+                    <%= ListaWeb.escapar(contrato.getDataInicio()) %>
                   </td>
                   <td data-rotulo="Data de vencimento" data-campo="data_vencimento">
-                    <%= contrato.getDataVencimento() %>
+                    <%= ListaWeb.escapar(contrato.getDataVencimento()) %>
                   </td>
                   <td data-rotulo="Plano" data-campo="plano" class=" registro-titulo">
-                    <%= contrato.getPlanoNome() %>
+                    <%= ListaWeb.escapar(contrato.getPlanoNome()) %>
                   </td>
                   <td data-rotulo="Status do contrato" data-campo="status_contrato">
-                    <%= contrato.getStatusContrato() %>
+                    <%= ListaWeb.escapar(contrato.getStatusContrato()) %>
                   </td>
                   <td class="coluna-relacionada" data-rotulo="Estado (UF)" data-campo="estado">
-                    <%= contrato.getEstado() %>
+                    <%= ListaWeb.escapar(contrato.getEstado()) %>
                   </td>
                   <td class="coluna-relacionada" data-rotulo="Instituição" data-campo="instituicao">
-                    <%= contrato.getInstituicaoNome() %>
+                    <%= ListaWeb.escapar(contrato.getInstituicaoNome()) %>
                   </td>
                   <td class="coluna-acoes" data-rotulo="Ações" data-campo="acoes">
                     <div class="acoes-linha">
-                      <a class="editar" href="${pageContext.request.contextPath}/contratos?action=update&id=<%= contrato.getId() %>">
+                      <a class="editar" href="${pageContext.request.contextPath}/contratos?action=update&id=<%= ListaWeb.escapar(contrato.getId()) %>">
                         <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                           <path d="M16 3l5 5L8 21H3v-5L16 3Z M14 5l5 5">
                           </path>
@@ -314,7 +314,7 @@
                       </a>
                       <form action="${pageContext.request.contextPath}/contratos" method="post" class="form-excluir">
                         <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="id" value="<%= contrato.getId() %>">
+                        <input type="hidden" name="id" value="<%= ListaWeb.escapar(contrato.getId()) %>">
                         <button class="excluir" type="submit">
                           <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                             <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7">

@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,8 +7,8 @@
 
     <title>Erro 500 - FIXA</title>
 
-    <link rel="stylesheet" href="../assets/css/erros.css">
-    <link rel="icon" href="../assets/img/comum/logo-escuro.svg">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/erros.css">
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/img/comum/logo-escuro.svg">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,10 +17,10 @@
 
 <body>
     <header class="cabecalho">
-        <a href="../index.html">
+        <a href="${pageContext.request.contextPath}/index.html">
             <img
                 class="logo"
-                src="../assets/img/comum/logo1.svg"
+                src="${pageContext.request.contextPath}/assets/img/comum/logo1.svg"
                 alt="FIXA - Página inicial"
             >
         </a>
@@ -47,7 +48,7 @@
                     Tentar de novo
                 </button>
 
-                <a class="botao botao-branco" href="../index.html">
+                <a class="botao botao-branco" href="${pageContext.request.contextPath}/index.html">
                     Voltar ao início
                 </a>
             </div>
@@ -61,7 +62,7 @@
         <div class="circulo">
             <img
                 class="mascote"
-                src="../assets/img/comum/manu-ferramenta.svg"
+                src="${pageContext.request.contextPath}/assets/img/comum/manu-ferramenta.svg"
                 alt="Manu segurando uma ferramenta ao lado de uma engrenagem"
             >
         </div>

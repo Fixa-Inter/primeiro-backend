@@ -1620,5 +1620,6 @@ main h1, main h2, main h3, header h1 { text-wrap:initial; }
 .guia-manu > a.guia-manu-img { display: block; flex-shrink: 0; border-radius: 50%; cursor: pointer; }
 
 /* ENTRAR DA NAVEGAÇÃO: LINK PARA A PÁGINA 401 */
-a.entrar { display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; text-decoration:none; font-family:inherit; cursor:pointer; }
+a.entrar { align-items:center; justify-content:center; box-sizing:border-box; text-decoration:none; font-family:inherit; cursor:pointer; }
+@media (min-width:601px) { a.entrar { display:inline-flex; } }
 a.entrar-mobile { display:block; width:100%; text-align:left; text-decoration:none; color:inherit; font-family:inherit; cursor:pointer; }

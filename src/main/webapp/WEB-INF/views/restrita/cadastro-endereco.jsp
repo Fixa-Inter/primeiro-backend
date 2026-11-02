@@ -341,8 +341,8 @@
                     Selecione uma instituição
                   </option>
                   <% if (instituicoesDisponiveis != null) { for (Instituicao instituicao : instituicoesDisponiveis) { %>
-                  <option value="<%= instituicao.getId() %>">
-                    <%= instituicao.getNome() %>
+                  <option value="<%= com.utils.ListaWeb.escapar(instituicao.getId()) %>">
+                    <%= com.utils.ListaWeb.escapar(instituicao.getNome()) %>
                   </option>
                   <% } } %>
                 </select>
@@ -372,6 +372,8 @@
       </main>
     </div>
     <script src="${pageContext.request.contextPath}/assets/js/feedback.js" defer>
+    </script>
+    <script src="${pageContext.request.contextPath}/assets/js/mascara.js" defer>
     </script>
   </body>
 </html>

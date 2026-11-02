@@ -234,23 +234,23 @@
                 %>
                 <tr>
                   <td data-rotulo="ID" data-campo="id">
-                    <%= foto.getId() %>
+                    <%= ListaWeb.escapar(foto.getId()) %>
                   </td>
                   <td data-rotulo="Data de registro" data-campo="data_registro">
-                    <%= foto.getDataRegistro() %>
+                    <%= ListaWeb.escapar(foto.getDataRegistro()) %>
                   </td>
                   <td data-campo="url" data-rotulo="URL da foto" class=" campo-largo">
-                    <%= foto.getUrl() %>
+                    <%= ListaWeb.escapar(foto.getUrl()) %>
                   </td>
                   <td class="coluna-relacionada" data-rotulo="Nome do usuário" data-campo="usuario_nome">
-                    <%= foto.getUsuarioNome() %>
+                    <%= ListaWeb.escapar(foto.getUsuarioNome()) %>
                   </td>
                   <td class="coluna-relacionada" data-rotulo="E-mail do usuário" data-campo="email_usuario">
-                    <%= foto.getUsuarioEmail() %>
+                    <%= ListaWeb.escapar(foto.getUsuarioEmail()) %>
                   </td>
                   <td class="coluna-acoes" data-rotulo="Ações" data-campo="acoes">
                     <div class="acoes-linha">
-                      <a class="editar" href="${pageContext.request.contextPath}/fotoUsuario?action=update&id=<%= foto.getId() %>">
+                      <a class="editar" href="${pageContext.request.contextPath}/fotoUsuario?action=update&id=<%= ListaWeb.escapar(foto.getId()) %>">
                         <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                           <path d="M16 3l5 5L8 21H3v-5L16 3Z M14 5l5 5">
                           </path>
@@ -259,7 +259,7 @@
                       </a>
                       <form action="${pageContext.request.contextPath}/fotoUsuario" method="post" class="form-excluir">
                         <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="id" value="<%= foto.getId() %>">
+                        <input type="hidden" name="id" value="<%= ListaWeb.escapar(foto.getId()) %>">
                         <button class="excluir" type="submit">
                           <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                             <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7">

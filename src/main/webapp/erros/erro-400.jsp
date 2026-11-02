@@ -1,11 +1,12 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Erro 400 - FIXA</title>
-    <link rel="stylesheet" href="../assets/css/erros.css">
-    <link rel="icon" href="../assets/img/comum/logo-escuro.svg">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/erros.css">
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/img/comum/logo-escuro.svg">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,10 +15,10 @@
 </head>
 <body>
     <header class="cabecalho">
-        <a href="../index.html">
+        <a href="${pageContext.request.contextPath}/index.html">
             <img
                 class="logo"
-                src="../assets/img/comum/logo1.svg"
+                src="${pageContext.request.contextPath}/assets/img/comum/logo1.svg"
                 alt="FIXA - Página inicial"
             >
         </a>
@@ -40,11 +41,11 @@
             </p>
 
             <div class="botoes">
-                <a class="botao botao-azul" href="erro-400.html">
+                <a class="botao botao-azul" href="${pageContext.request.contextPath}/erros/erro-400.jsp">
                     Tentar de novo
                 </a>
 
-                <a class="botao botao-branco" href="../index.html">
+                <a class="botao botao-branco" href="${pageContext.request.contextPath}/index.html">
                     Voltar ao início
                 </a>
             </div>
@@ -58,7 +59,7 @@
         <div class="circulo">
             <img
                 class="mascote"
-                src="../assets/img/comum/manu-confusa.svg"
+                src="${pageContext.request.contextPath}/assets/img/comum/manu-confusa.svg"
                 alt="Manu confusa, segurando uma prancheta"
             >
         </div>

@@ -221,7 +221,7 @@ public class SuperAdministradorDAO extends DAO{
     // pesquisar por email
     public SuperAdministrador pesquisarPorEmail(String email){
         {
-            String sql = "SELECT NOME, EMAIL FROM SUPER_ADMINISTRADOR WHERE EMAIL = ?";
+            String sql = "SELECT ID, NOME, EMAIL, SENHA_HASH FROM SUPER_ADMINISTRADOR WHERE EMAIL = ?";
             SuperAdministrador superAdministrador;
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, email);

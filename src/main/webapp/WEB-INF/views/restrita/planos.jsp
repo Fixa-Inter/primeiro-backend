@@ -292,26 +292,26 @@
                 %>
                 <tr>
                   <td data-rotulo="ID" data-campo="id">
-                    <%= plano.getId() %>
+                    <%= ListaWeb.escapar(plano.getId()) %>
                   </td>
                   <td data-rotulo="Nome" data-campo="nome" class=" registro-titulo">
-                    <%= plano.getNome() %>
+                    <%= ListaWeb.escapar(plano.getNome()) %>
                   </td>
                   <td data-rotulo="Valor mensal (R$)" data-campo="valor_mensal">
-                    <%= plano.getValorMensal() %>
+                    <%= ListaWeb.escapar(plano.getValorMensal()) %>
                   </td>
                   <td data-rotulo="Duração (meses)" data-campo="duracao_meses">
-                    <%= plano.getDuracaoMeses() %>
+                    <%= ListaWeb.escapar(plano.getDuracaoMeses()) %>
                   </td>
                   <td data-rotulo="Descrição" data-campo="descricao" class=" campo-largo">
-                    <%= plano.getDescricao() %>
+                    <%= ListaWeb.escapar(plano.getDescricao()) %>
                   </td>
                   <td data-rotulo="Data de criação" data-campo="data_criacao">
-                    <%= plano.getDataCriacao() %>
+                    <%= ListaWeb.escapar(plano.getDataCriacao()) %>
                   </td>
                   <td class="coluna-acoes" data-rotulo="Ações" data-campo="acoes">
                     <div class="acoes-linha">
-                      <a class="editar" href="${pageContext.request.contextPath}/planos?action=update&id=<%= plano.getId() %>">
+                      <a class="editar" href="${pageContext.request.contextPath}/planos?action=update&id=<%= ListaWeb.escapar(plano.getId()) %>">
                         <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                           <path d="M16 3l5 5L8 21H3v-5L16 3Z M14 5l5 5">
                           </path>
@@ -320,7 +320,7 @@
                       </a>
                       <form action="${pageContext.request.contextPath}/planos" method="post" class="form-excluir">
                         <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="id" value="<%= plano.getId() %>">
+                        <input type="hidden" name="id" value="<%= ListaWeb.escapar(plano.getId()) %>">
                         <button class="excluir" type="submit">
                           <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                             <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7">

@@ -56,7 +56,7 @@
       <% String erro = (String) request.getAttribute("erro"); %>
       <% if (erro != null && !erro.isBlank()) { %>
       <p class="mensagem-erro" role="alert">
-        <%= erro %>
+        <%= com.utils.ListaWeb.escapar(erro) %>
       </p>
       <% } %>
       <form action="${pageContext.request.contextPath}/cadastrar-endereco?action=login" method="post">

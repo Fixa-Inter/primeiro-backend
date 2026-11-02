@@ -1,13 +1,14 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Erro 403 - FIXA</title>
+    <title>Erro 404 - FIXA</title>
 
-    <link rel="stylesheet" href="../assets/css/erros.css">
-    <link rel="icon" href="../assets/img/comum/logo-escuro.svg">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/erros.css">
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/img/comum/logo-escuro.svg">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,10 +17,10 @@
 
 <body>
     <header class="cabecalho">
-        <a href="../index.html">
+        <a href="${pageContext.request.contextPath}/index.html">
             <img
                 class="logo"
-                src="../assets/img/comum/logo1.svg"
+                src="${pageContext.request.contextPath}/assets/img/comum/logo1.svg"
                 alt="FIXA - Página inicial"
             >
         </a>
@@ -27,19 +28,19 @@
 
     <main class="conteudo">
         <section class="informacoes">
-            <span class="etiqueta">Erro 403</span>
+            <span class="etiqueta">Erro 404</span>
 
-            <p class="numero-erro">403</p>
+            <p class="numero-erro">404</p>
 
-            <h1>Esta área não está liberada para você</h1>
+            <h1>Não encontramos esta página</h1>
 
             <p class="descricao">
-                Seu perfil não tem permissão para abrir esta página.
-                Se precisar dela, peça acesso ao gestor da sua instituição.
+                O endereço pode estar errado ou a página mudou de lugar.
+                Confira o link ou volte para o início.
             </p>
 
             <div class="botoes">
-                <a class="botao botao-azul" href="../index.html">
+                <a class="botao botao-azul" href="${pageContext.request.contextPath}/index.html">
                     Voltar ao início
                 </a>
 
@@ -54,15 +55,15 @@
 
             <p class="suporte">
                 Se continuar acontecendo, fale com o suporte
-                e informe o código 403.
+                e informe o código 404.
             </p>
         </section>
 
         <div class="circulo">
             <img
                 class="mascote"
-                src="../assets/img/comum/manu-cadeado.svg"
-                alt="Manu ao lado de um cadeado"
+                src="${pageContext.request.contextPath}/assets/img/comum/manu-lupa.svg"
+                alt="Manu segurando uma lupa"
             >
         </div>
     </main>

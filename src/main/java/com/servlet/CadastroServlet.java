@@ -50,7 +50,8 @@ public class CadastroServlet extends HttpServlet{
                     .forward(request, response);
         } else if (action.equals("enderecoInfo") || action.equals("enderecoCnpj")) {
             // só chega nas telas de endereço quem já passou pelo código e pela senha (dados na sessão)
-            if (request.getSession().getAttribute("cadastroDTO") == null) {
+            if (request.getSession().getAttribute("cadastroDTO") == null
+                    || request.getSession().getAttribute("emailVerificado") == null) {
                 response.sendRedirect(request.getContextPath() + "/cadastro?action=iniciar");
                 return;
             }
@@ -138,6 +139,7 @@ public class CadastroServlet extends HttpServlet{
 
             HttpSession session = request.getSession();
             session.setAttribute("cadastroDTO", dto);
+            session.removeAttribute("emailVerificado"); // novo e-mail: precisa confirmar o código de novo
 
             // gera código e grava na verificacao_cadastro
             String codigo = new GeradorCodigo().gerar();
@@ -205,6 +207,9 @@ public class CadastroServlet extends HttpServlet{
             // apaga o código para ele não poder ser reutilizado
             verificacaoCadastroDAO.invalidarPorEmail(email);
 
+            // só a partir daqui as próximas etapas são liberadas
+            session.setAttribute("emailVerificado", true);
+
             request
                     .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-senha.jsp")
                     .forward(request, response);
@@ -228,8 +233,8 @@ public class CadastroServlet extends HttpServlet{
         HttpSession session = request.getSession();
         CadastroInstituicaoEnderecoDTO dto = (CadastroInstituicaoEnderecoDTO) session.getAttribute("cadastroDTO");
 
-        // se de acordo com a sessão não tiver cadastro, volta para o início
-        if (dto == null){
+        // se de acordo com a sessão não tiver cadastro (ou o código não foi verificado), volta para o início
+        if (dto == null || session.getAttribute("emailVerificado") == null){
             response.sendRedirect(request.getContextPath() + "/cadastro?action=iniciar");
             return;
         }
@@ -282,7 +287,7 @@ public class CadastroServlet extends HttpServlet{
 
         CadastroInstituicaoEnderecoDTO dto = (CadastroInstituicaoEnderecoDTO) session.getAttribute("cadastroDTO");
 
-        if (dto == null) {
+        if (dto == null || session.getAttribute("emailVerificado") == null) {
             response.sendRedirect(request.getContextPath() + "/cadastro?action=iniciar");
             return;
         }
@@ -351,7 +356,7 @@ public class CadastroServlet extends HttpServlet{
         HttpSession session = request.getSession();
         CadastroInstituicaoEnderecoDTO dto = (CadastroInstituicaoEnderecoDTO) session.getAttribute("cadastroDTO");
 
-        if (dto == null) {
+        if (dto == null || session.getAttribute("emailVerificado") == null) {
             response.sendRedirect(request.getContextPath() + "/cadastro?action=iniciar");
             return;
         }
@@ -441,6 +446,7 @@ public class CadastroServlet extends HttpServlet{
         }
 
         session.removeAttribute("cadastroDTO");
+        session.removeAttribute("emailVerificado");
 
         response.sendRedirect(request.getContextPath() + "/cadastro?action=concluido");
 

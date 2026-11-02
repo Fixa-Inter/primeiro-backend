@@ -33,8 +33,8 @@
           para acessar o painel Fixa.
         </p>
         <% if (erro != null) { %>
-        <p class="descricao">
-          <%= erro %>
+        <p class="mensagem-erro" role="alert">
+          <%= com.utils.ListaWeb.escapar(erro) %>
         </p>
         <% } %>
         <form action="${pageContext.request.contextPath}/login-handler?action=login" method="post" novalidate>

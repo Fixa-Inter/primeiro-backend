@@ -200,7 +200,7 @@ return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
             </h2>
           </div>
           <form action="${pageContext.request.contextPath}/pagamentos" method="post" aria-describedby="aviso-formulario erro-formulario" id="registro-form">
-            <input type="hidden" name="id" value="<%= pagamento.getId() %>">
+            <input type="hidden" name="id" value="<%= com.utils.ListaWeb.escapar(pagamento.getId()) %>">
             <input type="hidden" name="action" value="update">
             <div class="corpo-formulario">
               <p class="orientacao" id="aviso-formulario">
@@ -237,9 +237,9 @@ return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
                   </option>
                   <% if (contratosDisponiveis != null) {
                   for (Contrato contratoOpcao : contratosDisponiveis) { %>
-                  <option value="<%= contratoOpcao.getId() %>" <%= contratoOpcao.getId().equals(pagamento.getFkContrato()) ? "selected" : "" %>>
+                  <option value="<%= com.utils.ListaWeb.escapar(contratoOpcao.getId()) %>" <%= contratoOpcao.getId().equals(pagamento.getFkContrato()) ? "selected" : "" %>>
                     Contrato #
-                    <%= contratoOpcao.getId() %>
+                    <%= com.utils.ListaWeb.escapar(contratoOpcao.getId()) %>
                   </option>
                   <%  }
                   } %>
