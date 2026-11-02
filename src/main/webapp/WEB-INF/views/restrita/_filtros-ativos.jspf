@@ -1,0 +1,21 @@
+<%-- Filtros que estao valendo: uma etiqueta para cada um. O X envia o indice do filtro em removerFiltro (botao ligado ao formulario da barra de filtros). --%>
+<% if (filtros != null && !filtros.isEmpty()) { %>
+<div class="filtros-ativos" id="filtros-ativos">
+  <span class="filtros-ativos-titulo">Filtros ativos:</span>
+  <div class="lista-filtros" id="lista-filtros">
+    <% int posicao = 0; for (Filtro filtro : filtros) {
+           String rotulo = filtro.getCampoFiltravel();
+           for (String[] campo : campos) {
+               if (campo[0].equals(filtro.getCampoFiltravel())) { rotulo = campo[1]; }
+           }
+           String operador = filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM ? "cont&eacute;m" : filtro.getOperacaoFiltro().getOperadorSQL();
+    %>
+    <span class="chip-filtro">
+      <%= rotulo %> <%= operador %> <%= ListaWeb.escapar(filtro.getValor()) %>
+      <button type="submit" form="filtro-form" class="chip-remover" name="removerFiltro" value="<%= posicao %>" aria-label="Remover este filtro">&times;</button>
+    </span>
+    <% posicao++; } %>
+  </div>
+  <a class="limpar-filtros" href="${pageContext.request.contextPath}/<%= urlLista %>">Limpar todos</a>
+</div>
+<% } %>
