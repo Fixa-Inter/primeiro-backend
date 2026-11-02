@@ -32,6 +32,23 @@ public class GerenciadorDesfazer extends HttpServlet {
      */
     public static void registrarComando(HttpServletRequest request, ComandoDesfazer comando) {
         request.getSession().setAttribute(CHAVE_SESSAO, comando);
+
+        // aviso que a proxima lista mostra, com o botao "Desfazer" (le e apaga: aparece uma vez so)
+        String mensagem;
+        if (comando instanceof DesfazerInsert) {
+            mensagem = "Registro criado com sucesso.";
+        } else if (comando instanceof DesfazerUpdate) {
+            mensagem = "Registro editado com sucesso.";
+        } else {
+            mensagem = "Registro excluído com sucesso.";
+        }
+        guardarAviso(request, mensagem, true);
+    }
+
+    // Guarda na sessao o aviso que o arquivo _aviso.jspf exibe na proxima tela de lista.
+    private static void guardarAviso(HttpServletRequest request, String mensagem, boolean comDesfazer) {
+        request.getSession().setAttribute("AVISO_TEXTO", mensagem);
+        request.getSession().setAttribute("AVISO_COM_DESFAZER", comDesfazer);
     }
 
     /**
@@ -44,6 +61,7 @@ public class GerenciadorDesfazer extends HttpServlet {
             try {
                 comando.desfazer(); // Executa a lógica específica do comando gravado
                 request.getSession().removeAttribute(CHAVE_SESSAO); // Limpa a memória RAM após desfazer
+                guardarAviso(request, "Ação desfeita.", false);
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
