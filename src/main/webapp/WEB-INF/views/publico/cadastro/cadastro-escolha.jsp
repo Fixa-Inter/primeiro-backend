@@ -51,7 +51,7 @@
         </span>
       </a>
       <p class="link-cadastro">
-        <a href="${pageContext.request.contextPath}/login">
+        <a href="https://segundo-aplicacao-website.vercel.app/login">
           Já é cadastrado? Entrar
         </a>
       </p>
