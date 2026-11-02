@@ -1,28 +1,30 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FIXA - Como Funciona</title>
     <link rel="stylesheet" href="assets/css/comofunciona.css">
+    <link rel="stylesheet" href="assets/css/dashboard-gestor.css">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" href="assets/img/comum/logo-claro.svg" media="(prefers-color-scheme: light)">
     <link rel="icon" href="assets/img/comum/logo-escuro.svg" media="(prefers-color-scheme: dark)">
     <link rel="stylesheet" href="assets/fontes/fontes.css">
+<link rel="stylesheet" href="assets/css/feedback.css">
 </head>
   <body>
     <header id="topo">
       <nav aria-label="Navegação principal">
-        <img src="assets/img/comum/logo1.svg" alt="Logo Fixa">
-        <div class="nav-links">
+        <a class="logo-navbar" href="index.html#topo" aria-label="FIXA — início"><img src="assets/img/comum/logo1.svg" alt="Logo Fixa">
+        </a><div class="nav-links">
           <a href="index.html#topo" class="normal">Início</a>
           <a href="sobre.html" class="normal">Sobre</a>
           <a href="comofunciona.html" class="inicio" aria-current="page">Como funciona</a>
           <a href="index.html#planos" class="normal" id="planos-link">Planos</a>
         </div>
         <div class="nav-buttons">
-          <a class="entrar" href="/login">Entrar</a>
-          <a class="cadastrar" href="/cadastro">Cadastrar</a>
+          <a class="entrar" href="login">Entrar</a>
+          <a class="cadastrar" href="cadastro">Cadastrar</a>
         </div>
         <details class="menu-mobile">
           <summary aria-label="Abrir ou fechar menu">
@@ -35,7 +37,7 @@
             <a href="sobre.html">Sobre</a>
             <a href="comofunciona.html">Como funciona</a>
             <a href="index.html#planos">Planos</a>
-            <a href="/login">Entrar</a>
+            <a href="login">Entrar</a>
           </div>
         </details>
       </nav>
@@ -54,60 +56,320 @@
             <img src="assets/img/comum/manu-ferramenta.svg" alt="Manu, assistente do Fixa">
           </div>
           <div class="imagem-dashboard">
-            <div class="dashboard-preview" role="img" aria-label="Exemplo de dashboard do gestor: 128 ordens de serviço, 14 atrasadas, 9 técnicos ativos e 92% concluídas no prazo.">
-              <div class="barra-dashboard">
-                <span>● ● ●</span>Dashboard do Gestor</div>
-              <div class="corpo-dashboard">
-                <div class="menu-dashboard">
-                  <strong>Visão geral</strong>
-                  <span>Kanban</span>
-                  <span>Equipe</span>
-                  <span>Equipamentos</span>
-                  <span>Calendário</span>
-                  <span>Relatórios</span>
-                </div>
-                <div class="painel-dashboard">
-                  <div class="indicadores-dashboard">
-                    <div>
-                      <strong>128</strong>
-                      <span>Ordens de serviço</span>
-                    </div>
-                    <div>
-                      <strong>14</strong>
-                      <span>Atrasadas</span>
-                    </div>
-                    <div>
-                      <strong>9</strong>
-                      <span>Técnicos ativos</span>
-                    </div>
-                    <div>
-                      <strong>92%</strong>
-                      <span>Concluídas no prazo</span>
-                    </div>
-                  </div>
-                  <div class="graficos-dashboard">
-                    <div class="barras-dashboard" aria-hidden="true">
-                      <span style="height: 60px"></span>
-                      <span style="height: 92px"></span>
-                      <span style="height: 50px"></span>
-                      <span style="height: 116px"></span>
-                      <span style="height: 70px"></span>
-                      <span style="height: 104px"></span>
-                      <span style="height: 66px"></span>
-                    </div>
-                    <div class="area-pizza" aria-hidden="true">
-                      <div class="pizza-dashboard"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+<div id="dashboard-gestor" class="dashboard-preview dashboard-interativo" role="region" aria-label="Dashboard do Gestor">
+  <input class="controle-dashboard" type="radio" name="tela-gestor" id="gestor-geral" aria-label="Visão geral" checked>
+  <input class="controle-dashboard" type="radio" name="tela-gestor" id="gestor-kanban" aria-label="Kanban">
+  <input class="controle-dashboard" type="radio" name="tela-gestor" id="gestor-equipe" aria-label="Equipe">
+  <input class="controle-dashboard" type="radio" name="tela-gestor" id="gestor-equipamentos" aria-label="Equipamentos">
+  <input class="controle-dashboard" type="radio" name="tela-gestor" id="gestor-calendario" aria-label="Calendário">
+  <input class="controle-dashboard" type="radio" name="tela-gestor" id="gestor-relatorios" aria-label="Relatórios">
+  <div class="barra-dashboard">
+    <span aria-hidden="true">● ● ●</span>Dashboard do Gestor</div>
+  <div class="corpo-dashboard">
+    <div class="menu-dashboard" role="group" aria-label="Telas do dashboard">
+      <label for="gestor-geral">Visão geral</label>
+      <label for="gestor-kanban">Kanban</label>
+      <label for="gestor-equipe">Equipe</label>
+      <label for="gestor-equipamentos">Equipamentos</label>
+      <label for="gestor-calendario">Calendário</label>
+      <label for="gestor-relatorios">Relatórios</label>
+    </div>
+    <div class="painel-dashboard">
+      <section class="tela-gestor tela-geral" aria-label="Visão geral">
+        <div class="indicadores-dashboard">
+          <div>
+            <strong>128</strong>
+            <span>Ordens de serviço</span>
+          </div>
+          <div>
+            <strong>14</strong>
+            <span>Atrasadas</span>
+          </div>
+          <div>
+            <strong>9</strong>
+            <span>Técnicos ativos</span>
+          </div>
+          <div>
+            <strong>92%</strong>
+            <span>Concluídas no prazo</span>
+          </div>
+        </div>
+        <div class="graficos-dashboard">
+          <div class="barras-dashboard" aria-hidden="true">
+            <span style="height: 60px"></span>
+            <span style="height: 92px"></span>
+            <span style="height: 50px"></span>
+            <span style="height: 116px"></span>
+            <span style="height: 70px"></span>
+            <span style="height: 104px"></span>
+            <span style="height: 66px"></span>
+          </div>
+          <div class="area-pizza" aria-hidden="true">
+            <div class="pizza-dashboard"></div>
+          </div>
+        </div>
+      </section>
+      <section class="tela-gestor tela-kanban" aria-label="Kanban">
+        <div class="cabecalho-gestor">
+          <h2>Kanban da equipe</h2>
+          <span>32 ordens abertas</span>
+        </div>
+        <div class="kanban-gestor">
+          <section class="coluna-gestor">
+            <h3>PENDENTES</h3>
+            <ul>
+              <li>Ar-condicionado sem gelar · Sala 12<span class="status-gestor vermelho">Alta prioridade</span>
+              </li>
+              <li>Filtro sujo · Biblioteca<span class="status-gestor amarelo">Média prioridade</span>
+              </li>
+            </ul>
+          </section>
+          <section class="coluna-gestor">
+            <h3>EM ANDAMENTO</h3>
+            <ul>
+              <li>Vazamento de água · Sala de Informática<span class="status-gestor amarelo">Média prioridade</span>
+              </li>
+            </ul>
+          </section>
+          <section class="coluna-gestor">
+            <h3>CONCLUÍDAS</h3>
+            <ul>
+              <li>Ruído no motor · Secretaria<span class="status-gestor verde">Concluída</span>
+              </li>
+              <li>Checklist PMOC · Auditório<span class="status-gestor verde">Concluída</span>
+              </li>
+            </ul>
+          </section>
+        </div>
+      </section>
+      <section class="tela-gestor tela-equipe" aria-label="Equipe">
+        <div class="cabecalho-gestor">
+          <h2>Equipe técnica</h2>
+          <span>9 técnicos ativos</span>
+        </div>
+        <ul class="lista-gestor">
+          <li>
+            <span class="avatar-gestor">CR</span>
+            <div class="texto-gestor">
+              <strong>Carlos Ribeiro</strong>
+              <span>4 OS em andamento</span>
             </div>
+            <span class="status-gestor verde">Disponível</span>
+          </li>
+          <li>
+            <span class="avatar-gestor">AM</span>
+            <div class="texto-gestor">
+              <strong>Ana Moreira</strong>
+              <span>6 OS em andamento</span>
+            </div>
+            <span class="status-gestor amarelo">Ocupada</span>
+          </li>
+          <li>
+            <span class="avatar-gestor">JS</span>
+            <div class="texto-gestor">
+              <strong>João Santos</strong>
+              <span>2 OS em andamento</span>
+            </div>
+            <span class="status-gestor verde">Disponível</span>
+          </li>
+          <li>
+            <span class="avatar-gestor">PL</span>
+            <div class="texto-gestor">
+              <strong>Patrícia Lima</strong>
+              <span>Férias até 20/10</span>
+            </div>
+            <span class="status-gestor cinza">Ausente</span>
+          </li>
+        </ul>
+      </section>
+      <section class="tela-gestor tela-equipamentos" aria-label="Equipamentos">
+        <div class="cabecalho-gestor">
+          <h2>Equipamentos</h2>
+          <span>48 cadastrados</span>
+        </div>
+        <ul class="lista-gestor">
+          <li>
+            <div class="texto-gestor">
+              <strong>Ar-condicionado · Sala 12</strong>
+              <span>Última inspeção há 12 dias</span>
+            </div>
+            <span class="status-gestor verde">Ativo</span>
+          </li>
+          <li>
+            <div class="texto-gestor">
+              <strong>Ar-condicionado · Biblioteca</strong>
+              <span>PMOC pendente</span>
+            </div>
+            <span class="status-gestor amarelo">Pendente</span>
+          </li>
+          <li>
+            <div class="texto-gestor">
+              <strong>Ar-condicionado · Sala de Informática</strong>
+              <span>Em manutenção</span>
+            </div>
+            <span class="status-gestor vermelho">Parado</span>
+          </li>
+          <li>
+            <div class="texto-gestor">
+              <strong>Ar-condicionado · Auditório</strong>
+              <span>PMOC concluído</span>
+            </div>
+            <span class="status-gestor verde">Ativo</span>
+          </li>
+        </ul>
+      </section>
+      <section class="tela-gestor tela-calendario" aria-label="Calendário">
+        <div class="cabecalho-gestor">
+          <h2>Outubro 2026</h2>
+          <span>11 visitas agendadas</span>
+        </div>
+        <table class="calendario-gestor" aria-label="Agenda de visitas de outubro de 2026">
+          <thead>
+            <tr>
+              <th scope="col">
+                <abbr title="Domingo">D</abbr>
+              </th>
+              <th scope="col">
+                <abbr title="Segunda-feira">S</abbr>
+              </th>
+              <th scope="col">
+                <abbr title="Terça-feira">T</abbr>
+              </th>
+              <th scope="col">
+                <abbr title="Quarta-feira">Q</abbr>
+              </th>
+              <th scope="col">
+                <abbr title="Quinta-feira">Q</abbr>
+              </th>
+              <th scope="col">
+                <abbr title="Sexta-feira">S</abbr>
+              </th>
+              <th scope="col">
+                <abbr title="Sábado">S</abbr>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span>11</span>
+              </td>
+              <td>
+                <span>12</span>
+                <i class="visita" aria-label="Visita agendada"></i>
+              </td>
+              <td>
+                <span>13</span>
+              </td>
+              <td>
+                <span>14</span>
+                <i class="visita urgente" aria-label="Visita agendada"></i>
+              </td>
+              <td>
+                <span>15</span>
+                <i class="visita" aria-label="Visita agendada"></i>
+              </td>
+              <td class="dia-selecionado" aria-label="16 de outubro, selecionado">
+                <span>16</span>
+              </td>
+              <td>
+                <span>17</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span>18</span>
+              </td>
+              <td>
+                <span>19</span>
+                <i class="visita" aria-label="Visita agendada"></i>
+              </td>
+              <td>
+                <span>20</span>
+                <i class="visita" aria-label="Visita agendada"></i>
+              </td>
+              <td>
+                <span>21</span>
+              </td>
+              <td>
+                <span>22</span>
+                <i class="visita" aria-label="Visita agendada"></i>
+              </td>
+              <td>
+                <span>23</span>
+              </td>
+              <td>
+                <span>24</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span>25</span>
+              </td>
+              <td>
+                <span>26</span>
+              </td>
+              <td>
+                <span>27</span>
+                <i class="visita" aria-label="Visita agendada"></i>
+              </td>
+              <td>
+                <span>28</span>
+              </td>
+              <td>
+                <span>29</span>
+                <i class="visita" aria-label="Visita agendada"></i>
+              </td>
+              <td>
+                <span>30</span>
+                <i class="visita" aria-label="Visita agendada"></i>
+              </td>
+              <td>
+                <span>31</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section class="tela-gestor tela-relatorios" aria-label="Relatórios">
+        <div class="cabecalho-gestor">
+          <h2>Relatórios</h2>
+          <span>Prontos para exportar</span>
+        </div>
+        <ul class="lista-gestor">
+          <li>
+            <div class="texto-gestor">
+              <strong>Inspeções PMOC · Setembro</strong>
+              <span>Planilha · 24 checklists</span>
+            </div>
+            <button class="exportar-gestor" type="button">Exportar</button>
+          </li>
+          <li>
+            <div class="texto-gestor">
+              <strong>Desempenho da equipe · 3º trimestre</strong>
+              <span>PDF · 9 técnicos</span>
+            </div>
+            <button class="exportar-gestor" type="button">Exportar</button>
+          </li>
+          <li>
+            <div class="texto-gestor">
+              <strong>Ordens atrasadas · Outubro</strong>
+              <span>Planilha · 14 ordens</span>
+            </div>
+            <button class="exportar-gestor" type="button">Exportar</button>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</div>
           </div>
         </div>
       </section>
       <div class="guia-manu">
-<img src="assets/img/comum/bolinha-manu.svg" alt=""><p>Agora veja o caminho de cada chamado, passo a passo.</p>
-<a href="#fluxo" aria-label="Ir para a próxima seção"><img src="assets/img/comum/seta4.svg" alt=""></a>
+<img src="assets/img/comum/manu-oficial.png" alt=""><a class="guia-acao" href="#fluxo" role="button"><p>Agora veja o caminho de cada chamado, passo a passo.</p>
+<span class="guia-seta"><img src="assets/img/comum/seta4.svg" alt=""></span>
+</a>
 </div>
 <section class="fluxo-completo" id="fluxo">
         <p class="titulo-fluxo">01 · FLUXO COMPLETO</p>
@@ -161,7 +423,7 @@
           <h2> Cada perfil vê exatamente o que precisa </h2>
           <p class="descricao-perfis"> Funcionalidades específicas para solicitante, técnico e gestor — sem excesso de informação. </p>
           <div class="cards-perfis">
-            <div class="card-perfil">
+            <article class="card-perfil">
               <div class="icone-perfil">
                 <img src="assets/img/comum/solicitante.svg" alt="">
               </div>
@@ -178,8 +440,8 @@
                 <p>
                   <span>—</span> Recebe atualizações em tempo real </p>
               </div>
-            </div>
-            <div class="card-perfil">
+            </article>
+            <article class="card-perfil">
               <div class="icone-perfil">
                 <img src="assets/img/comum/tecnico.svg" alt="">
               </div>
@@ -196,8 +458,8 @@
                 <p>
                   <span>—</span> Preenche checklists PMOC </p>
               </div>
-            </div>
-            <div class="card-perfil">
+            </article>
+            <article class="card-perfil">
               <div class="icone-perfil">
                 <img src="assets/img/comum/gestor.svg" alt="">
               </div>
@@ -214,13 +476,14 @@
                 <p>
                   <span>—</span> Gera relatórios de inspeção </p>
               </div>
-            </div>
+            </article>
           </div>
         </div>
       </section>
       <div class="guia-manu">
-<img src="assets/img/comum/bolinha-manu.svg" alt=""><p>Agora veja o que a Manu faz por você.</p>
-<a href="#manu" aria-label="Ir para a próxima seção"><img src="assets/img/comum/seta4.svg" alt=""></a>
+<img src="assets/img/comum/manu-oficial.png" alt=""><a class="guia-acao" href="#manu" role="button"><p>Agora veja o que a Manu faz por você.</p>
+<span class="guia-seta"><img src="assets/img/comum/seta4.svg" alt=""></span>
+</a>
 </div>
 <section class="inteligencia-artificial" id="manu">
         <div class="ia-conteudo">
@@ -387,12 +650,10 @@
         <div class="footer-linha"></div>
         <div class="footer-baixo">
           <p> © 2026 Fixa | Todos os direitos reservados </p>
-          <a href="/login" class="area-restrita"> Área restrita </a>
+          <a href="login" class="area-restrita"> Área restrita </a>
         </div>
       </div>
     </footer>
-  </body>
+  <script src="assets/js/feedback.js" defer></script>
+</body>
 </html>
-
-
-

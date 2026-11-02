@@ -1,4 +1,4 @@
-﻿* {
+* {
   box-sizing: border-box;
 }
 
@@ -390,3 +390,9 @@ button:focus-visible {
   }
 }
 
+.campo-cadastro select { padding: 14px 44px 14px 18px; }
+.regras-senha .atendida { color:#193F7D; }
+.regras-senha .atendida::marker { content:"✓  "; }
+
+.cadastro-inicial .campo-cadastro input, .cadastro-inicial .campo-cadastro select { min-height:56px; height:auto; padding:16px 18px; }
+.cadastro-inicial .campo-cadastro select { padding-right:48px; }

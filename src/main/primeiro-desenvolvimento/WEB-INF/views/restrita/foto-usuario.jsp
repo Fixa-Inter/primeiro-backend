@@ -4,288 +4,271 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fotos de usuário | FIXA</title>
-    <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
-    <link rel="stylesheet" href="../../assets/css/crud.css" />
-    <script src="../../assets/js/operadores-filtro.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+      Fotos de usuário | FIXA
+    </title>
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/img/crud/simbolo-fixa.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/fontes/fontes.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/crud.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/feedback.css">
   </head>
   <body data-entidade="fotos-usuario">
-    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+    <input type="checkbox" id="menu-fixado" class="controle-sidebar" aria-label="Fixar ou recolher menu">
+    <input type="checkbox" id="menu-aberto" class="controle-sidebar" aria-label="Abrir ou fechar menu">
+    <a class="pular-conteudo" href="#conteudo">
+      Pular para o conteúdo
+    </a>
+    <label class="abrir-menu" for="menu-aberto">
+      ☰ Menu
+    </label>
     <aside class="menu-lateral" aria-label="Menu administrativo">
-      <button
-        class="marca-menu"
-        type="button"
-        id="controle-menu"
-        aria-label="Expandir menu lateral"
-        aria-expanded="false"
-      >
-        <img class="simbolo" src="../../assets/img/crud/simbolo-fixa.svg" alt="" />
-        <img class="logo-menu" src="../../assets/img/crud/logo-fixa.svg" alt="FIXA" />
-      </button>
+      <label class="marca-menu fixar-menu" for="menu-fixado" title="Fixar ou recolher menu">
+        <img class="simbolo" src="${pageContext.request.contextPath}/assets/img/crud/simbolo-fixa.svg" alt="">
+        <img class="logo-menu" src="${pageContext.request.contextPath}/assets/img/crud/logo-fixa.svg" alt="FIXA">
+        <span class="sr-only">
+          Fixar ou recolher menu
+        </span>
+      </label>
       <nav class="navegacao" aria-label="Páginas do CRUD">
-        <a href="../index.html" title="Página inicial">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M3 11.5 12 4l9 7.5"></path>
-            <path d="M5.5 10v9a1 1 0 0 0 1 1H10v-6h4v6h3.5a1 1 0 0 0 1-1v-9"></path>
+        <a href="${pageContext.request.contextPath}/analiticos" title="Página inicial">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 11.5 12 4l9 7.5">
+            </path>
+            <path d="M5.5 10v9a1 1 0 0 0 1 1H10v-6h4v6h3.5a1 1 0 0 0 1-1v-9">
+            </path>
           </svg>
-          <span class="texto-menu">Página inicial</span>
+          <span class="texto-menu">
+            Página inicial
+          </span>
         </a>
-        <a href="/instituicoes" title="Instituições">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <rect x="4" y="3" width="16" height="18" rx="1.5"></rect>
-            <path d="M9 21v-5h6v5"></path>
-            <path d="M8.5 7.5h1M14.5 7.5h1M8.5 11.5h1M14.5 11.5h1M8.5 15.5h1M14.5 15.5h1"></path>
+        <a href="${pageContext.request.contextPath}/instituicoes" title="Instituições">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="4" y="3" width="16" height="18" rx="1.5">
+            </rect>
+            <path d="M9 21v-5h6v5">
+            </path>
+            <path d="M8.5 7.5h1M14.5 7.5h1M8.5 11.5h1M14.5 11.5h1M8.5 15.5h1M14.5 15.5h1">
+            </path>
           </svg>
-          <span class="texto-menu">Instituições</span>
+          <span class="texto-menu">
+            Instituições
+          </span>
         </a>
-        <a href="/usuarios" title="Usuários">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path
-              d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
-            ></path>
-            <circle cx="9" cy="7" r="4"></circle>
+        <a href="${pageContext.request.contextPath}/usuarios" title="Usuários">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75">
+            </path>
+            <circle cx="9" cy="7" r="4">
+            </circle>
           </svg>
-          <span class="texto-menu">Usuários</span>
+          <span class="texto-menu">
+            Usuários
+          </span>
         </a>
-        <a href="/enderecos" title="Endereços">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
+        <a href="${pageContext.request.contextPath}/enderecos" title="Endereços">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z">
+            </path>
+            <circle cx="12" cy="10" r="3">
+            </circle>
           </svg>
-          <span class="texto-menu">Endereços</span>
+          <span class="texto-menu">
+            Endereços
+          </span>
         </a>
-        <a href="/superAdmin" title="Super administradores">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+        <a href="${pageContext.request.contextPath}/superAdmin" title="Super administradores">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z">
+            </path>
           </svg>
-          <span class="texto-menu">Super administradores</span>
+          <span class="texto-menu">
+            Super administradores
+          </span>
         </a>
-        <a href="/planos" title="Planos">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5"></path>
+        <a href="${pageContext.request.contextPath}/planos" title="Planos">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5">
+            </path>
           </svg>
-          <span class="texto-menu">Planos</span>
+          <span class="texto-menu">
+            Planos
+          </span>
         </a>
-        <a href="/contratos" title="Contratos">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-            <line x1="10" y1="9" x2="8" y2="9"></line>
+        <a href="${pageContext.request.contextPath}/contratos" title="Contratos">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z">
+            </path>
+            <polyline points="14 2 14 8 20 8">
+            </polyline>
+            <line x1="16" y1="13" x2="8" y2="13">
+            </line>
+            <line x1="16" y1="17" x2="8" y2="17">
+            </line>
+            <line x1="10" y1="9" x2="8" y2="9">
+            </line>
           </svg>
-          <span class="texto-menu">Contratos</span>
+          <span class="texto-menu">
+            Contratos
+          </span>
         </a>
-        <a href="/pagamentos" title="Pagamentos">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-            <path d="M2 10h20M6 16h4"></path>
+        <a href="${pageContext.request.contextPath}/pagamentos" title="Pagamentos">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="4" width="20" height="16" rx="2">
+            </rect>
+            <path d="M2 10h20M6 16h4">
+            </path>
           </svg>
-          <span class="texto-menu">Pagamentos</span>
+          <span class="texto-menu">
+            Pagamentos
+          </span>
         </a>
-        <a href="/fotoUsuario" title="Fotos de usuário" aria-current="page">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-            <polyline points="21 15 16 10 5 21"></polyline>
+        <a href="${pageContext.request.contextPath}/fotoUsuario" title="Fotos de usuário" aria-current="page">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2">
+            </rect>
+            <circle cx="8.5" cy="8.5" r="1.5">
+            </circle>
+            <polyline points="21 15 16 10 5 21">
+            </polyline>
           </svg>
-          <span class="texto-menu">Fotos de usuário</span>
+          <span class="texto-menu">
+            Fotos de usuário
+          </span>
         </a>
       </nav>
       <div class="rodape-menu">
-        <a href="../../jsp/login.html" class="voltar-login">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            aria-hidden="true"
-          >
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path>
+        <a href="${pageContext.request.contextPath}/login" class="voltar-login">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9">
+            </path>
           </svg>
-          <span class="texto-menu">Sair</span>
+          <span class="texto-menu">
+            Sair
+          </span>
         </a>
       </div>
+      <label for="menu-aberto" class="fechar-menu">
+        Fechar menu ×
+      </label>
     </aside>
+    <label class="fundo-menu" for="menu-aberto" aria-label="Fechar menu">
+    </label>
     <div class="pagina">
       <header class="cabecalho">
         <div>
-          <h1>Fotos de usuário</h1>
-          <p>Consulte, filtre e edite os registros de fotos de usuário.</p>
+          <h1>
+            Fotos de usuário
+          </h1>
+          <p>
+            Consulte, filtre e edite os registros de fotos de usuário.
+          </p>
         </div>
         <div class="acoes">
-          <a class="botao" id="novo" href="/fotoUsuario?action=create">+ Novo</a>
+          <a class="botao" id="novo" href="${pageContext.request.contextPath}/fotoUsuario?action=create">
+            + Novo
+          </a>
         </div>
       </header>
       <main class="conteudo" id="conteudo">
         <section class="cartao lista" aria-label="Registros de fotos de usuário">
           <div class="barra-tabela">
-            <strong id="contagem" role="status"><%= fotos == null ? 0 : fotos.size() %> <%= fotos != null && fotos.size() == 1 ? "registro" : "registros" %></strong>
-            <form id="filtro-form" class="filtros" role="search" action="/fotoUsuario" method="get"><input type="hidden" name="action" value="read" />
-              <label class="sr-only" for="campo-filtro">Campo</label>
-              <select id="campo-filtro" name="campo">
-                <option value="id">ID</option>
-                <option value="fk_usuario_id">Usuário</option>
-              </select>
-              <label class="sr-only" for="operador-filtro">Operador</label>
-              <select id="operador-filtro" name="operador">
-                <option value="IGUAL">=</option>
-              </select>
-              <label class="sr-only" for="valor-filtro">Valor do filtro</label>
-              <input
-                type="number"
-                id="valor-filtro"
-                name="valor"
-                placeholder="Valor"
-              />
-              <button class="botao botao-secundario" type="button">+ Filtro</button>
-            </form>
-            </div>
-          <div
-            class="tabela-rolagem"
-            tabindex="0"
-            role="region"
-            aria-label="Tabela de fotos de usuário, com rolagem horizontal e vertical"
-          >
-            <table>
-              <caption class="sr-only">Fotos de usuário, ordenadas por ID crescente.</caption>
+            <strong id="contagem" role="status">
+              <%= fotos == null ? 0 : fotos.size() %>
+              <%= fotos != null && fotos.size() == 1 ? "registro" : "registros" %>
+            </strong>
+            <%@ page import="com.utils.ListaWeb" %>
+<% String pesquisa = request.getParameter("pesquisa"); String erro = (String) request.getAttribute("erro"); %>
+<form id="filtro-form" class="filtros" role="search" action="${pageContext.request.contextPath}/fotoUsuario" method="get">
+  <input type="hidden" name="action" value="read">
+  <label class="sr-only" for="pesquisa">Pesquisar em todos os campos</label>
+  <input type="search" id="pesquisa" name="pesquisa" placeholder="Pesquisar em todos os campos" autocomplete="off" value="<%= ListaWeb.escapar(pesquisa) %>">
+  <button class="botao botao-secundario" type="submit">Pesquisar</button>
+</form>
+          </div>
+          <div class="tabela-rolagem" tabindex="0" role="region" aria-label="Tabela de fotos de usuário, com rolagem horizontal e vertical">
+            <table class="tabela-crud">
+              <caption class="sr-only">
+                Use os cabeçalhos para alternar entre ordem crescente e decrescente.
+              </caption>
               <thead>
                 <tr>
-                  <th scope="col" data-campo="id" aria-sort="ascending">
-                    ID
-                    <svg
-                      class="icone-ordenacao"
-                      viewBox="0 0 12 18"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path class="seta-cima" d="m2 6 4-4 4 4"></path>
-                    </svg>
-                  </th>
+                  <th scope="col" data-campo="id">ID</th>
                   <th scope="col" data-campo="data_registro">Data de registro</th>
                   <th scope="col" data-campo="url">URL da foto</th>
-                  <th scope="col" data-campo="usuario_nome" class="coluna-relacionada">
-                    Nome do usuário
+                  <th scope="col" data-campo="usuario_nome" class="coluna-relacionada">Nome do usuário</th>
+                  <th scope="col" data-campo="email_usuario" class="coluna-relacionada">E-mail do usuário</th>
+                  <th scope="col" class="coluna-acoes">
+                    Ações
                   </th>
-                  <th scope="col" data-campo="email_usuario" class="coluna-relacionada">
-                    E-mail do usuário
-                  </th>
-                  <th scope="col" class="coluna-acoes">Ações</th>
                 </tr>
               </thead>
               <tbody id="registros">
-                                    <%
-        if (fotos != null && !fotos.isEmpty()) {
-            for (FotoUsuarioDTO foto : fotos) {
-    %>
-                  <tr>
-                    <td><%= foto.getId() %></td><td><%= foto.getDataRegistro() %></td><td><%= foto.getUrl() %></td><td class="coluna-relacionada"><%= foto.getUsuarioNome() %></td><td class="coluna-relacionada"><%= foto.getUsuarioEmail() %></td>
-                    <td class="coluna-acoes"><div class="acoes-linha"><a class="editar" href="/fotoUsuario?action=update&id=<%= foto.getId() %>">Editar</a><form action="/fotoUsuario" method="post" class="form-excluir"><input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value="<%= foto.getId() %>" /><button class="excluir" type="submit">Excluir</button></form></div></td>
-                  </tr>
-    <% } } else { %>
-                  <tr><td class="vazio" colspan="6">Nenhum registro encontrado.</td></tr>
-    <% } %>
+                <%
+                if (fotos != null && !fotos.isEmpty()) {
+                for (FotoUsuarioDTO foto : fotos) {
+                %>
+                <tr>
+                  <td data-rotulo="ID" data-campo="id">
+                    <%= foto.getId() %>
+                  </td>
+                  <td data-rotulo="Data de registro" data-campo="data_registro">
+                    <%= foto.getDataRegistro() %>
+                  </td>
+                  <td data-campo="url" data-rotulo="URL da foto" class=" campo-largo">
+                    <%= foto.getUrl() %>
+                  </td>
+                  <td class="coluna-relacionada" data-rotulo="Nome do usuário" data-campo="usuario_nome">
+                    <%= foto.getUsuarioNome() %>
+                  </td>
+                  <td class="coluna-relacionada" data-rotulo="E-mail do usuário" data-campo="email_usuario">
+                    <%= foto.getUsuarioEmail() %>
+                  </td>
+                  <td class="coluna-acoes" data-rotulo="Ações" data-campo="acoes">
+                    <div class="acoes-linha">
+                      <a class="editar" href="${pageContext.request.contextPath}/fotoUsuario?action=update&id=<%= foto.getId() %>">
+                        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                          <path d="M16 3l5 5L8 21H3v-5L16 3Z M14 5l5 5">
+                          </path>
+                        </svg>
+                        Editar
+                      </a>
+                      <form action="${pageContext.request.contextPath}/fotoUsuario" method="post" class="form-excluir">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="id" value="<%= foto.getId() %>">
+                        <button class="excluir" type="submit">
+                          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7">
+                            </path>
+                          </svg>
+                          Excluir
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                <% } } else { %>
+                <tr>
+                  <td class="vazio" colspan="6">
+                    Nenhum registro encontrado.
+                  </td>
+                </tr>
+                <% } %>
               </tbody>
             </table>
           </div>
-          <footer class="rodape-tabela" id="rodape-tabela"><%= fotos == null ? 0 : fotos.size() %> de <%= fotos == null ? 0 : fotos.size() %> <%= fotos != null && fotos.size() == 1 ? "registro" : "registros" %></footer>
+          <footer class="rodape-tabela" id="rodape-tabela">
+            <%= fotos == null ? 0 : fotos.size() %>
+            de
+            <%= fotos == null ? 0 : fotos.size() %>
+            <%= fotos != null && fotos.size() == 1 ? "registro" : "registros" %>
+          </footer>
         </section>
-
-        <p class="mensagem" id="mensagem" role="status" aria-live="polite"></p>
+        <p class="mensagem" id="mensagem" role="status" aria-live="polite"><%= erro == null ? "" : ListaWeb.escapar(erro) %></p>
       </main>
     </div>
+    <script src="${pageContext.request.contextPath}/assets/js/feedback.js" defer>
+    </script>
   </body>
 </html>
-
-
-
-

@@ -3,283 +3,254 @@
 <% String erro = (String) request.getAttribute("erro"); %>
 <html lang="pt-BR">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cadastrar instituição | FIXA</title>
-    <link rel="icon" href="../../assets/img/crud/simbolo-fixa.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../../assets/fontes/fontes.css" />
-    <link rel="stylesheet" href="../../assets/css/crud.css" />
-      <link rel="stylesheet" href="../../assets/css/senha.css">
-    <script src="../../assets/js/senha.js" defer></script>
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+      Cadastrar instituição | FIXA
+    </title>
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/img/crud/simbolo-fixa.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/fontes/fontes.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/crud.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/senha.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/feedback.css">
+    <script src="${pageContext.request.contextPath}/assets/js/senha.js" defer>
+    </script>
+  </head>
   <body data-entidade="instituicoes" data-operacao="novo">
-    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+    <input type="checkbox" id="menu-fixado" class="controle-sidebar" aria-label="Fixar ou recolher menu">
+    <input type="checkbox" id="menu-aberto" class="controle-sidebar" aria-label="Abrir ou fechar menu">
+    <a class="pular-conteudo" href="#conteudo">
+      Pular para o conteúdo
+    </a>
+    <label class="abrir-menu" for="menu-aberto">
+      ☰ Menu
+    </label>
     <aside class="menu-lateral" aria-label="Menu administrativo">
-      <button
-        class="marca-menu"
-        type="button"
-        id="controle-menu"
-        aria-label="Expandir menu lateral"
-        aria-expanded="false"
-      >
-        <img class="simbolo" src="../../assets/img/crud/simbolo-fixa.svg" alt="" />
-        <img class="logo-menu" src="../../assets/img/crud/logo-fixa.svg" alt="FIXA" />
-      </button>
+      <label class="marca-menu fixar-menu" for="menu-fixado" title="Fixar ou recolher menu">
+        <img class="simbolo" src="${pageContext.request.contextPath}/assets/img/crud/simbolo-fixa.svg" alt="">
+        <img class="logo-menu" src="${pageContext.request.contextPath}/assets/img/crud/logo-fixa.svg" alt="FIXA">
+        <span class="sr-only">
+          Fixar ou recolher menu
+        </span>
+      </label>
       <nav class="navegacao" aria-label="Páginas do CRUD">
-        <a href="../index.html" title="Página inicial">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M3 11.5 12 4l9 7.5"></path>
-            <path d="M5.5 10v9a1 1 0 0 0 1 1H10v-6h4v6h3.5a1 1 0 0 0 1-1v-9"></path>
+        <a href="${pageContext.request.contextPath}/analiticos" title="Página inicial">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 11.5 12 4l9 7.5">
+            </path>
+            <path d="M5.5 10v9a1 1 0 0 0 1 1H10v-6h4v6h3.5a1 1 0 0 0 1-1v-9">
+            </path>
           </svg>
-          <span class="texto-menu">Página inicial</span>
+          <span class="texto-menu">
+            Página inicial
+          </span>
         </a>
-        <a href="/instituicoes" title="Instituições" aria-current="page">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <rect x="4" y="3" width="16" height="18" rx="1.5"></rect>
-            <path d="M9 21v-5h6v5"></path>
-            <path d="M8.5 7.5h1M14.5 7.5h1M8.5 11.5h1M14.5 11.5h1M8.5 15.5h1M14.5 15.5h1"></path>
+        <a href="${pageContext.request.contextPath}/instituicoes" title="Instituições" aria-current="page">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="4" y="3" width="16" height="18" rx="1.5">
+            </rect>
+            <path d="M9 21v-5h6v5">
+            </path>
+            <path d="M8.5 7.5h1M14.5 7.5h1M8.5 11.5h1M14.5 11.5h1M8.5 15.5h1M14.5 15.5h1">
+            </path>
           </svg>
-          <span class="texto-menu">Instituições</span>
+          <span class="texto-menu">
+            Instituições
+          </span>
         </a>
-        <a href="/usuarios" title="Usuários">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path
-              d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
-            ></path>
-            <circle cx="9" cy="7" r="4"></circle>
+        <a href="${pageContext.request.contextPath}/usuarios" title="Usuários">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75">
+            </path>
+            <circle cx="9" cy="7" r="4">
+            </circle>
           </svg>
-          <span class="texto-menu">Usuários</span>
+          <span class="texto-menu">
+            Usuários
+          </span>
         </a>
-        <a href="/enderecos" title="Endereços">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
+        <a href="${pageContext.request.contextPath}/enderecos" title="Endereços">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z">
+            </path>
+            <circle cx="12" cy="10" r="3">
+            </circle>
           </svg>
-          <span class="texto-menu">Endereços</span>
+          <span class="texto-menu">
+            Endereços
+          </span>
         </a>
-        <a href="/superAdmin" title="Super administradores">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+        <a href="${pageContext.request.contextPath}/superAdmin" title="Super administradores">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z">
+            </path>
           </svg>
-          <span class="texto-menu">Super administradores</span>
+          <span class="texto-menu">
+            Super administradores
+          </span>
         </a>
-        <a href="/planos" title="Planos">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5"></path>
+        <a href="${pageContext.request.contextPath}/planos" title="Planos">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5">
+            </path>
           </svg>
-          <span class="texto-menu">Planos</span>
+          <span class="texto-menu">
+            Planos
+          </span>
         </a>
-        <a href="/contratos" title="Contratos">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-            <line x1="10" y1="9" x2="8" y2="9"></line>
+        <a href="${pageContext.request.contextPath}/contratos" title="Contratos">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z">
+            </path>
+            <polyline points="14 2 14 8 20 8">
+            </polyline>
+            <line x1="16" y1="13" x2="8" y2="13">
+            </line>
+            <line x1="16" y1="17" x2="8" y2="17">
+            </line>
+            <line x1="10" y1="9" x2="8" y2="9">
+            </line>
           </svg>
-          <span class="texto-menu">Contratos</span>
+          <span class="texto-menu">
+            Contratos
+          </span>
         </a>
-        <a href="/pagamentos" title="Pagamentos">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-            <path d="M2 10h20M6 16h4"></path>
+        <a href="${pageContext.request.contextPath}/pagamentos" title="Pagamentos">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="4" width="20" height="16" rx="2">
+            </rect>
+            <path d="M2 10h20M6 16h4">
+            </path>
           </svg>
-          <span class="texto-menu">Pagamentos</span>
+          <span class="texto-menu">
+            Pagamentos
+          </span>
         </a>
-        <a href="/fotoUsuario" title="Fotos de usuário">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-            <polyline points="21 15 16 10 5 21"></polyline>
+        <a href="${pageContext.request.contextPath}/fotoUsuario" title="Fotos de usuário">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2">
+            </rect>
+            <circle cx="8.5" cy="8.5" r="1.5">
+            </circle>
+            <polyline points="21 15 16 10 5 21">
+            </polyline>
           </svg>
-          <span class="texto-menu">Fotos de usuário</span>
+          <span class="texto-menu">
+            Fotos de usuário
+          </span>
         </a>
       </nav>
       <div class="rodape-menu">
-        <a href="../../jsp/login.html" class="voltar-login">
-          <svg
-            class="icone"
-            viewbox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            aria-hidden="true"
-          >
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path>
+        <a href="${pageContext.request.contextPath}/login" class="voltar-login">
+          <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9">
+            </path>
           </svg>
-          <span class="texto-menu">Sair</span>
+          <span class="texto-menu">
+            Sair
+          </span>
         </a>
       </div>
+      <label for="menu-aberto" class="fechar-menu">
+        Fechar menu ×
+      </label>
     </aside>
+    <label class="fundo-menu" for="menu-aberto" aria-label="Fechar menu">
+    </label>
     <div class="pagina">
       <header class="cabecalho">
         <div>
-          <h1>Cadastrar instituição</h1>
-          <p>Preencha os dados do registro.</p>
+          <h1>
+            Cadastrar instituição
+          </h1>
+          <p>
+            Preencha os dados do registro.
+          </p>
         </div>
-        <a class="botao botao-secundario" href="/instituicoes">Voltar para a lista</a>
+        <a class="botao botao-secundario" href="${pageContext.request.contextPath}/instituicoes">
+          Voltar para a lista
+        </a>
       </header>
       <main class="conteudo" id="conteudo">
         <section class="cartao formulario-pagina" aria-labelledby="titulo-formulario">
           <div class="titulo-cartao">
-            <h2 id="titulo-formulario">Cadastrar instituição</h2>
+            <h2 id="titulo-formulario">
+              Cadastrar instituição
+            </h2>
           </div>
-          <form
-            action="/instituicoes"
-            method="post"
-            aria-describedby="aviso-formulario erro-formulario"
-            id="registro-form"
-          >
-            <input type="hidden" name="id" value="" />
-            <input type="hidden" name="action" value="create" />
+          <form action="${pageContext.request.contextPath}/instituicoes" method="post" aria-describedby="aviso-formulario erro-formulario" id="registro-form">
+            <input type="hidden" name="id" value="">
+            <input type="hidden" name="action" value="create">
             <div class="corpo-formulario">
-              <p class="orientacao" id="aviso-formulario">Campos com * são obrigatórios.</p>
-              <p class="mensagem erro" id="erro-formulario" role="alert" aria-live="assertive"><%= erro == null ? "" : erro %></p>
+              <p class="orientacao" id="aviso-formulario">
+                Campos com * são obrigatórios.
+              </p>
+              <p class="mensagem erro" id="erro-formulario" role="alert" aria-live="assertive">
+                <%= erro == null ? "" : erro %>
+              </p>
               <div class="campo">
-                <label for="nome">Nome *</label>
-                <input
-                  type="text"
-                  id="nome"
-                  name="nome" required
-                  autocomplete="name"
-                  placeholder="Ex: Colégio Aurora"
-                  value=""
-                />
+                <label for="nome">
+                  Nome *
+                </label>
+                <input type="text" id="nome" name="nome" required autocomplete="name" placeholder="Ex: Colégio Aurora" value="">
               </div>
               <div class="campo">
-                <label for="email_corporativo">E-mail corporativo *</label>
-                <input
-                  type="email"
-                  id="email_corporativo"
-                  name="emailCorporativo" required
-                  placeholder="Ex: contato@suainstituicao.com.br"
-                  autocomplete="email"
-                  value=""
-                />
+                <label for="email_corporativo">
+                  E-mail corporativo *
+                </label>
+                <input type="email" id="email_corporativo" name="emailCorporativo" required placeholder="Ex: contato@suainstituicao.com.br" autocomplete="email" value="">
               </div>
               <div class="campo">
-                <label for="data_cadastro">Data de cadastro (gerada automaticamente)</label>
-                <input type="date" id="data_cadastro" disabled value="" />
+                <label for="data_cadastro">
+                  Data de cadastro (gerada automaticamente)
+                </label>
+                <input type="date" id="data_cadastro" disabled value="">
               </div>
               <div class="campo">
-                <label for="dominio_email">Domínio do e-mail</label>
-                <input
-                  type="text"
-                  id="dominio_email"
-                  name="dominioEmail"
-                  aria-describedby="ajuda-dominio_email"
-                  placeholder="Ex: aurora.edu.br"
-                  value=""
-                />
-                <small class="ajuda" id="ajuda-dominio_email">Informe um valor único.</small>
+                <label for="dominio_email">
+                  Domínio do e-mail
+                </label>
+                <input type="text" id="dominio_email" disabled aria-describedby="ajuda-dominio_email" placeholder="Ex: aurora.edu.br" value="">
+                <small class="ajuda" id="ajuda-dominio_email">
+                  Gerado automaticamente a partir do e-mail corporativo.
+                </small>
               </div>
               <div class="campo">
-                <label for="tipo_instituicao">Tipo de instituição *</label>
+                <label for="tipo_instituicao">
+                  Tipo de instituição *
+                </label>
                 <select id="tipo_instituicao" name="tipoInstituicao" required>
-                  <option value="">Selecione</option>
-                  <option value="1">Escola</option>
-                  <option value="2">Faculdade</option>
-                  <option value="3">Empresa</option>
-                  <option value="4">Órgão Público</option>
+                  <option value="">
+                    Selecione
+                  </option>
+                  <option value="1">
+                    Escola
+                  </option>
+                  <option value="2">
+                    Faculdade
+                  </option>
+                  <option value="3">
+                    Empresa
+                  </option>
+                  <option value="4">
+                    Órgão Público
+                  </option>
                 </select>
               </div>
               <div class="campo">
-                <label for="senha">Senha *</label>
+                <label for="senha">
+                  Senha *
+                </label>
                 <div class="campo-senha">
-                  <input
-                    type="password"
-                    id="senha"
-                    name="senha" required
-                    autocomplete="new-password"
-                    placeholder="Digite uma senha segura"
-                    aria-describedby="ajuda-senha"
-                  />
+                  <input type="password" id="senha" name="senha" required autocomplete="new-password" placeholder="Digite uma senha segura" aria-describedby="ajuda-senha">
                   <button class="mostrar-senha" type="button" data-campo="senha" aria-controls="senha" aria-label="Mostrar senha" aria-pressed="false" title="Mostrar senha">
                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                      <path class="risco-senha" d="m3 3 18 18"></path>
+                      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z">
+                      </path>
+                      <circle cx="12" cy="12" r="3">
+                      </circle>
+                      <path class="risco-senha" d="m3 3 18 18">
+                      </path>
                     </svg>
                   </button>
                 </div>
@@ -289,17 +260,20 @@
               </div>
             </div>
             <div class="rodape-formulario">
-              <a class="botao botao-secundario" href="/instituicoes">Cancelar</a>
-              <button class="botao" type="submit">Salvar</button>
+              <a class="botao botao-secundario" href="${pageContext.request.contextPath}/instituicoes">
+                Cancelar
+              </a>
+              <button class="botao" type="submit">
+                Salvar
+              </button>
             </div>
           </form>
         </section>
-        <p class="mensagem" id="mensagem" role="status" aria-live="polite"></p>
+        <p class="mensagem" id="mensagem" role="status" aria-live="polite">
+        </p>
       </main>
     </div>
+    <script src="${pageContext.request.contextPath}/assets/js/feedback.js" defer>
+    </script>
   </body>
 </html>
-
-
-
-

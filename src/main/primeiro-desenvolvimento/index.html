@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8">
@@ -9,20 +9,21 @@
     <link rel="icon" href="assets/img/comum/logo-claro.svg" media="(prefers-color-scheme: light)">
     <link rel="icon" href="assets/img/comum/logo-escuro.svg" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="assets/fontes/fontes.css">
+<link rel="stylesheet" href="assets/css/feedback.css">
 </head>
   <body>
     <header id="topo">
       <nav aria-label="Navegação principal">
-        <img src="assets/img/comum/logo1.svg" alt="Logo Fixa">
-        <div class="nav-links">
+        <a class="logo-navbar" href="#topo" aria-label="FIXA — início"><img src="assets/img/comum/logo1.svg" alt="Logo Fixa">
+        </a><div class="nav-links">
           <a href="#topo" class="inicio">Início</a>
           <a href="sobre.html" class="normal">Sobre</a>
           <a href="comofunciona.html" class="normal">Como funciona</a>
           <a href="#planos" class="normal" id="planos-link">Planos</a>
         </div>
         <div class="nav-buttons">
-          <a class="entrar" href="/login">Entrar</a>
-          <a class="cadastrar" href="/cadastro">Cadastrar</a>
+          <a class="entrar" href="login">Entrar</a>
+          <a class="cadastrar" href="cadastro">Cadastrar</a>
         </div>
         <details class="menu-mobile">
           <summary aria-label="Abrir ou fechar menu">
@@ -35,7 +36,7 @@
             <a href="sobre.html">Sobre</a>
             <a href="comofunciona.html">Como funciona</a>
             <a href="#planos">Planos</a>
-            <a href="/login">Entrar</a>
+            <a href="login">Entrar</a>
           </div>
         </details>
       </nav>
@@ -51,24 +52,19 @@
           <p class="para-solicitantes">Para solicitantes, técnicos e gestores de manutenção. <a href="#equipe">Ver os perfis ↓</a>
           </p>
         </div>
-        <div class="foto-header">
-          <img src="assets/img/comum/imagem1.svg" alt="Imagem do sistema Fixa">
-        <div class="hero-celular">
-<div class="kanban-celular"><img src="assets/img/comum/hero-quadro.svg" alt="Quadro de solicitações"></div>
-<div class="solicitacao-hero">
+        <div class="foto-header"><div class="hero-organizado">
+<img class="quadro-hero" src="assets/img/comum/hero-quadro.svg" alt="Quadro de solicitações de manutenção"><div class="solicitacao-hero">
 <small>● SOLICITAÇÃO</small><p>“Ar-condicionado da sala 12 com vazamento constante.”</p>
 <span>Categoria: Refrigeração</span> <span>Local: Sala 12</span>
 </div>
 <div class="manu-fala">
 <div class="balao-manu">
 <p class="rotulo-manu">MANU · ASSISTENTE</p>
-<p>Já abri a solicitação. Quer ver seus status de serviço?</p>
+<p>Já abri a solicitação. Quer ver suas ordens de serviço?</p>
 </div>
-<img src="assets/img/comum/manu-ferramenta.svg" alt="Manu">
+<img src="assets/img/comum/manu-foto.svg" alt="Manu, assistente do Fixa">
 </div>
-</div>
-</div>
-      </section>
+</div></div></section>
       <section class="quebra-linha">
         <img src="assets/img/comum/quebra-linha.svg" alt="">
       </section>
@@ -109,8 +105,9 @@
         </div>
       </section>
       <div class="guia-manu">
-<img src="assets/img/comum/bolinha-manu.svg" alt=""><p>Calma! Eu te mostro como o Fixa resolve isso.</p>
-<a href="#como-funciona" aria-label="Ir para a próxima seção"><img src="assets/img/comum/seta4.svg" alt=""></a>
+<img src="assets/img/comum/manu-oficial.png" alt=""><a class="guia-acao" href="#como-funciona" role="button"><p>Calma! Eu te mostro como o Fixa resolve isso.</p>
+<span class="guia-seta"><img src="assets/img/comum/seta4.svg" alt=""></span>
+</a>
 </div>
 <section class="como-funciona" id="como-funciona">
         <div class="como-funciona-texto">
@@ -243,10 +240,10 @@
           </div>
         </div>
       <div class="controles-cards" aria-label="Navegação dos cartões">
-<button type="button" class="anterior" aria-label="Cartão anterior">←</button><div class="pontos-cards">
+<button type="button" class="anterior" aria-label="Cartão anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7"></path></svg></button><div class="pontos-cards">
 <button type="button" data-indice="0" aria-label="Mostrar cartão 1"></button><button type="button" data-indice="1" aria-label="Mostrar cartão 2"></button><button type="button" data-indice="2" aria-label="Mostrar cartão 3"></button><button type="button" data-indice="3" aria-label="Mostrar cartão 4"></button><button type="button" data-indice="4" aria-label="Mostrar cartão 5"></button><button type="button" data-indice="5" aria-label="Mostrar cartão 6"></button><button type="button" data-indice="6" aria-label="Mostrar cartão 7"></button><button type="button" data-indice="7" aria-label="Mostrar cartão 8"></button>
 </div>
-<button type="button" class="proximo" aria-label="Próximo cartão">→</button>
+<button type="button" class="proximo" aria-label="Próximo cartão"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"></path></svg></button>
 </div></section>
       <section class="quebra-linha">
         <img src="assets/img/comum/quebra-linha.svg" alt="">
@@ -264,7 +261,7 @@
               <div class="dentro-chat-manu">
                 <div>
                   <div class="perfil-manu">
-                    <img src="assets/img/comum/bolinha-manu.svg" alt="manu-perfil">
+                    <img src="assets/img/comum/manu-oficial.png" alt="manu-perfil">
                     <div class="perfil-manu-texto">
                       <p class="manu">Manu</p>
                       <div class="perfil-manu-texto-online">
@@ -309,7 +306,7 @@
             <h3>Um sistema, três perfis de uso</h3>
           </div>
           <div class="cards-usuarios">
-            <div class="card-usuario">
+            <article class="card-usuario">
               <img class="icone-usuario" src="assets/img/comum/solicitante.svg" alt="">
               <h5 class="h5-card-usuario">Solicitante</h5>
               <p class="card-p"> Professores, inspetores e demais colaboradores que identificam um problema na instituição. </p>
@@ -327,8 +324,8 @@
                   <p>Recebe atualizações em tempo real</p>
                 </div>
               </div>
-            </div>
-            <div class="card-usuario">
+            </article>
+            <article class="card-usuario">
               <img class="icone-usuario" src="assets/img/comum/tecnico.svg" alt="">
               <h5 class="h5-card-usuario">Técnico de Manutenção</h5>
               <p class="card-p"> Responsável por executar e registrar a resolução das ordens de serviço atribuídas. </p>
@@ -346,8 +343,8 @@
                   <p>Acessa dashboard individual</p>
                 </div>
               </div>
-            </div>
-            <div class="card-usuario">
+            </article>
+            <article class="card-usuario">
               <img class="icone-usuario" src="assets/img/comum/gestor.svg" alt="">
               <h5 class="h5-card-usuario">Gestor de Manutenção</h5>
               <p class="card-p"> Supervisiona equipe, equipamentos e a operação completa da instituição. </p>
@@ -365,13 +362,14 @@
                   <p>Planeja calendário de manutenção</p>
                 </div>
               </div>
-            </div>
+            </article>
           </div>
         </div>
       </section>
       <div class="guia-manu">
-<img src="assets/img/comum/bolinha-manu.svg" alt=""><p>Tem um plano certo para cada tamanho de escola.</p>
-<a href="#planos" aria-label="Ir para a próxima seção"><img src="assets/img/comum/seta4.svg" alt=""></a>
+<img src="assets/img/comum/manu-oficial.png" alt=""><a class="guia-acao" href="#planos" role="button"><p>Tem um plano certo para cada tamanho de escola.</p>
+<span class="guia-seta"><img src="assets/img/comum/seta4.svg" alt=""></span>
+</a>
 </div>
 <section class="planos" id="planos">
         <p class="p-usuarios">07 · PLANOS</p>
@@ -399,7 +397,7 @@
               <li>Classificação de solicitações</li>
               <li>1 unidade escolar</li>
             </ul>
-            <a class="plano-btn" href="/cadastro">Começar</a>
+            <a class="plano-btn" href="cadastro">Começar</a>
           </div>
           <div class="plano-card destaque">
             <span class="badge">Mais popular</span>
@@ -418,7 +416,7 @@
               <li>Checklists PMOC</li>
               <li>Dashboard consolidado</li>
             </ul>
-            <a class="plano-btn" href="/cadastro">Começar</a>
+            <a class="plano-btn" href="cadastro">Começar</a>
           </div>
           <div class="plano-card">
             <div class="plano-nome">Premium</div>
@@ -436,13 +434,14 @@
               <li>Múltiplas unidades</li>
               <li>Exportações avançadas</li>
             </ul>
-            <a class="plano-btn" href="/cadastro">Começar</a>
+            <a class="plano-btn" href="cadastro">Começar</a>
           </div>
         </div>
       </section>
       <div class="guia-manu">
-<img src="assets/img/comum/bolinha-manu.svg" alt=""><p>Ficou alguma dúvida? Separei as mais comuns.</p>
-<a href="#faq" aria-label="Ir para a próxima seção"><img src="assets/img/comum/seta4.svg" alt=""></a>
+<img src="assets/img/comum/manu-oficial.png" alt=""><a class="guia-acao" href="#faq" role="button"><p>Ficou alguma dúvida? Separei as mais comuns.</p>
+<span class="guia-seta"><img src="assets/img/comum/seta4.svg" alt=""></span>
+</a>
 </div>
 <section class="faq-section" id="faq">
         <div class="faq-header">
@@ -523,13 +522,11 @@
         <div class="footer-linha"></div>
         <div class="footer-baixo">
           <p>© 2026 Fixa | Todos os direitos reservados</p>
-          <a href="/login" class="area-restrita"> Área restrita </a>
+          <a href="login" class="area-restrita"> Área restrita </a>
         </div>
       </div>
     </footer>
   <script src="assets/js/cards.js" defer></script>
+<script src="assets/js/feedback.js" defer></script>
 </body>
 </html>
-
-
-

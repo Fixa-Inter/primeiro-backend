@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8">
@@ -9,20 +9,21 @@
     <link rel="icon" href="assets/img/comum/logo-claro.svg" media="(prefers-color-scheme: light)">
     <link rel="icon" href="assets/img/comum/logo-escuro.svg" media="(prefers-color-scheme: dark)">
     <link rel="stylesheet" href="assets/fontes/fontes.css">
+<link rel="stylesheet" href="assets/css/feedback.css">
 </head>
   <body>
     <header id="topo">
       <nav aria-label="Navegação principal">
-        <img src="assets/img/comum/logo1.svg" alt="Logo Fixa">
-        <div class="nav-links">
+        <a class="logo-navbar" href="index.html#topo" aria-label="FIXA — início"><img src="assets/img/comum/logo1.svg" alt="Logo Fixa">
+        </a><div class="nav-links">
           <a href="index.html#topo" class="normal">Início</a>
           <a href="sobre.html" class="inicio" aria-current="page">Sobre</a>
           <a href="comofunciona.html" class="normal">Como funciona</a>
           <a href="index.html#planos" class="normal" id="planos-link">Planos</a>
         </div>
         <div class="nav-buttons">
-          <a class="entrar" href="/login">Entrar</a>
-          <a class="cadastrar" href="/cadastro">Cadastrar</a>
+          <a class="entrar" href="login">Entrar</a>
+          <a class="cadastrar" href="cadastro">Cadastrar</a>
         </div>
         <details class="menu-mobile">
           <summary aria-label="Abrir ou fechar menu">
@@ -35,7 +36,7 @@
             <a href="sobre.html">Sobre</a>
             <a href="comofunciona.html">Como funciona</a>
             <a href="index.html#planos">Planos</a>
-            <a href="/login">Entrar</a>
+            <a href="login">Entrar</a>
           </div>
         </details>
       </nav>
@@ -51,7 +52,7 @@
               <p class="rotulo-manu">MANU · ASSISTENTE</p>
               <p>Nasci junto com o Fixa, a partir das conversas com o gestor de manutenção da escola.</p>
             </div>
-            <img src="assets/img/comum/manu-ferramenta.svg" alt="Manu, assistente do Fixa">
+            <img src="assets/img/comum/manu-oficial.png" alt="Manu, assistente do Fixa">
           </div>
         </div>
       </section>
@@ -136,8 +137,9 @@
         </div>
       </section>
       <div class="guia-manu">
-<img src="assets/img/comum/bolinha-manu.svg" alt=""><p>E quem tira tudo isso do papel? Conheça a equipe.</p>
-<a href="#equipe" aria-label="Ir para a próxima seção"><img src="assets/img/comum/seta4.svg" alt=""></a>
+<img src="assets/img/comum/manu-oficial.png" alt=""><a class="guia-acao" href="#equipe" role="button"><p>E quem tira tudo isso do papel? Conheça a equipe.</p>
+<span class="guia-seta"><img src="assets/img/comum/seta4.svg" alt=""></span>
+</a>
 </div>
 <a href="#topo" class="subir-seta" aria-label="Voltar ao topo">
         <img src="assets/img/comum/seta2.svg" alt="">
@@ -171,11 +173,11 @@
 
             <div class="ferramentas">
 
-              <img src="assets/img/comum/logos/Python.svg" alt="Python">
-              <img src="assets/img/comum/logos/DataBricks.svg" alt="DataBricks">
-              <img src="assets/img/comum/logos/Mongodb.svg" alt="Mongodb">
-              <img src="assets/img/comum/logos/Redis.svg" alt="Redis">
-              <img src="assets/img/comum/logos/Langchain.svg" alt="Langchain">
+              <img src="assets/img/comum/logos/Python.svg" alt="Python" draggable="false">
+              <img src="assets/img/comum/logos/DataBricks.svg" alt="DataBricks" draggable="false">
+              <img src="assets/img/comum/logos/Mongodb.svg" alt="Mongodb" draggable="false">
+              <img src="assets/img/comum/logos/Redis.svg" alt="Redis" draggable="false">
+              <img src="assets/img/comum/logos/Langchain.svg" alt="Langchain" draggable="false">
 
             </div>
 
@@ -202,10 +204,10 @@
 
             <div class="ferramentas">
 
-              <img src="assets/img/comum/logos/Figma.svg" alt="Figma">
-              <img src="assets/img/comum/logos/React.svg" alt="React">
-              <img src="assets/img/comum/logos/Typescript.svg" alt="Typescript">
-              <img src="assets/img/comum/logos/Docker.svg" alt="Docker">
+              <img src="assets/img/comum/logos/Figma.svg" alt="Figma" draggable="false">
+              <img src="assets/img/comum/logos/React.svg" alt="React" draggable="false">
+              <img src="assets/img/comum/logos/Typescript.svg" alt="Typescript" draggable="false">
+              <img src="assets/img/comum/logos/Docker.svg" alt="Docker" draggable="false">
 
             </div>
 
@@ -232,12 +234,12 @@
 
             <div class="ferramentas">
 
-              <img src="assets/img/comum/logos/Java.svg" alt="Java">
-              <img src="assets/img/comum/logos/Android.svg" alt="Android">
-              <img src="assets/img/comum/logos/Docker.svg" alt="Docker">
-              <img src="assets/img/comum/logos/PgAdmin.svg" alt="PgAdmin">
-              <img src="assets/img/comum/logos/Python.svg" alt="Python">
-              <img src="assets/img/comum/logos/Langchain.svg" alt="Langchain">
+              <img src="assets/img/comum/logos/Java.svg" alt="Java" draggable="false">
+              <img src="assets/img/comum/logos/Android.svg" alt="Android" draggable="false">
+              <img src="assets/img/comum/logos/Docker.svg" alt="Docker" draggable="false">
+              <img src="assets/img/comum/logos/PgAdmin.svg" alt="PgAdmin" draggable="false">
+              <img src="assets/img/comum/logos/Python.svg" alt="Python" draggable="false">
+              <img src="assets/img/comum/logos/Langchain.svg" alt="Langchain" draggable="false">
 
             </div>
 
@@ -264,10 +266,10 @@
 
             <div class="ferramentas">
 
-              <img src="assets/img/comum/logos/Python.svg" alt="Python">
-              <img src="assets/img/comum/logos/PgAdmin.svg" alt="PgAdmin">
-              <img src="assets/img/comum/logos/Mongodb.svg" alt="Mongodb">
-              <img src="assets/img/comum/logos/Redis.svg" alt="Redis">
+              <img src="assets/img/comum/logos/Python.svg" alt="Python" draggable="false">
+              <img src="assets/img/comum/logos/PgAdmin.svg" alt="PgAdmin" draggable="false">
+              <img src="assets/img/comum/logos/Mongodb.svg" alt="Mongodb" draggable="false">
+              <img src="assets/img/comum/logos/Redis.svg" alt="Redis" draggable="false">
 
             </div>
 
@@ -294,12 +296,12 @@
 
             <div class="ferramentas">
 
-              <img src="assets/img/comum/logos/Figma.svg" alt="Figma">
-              <img src="assets/img/comum/logos/Python.svg" alt="Python">
-              <img src="assets/img/comum/logos/DataBricks.svg" alt="DataBricks">
-              <img src="assets/img/comum/logos/Springboot.svg" alt="Spring Boot">
-              <img src="assets/img/comum/logos/Java.svg" alt="Java">
-              <img src="assets/img/comum/logos/Android.svg" alt="Android">
+              <img src="assets/img/comum/logos/Figma.svg" alt="Figma" draggable="false">
+              <img src="assets/img/comum/logos/Python.svg" alt="Python" draggable="false">
+              <img src="assets/img/comum/logos/DataBricks.svg" alt="DataBricks" draggable="false">
+              <img src="assets/img/comum/logos/Springboot.svg" alt="Spring Boot" draggable="false">
+              <img src="assets/img/comum/logos/Java.svg" alt="Java" draggable="false">
+              <img src="assets/img/comum/logos/Android.svg" alt="Android" draggable="false">
 
             </div>
 
@@ -324,11 +326,11 @@
 
             <div class="ferramentas">
 
-              <img src="assets/img/comum/logos/Java.svg" alt="Java">
-              <img src="assets/img/comum/logos/Springboot.svg" alt="Spring Boot">
-              <img src="assets/img/comum/logos/Android.svg" alt="Android">
-              <img src="assets/img/comum/logos/React.svg" alt="React">
-              <img src="assets/img/comum/logos/Typescript.svg" alt="Typescript">
+              <img src="assets/img/comum/logos/Java.svg" alt="Java" draggable="false">
+              <img src="assets/img/comum/logos/Springboot.svg" alt="Spring Boot" draggable="false">
+              <img src="assets/img/comum/logos/Android.svg" alt="Android" draggable="false">
+              <img src="assets/img/comum/logos/React.svg" alt="React" draggable="false">
+              <img src="assets/img/comum/logos/Typescript.svg" alt="Typescript" draggable="false">
 
             </div>
 
@@ -341,7 +343,7 @@
 
 
       <div class="controles-equipe">
-<button type="button" class="seta-equipe anterior" aria-label="Integrante anterior">←</button><button type="button" class="ponto-equipe" aria-label="Mostrar Aline" data-indice="0"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Gustavo Kenzo" data-indice="1"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Lorenzo" data-indice="2"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Nicolas" data-indice="3"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Raphaely" data-indice="4"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Ryan" data-indice="5"></button><button type="button" class="seta-equipe proximo" aria-label="Próximo integrante">→</button>
+<button type="button" class="seta-equipe anterior" aria-label="Integrante anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7"></path></svg></button><button type="button" class="ponto-equipe" aria-label="Mostrar Aline" data-indice="0"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Gustavo Kenzo" data-indice="1"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Lorenzo" data-indice="2"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Nicolas" data-indice="3"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Raphaely" data-indice="4"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Ryan" data-indice="5"></button><button type="button" class="seta-equipe proximo" aria-label="Próximo integrante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"></path></svg></button>
 </div>
 <span class="anuncio-equipe" aria-live="polite" aria-atomic="true"></span>
 </div>
@@ -367,9 +369,9 @@
 
             <div class="ferramentas">
 
-              <img src="assets/img/comum/logos/Python.svg" alt="Python">
-              <img src="assets/img/comum/logos/Figma.svg" alt="Figma">
-              <img src="assets/img/comum/logos/Excel.svg" alt="Excel">
+              <img src="assets/img/comum/logos/Python.svg" alt="Python" draggable="false">
+              <img src="assets/img/comum/logos/Figma.svg" alt="Figma" draggable="false">
+              <img src="assets/img/comum/logos/Excel.svg" alt="Excel" draggable="false">
 
             </div>
 
@@ -396,10 +398,10 @@
 
             <div class="ferramentas">
 
-              <img src="assets/img/comum/logos/html.svg" alt="HTML">
-              <img src="assets/img/comum/logos/Css.svg" alt="CSS">
-              <img src="assets/img/comum/logos/PgAdmin.svg" alt="PgAdmin">
-              <img src="assets/img/comum/logos/Java.svg" alt="Java">
+              <img src="assets/img/comum/logos/html.svg" alt="HTML" draggable="false">
+              <img src="assets/img/comum/logos/Css.svg" alt="CSS" draggable="false">
+              <img src="assets/img/comum/logos/PgAdmin.svg" alt="PgAdmin" draggable="false">
+              <img src="assets/img/comum/logos/Java.svg" alt="Java" draggable="false">
 
             </div>
 
@@ -425,10 +427,10 @@
 
             <div class="ferramentas">
 
-              <img src="assets/img/comum/logos/html.svg" alt="HTML">
-              <img src="assets/img/comum/logos/Css.svg" alt="CSS">
-              <img src="assets/img/comum/logos/Figma.svg" alt="Figma">
-              <img src="assets/img/comum/logos/Excel.svg" alt="Excel">
+              <img src="assets/img/comum/logos/html.svg" alt="HTML" draggable="false">
+              <img src="assets/img/comum/logos/Css.svg" alt="CSS" draggable="false">
+              <img src="assets/img/comum/logos/Figma.svg" alt="Figma" draggable="false">
+              <img src="assets/img/comum/logos/Excel.svg" alt="Excel" draggable="false">
 
             </div>
 
@@ -455,9 +457,9 @@
 
             <div class="ferramentas">
 
-              <img src="assets/img/comum/logos/PgAdmin.svg" alt="PgAdmin">
-              <img src="assets/img/comum/logos/Python.svg" alt="Python">
-              <img src="assets/img/comum/logos/Java.svg" alt="Java">
+              <img src="assets/img/comum/logos/PgAdmin.svg" alt="PgAdmin" draggable="false">
+              <img src="assets/img/comum/logos/Python.svg" alt="Python" draggable="false">
+              <img src="assets/img/comum/logos/Java.svg" alt="Java" draggable="false">
 
             </div>
 
@@ -484,8 +486,8 @@
 
             <div class="ferramentas">
 
-              <img src="assets/img/comum/logos/PgAdmin.svg" alt="PgAdmin">
-              <img src="assets/img/comum/logos/Trello.svg" alt="Trello">
+              <img src="assets/img/comum/logos/PgAdmin.svg" alt="PgAdmin" draggable="false">
+              <img src="assets/img/comum/logos/Trello.svg" alt="Trello" draggable="false">
 
             </div>
 
@@ -512,8 +514,8 @@
 
             <div class="ferramentas">
 
-              <img src="assets/img/comum/logos/PgAdmin.svg" alt="PgAdmin">
-              <img src="assets/img/comum/logos/Trello.svg" alt="Trello">
+              <img src="assets/img/comum/logos/PgAdmin.svg" alt="PgAdmin" draggable="false">
+              <img src="assets/img/comum/logos/Trello.svg" alt="Trello" draggable="false">
 
             </div>
 
@@ -526,7 +528,7 @@
 
 
     <div class="controles-equipe">
-<button type="button" class="seta-equipe anterior" aria-label="Integrante anterior">←</button><button type="button" class="ponto-equipe" aria-label="Mostrar Guilherme" data-indice="0"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Lucas" data-indice="1"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Luisa" data-indice="2"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Miguel Monteiro" data-indice="3"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Miguel Yuji" data-indice="4"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Paula" data-indice="5"></button><button type="button" class="seta-equipe proximo" aria-label="Próximo integrante">→</button>
+<button type="button" class="seta-equipe anterior" aria-label="Integrante anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7"></path></svg></button><button type="button" class="ponto-equipe" aria-label="Mostrar Guilherme" data-indice="0"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Lucas" data-indice="1"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Luisa" data-indice="2"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Miguel Monteiro" data-indice="3"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Miguel Yuji" data-indice="4"></button><button type="button" class="ponto-equipe" aria-label="Mostrar Paula" data-indice="5"></button><button type="button" class="seta-equipe proximo" aria-label="Próximo integrante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"></path></svg></button>
 </div>
 <span class="anuncio-equipe" aria-live="polite" aria-atomic="true"></span>
 </div>
@@ -534,8 +536,9 @@
 </div>
       </section>
       <div class="guia-manu">
-<img src="assets/img/comum/bolinha-manu.svg" alt=""><p>E o que vem por aí? Olha o nosso roadmap.</p>
-<a href="#roadmap" aria-label="Ir para a próxima seção"><img src="assets/img/comum/seta4.svg" alt=""></a>
+<img src="assets/img/comum/manu-oficial.png" alt=""><a class="guia-acao" href="#roadmap" role="button"><p>E o que vem por aí? Olha o nosso roadmap.</p>
+<span class="guia-seta"><img src="assets/img/comum/seta4.svg" alt=""></span>
+</a>
 </div>
 <section class="roadmap" id="roadmap">
         <div class="roadmap-conteudo">
@@ -575,10 +578,10 @@
             </div>
           </div>
         <div class="controles-cards" aria-label="Navegação dos cartões">
-<button type="button" class="anterior" aria-label="Cartão anterior">←</button><div class="pontos-cards">
+<button type="button" class="anterior" aria-label="Cartão anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7"></path></svg></button><div class="pontos-cards">
 <button type="button" data-indice="0" aria-label="Mostrar cartão 1"></button><button type="button" data-indice="1" aria-label="Mostrar cartão 2"></button><button type="button" data-indice="2" aria-label="Mostrar cartão 3"></button><button type="button" data-indice="3" aria-label="Mostrar cartão 4"></button><button type="button" data-indice="4" aria-label="Mostrar cartão 5"></button><button type="button" data-indice="5" aria-label="Mostrar cartão 6"></button>
 </div>
-<button type="button" class="proximo" aria-label="Próximo cartão">→</button>
+<button type="button" class="proximo" aria-label="Próximo cartão"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"></path></svg></button>
 </div>
 </div>
       </section>
@@ -627,14 +630,12 @@
         <div class="footer-linha"></div>
         <div class="footer-baixo">
           <p> © 2026 Fixa | Todos os direitos reservados </p>
-          <a href="/login" class="area-restrita"> Área restrita </a>
+          <a href="login" class="area-restrita"> Área restrita </a>
         </div>
       </div>
     </footer>
-  <script src="equipe.js" defer></script>
+  <script src="assets/js/equipe.js" defer></script>
 <script src="assets/js/cards.js" defer></script>
+<script src="assets/js/feedback.js" defer></script>
 </body>
 </html>
-
-
-
