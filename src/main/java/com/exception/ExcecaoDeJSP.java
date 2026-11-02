@@ -63,6 +63,11 @@ public class ExcecaoDeJSP extends RuntimeException {
         return uniqueDuplicado("domínio de e-mail");
     }
 
+    // cnpj com formato válido, mas que a consulta à API não encontrou
+    public static ExcecaoDeJSP cnpjNaoEncontrado(){
+        return new ExcecaoDeJSP("CNPJ inválido ou não encontrado.");
+    }
+
     // Exceções de not null
     public static ExcecaoDeJSP notNullVazio(String campo){
         String mensagem = "Por favor, preencha o campo %s.".formatted(rotulo(campo));
@@ -71,7 +76,7 @@ public class ExcecaoDeJSP extends RuntimeException {
 
     // Constraint -> senha ou email diferentes do acesso ao banco de dados
     public static ExcecaoDeJSP falhaLogin() {
-        return new ExcecaoDeJSP("Login falhou. Verifique se Email e Senha.");
+        return new ExcecaoDeJSP("E-mail ou senha inválidos.");
     }
 
     // inválido no regex

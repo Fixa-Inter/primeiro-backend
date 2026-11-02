@@ -4,6 +4,7 @@ import com.DAO.EnderecoDAO;
 import com.DAO.InstituicaoDAO;
 import com.DTO.EnderecoViaCnpjDTO;
 import com.DTO.InstituicaoLogadaDTO;
+import com.exception.ExcecaoDeJSP;
 import com.model.Endereco;
 import com.model.Instituicao;
 import com.service.ConsultaCnpjService;
@@ -138,7 +139,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
 
             // mesma mensagem para email inexistente e senha errada, para não revelar quais emails estão cadastrados
             if (instituicao == null || !HashSenha.conferir(senha, instituicao.getSenhaHash())) {
-                mostrarErro(request, response, PAGINA_LOGIN, "E-mail ou senha inválidos");
+                mostrarErro(request, response, PAGINA_LOGIN, ExcecaoDeJSP.falhaLogin().getMessage());
                 return;
             }
 
@@ -174,7 +175,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
 
         if (!RegexUtils.validarCnpj(cnpj)) {
             request.setAttribute("cnpj", cnpj);
-            mostrarErro(request, response, PAGINA_ENDERECO, "CNPJ inválido");
+            mostrarErro(request, response, PAGINA_ENDERECO, ExcecaoDeJSP.valorInvalido("cnpj").getMessage());
             return;
         }
 
@@ -185,7 +186,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
             // verifica se esse cnpj já está cadastrado, e se estiver dá erro
             if (enderecoDAO.pesquisarPorCnpj(cnpjFormatado) != null) {
                 request.setAttribute("cnpj", cnpj);
-                mostrarErro(request, response, PAGINA_ENDERECO, "Esse CNPJ já está cadastrado");
+                mostrarErro(request, response, PAGINA_ENDERECO, ExcecaoDeJSP.cnpjDuplicado().getMessage());
                 return;
             }
 
@@ -194,7 +195,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
 
             if (dados == null) {
                 request.setAttribute("cnpj", cnpj);
-                mostrarErro(request, response, PAGINA_ENDERECO, "CNPJ inválido ou não encontrado");
+                mostrarErro(request, response, PAGINA_ENDERECO, ExcecaoDeJSP.cnpjNaoEncontrado().getMessage());
                 return;
             }
 
@@ -264,7 +265,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
         }
 
         if (!RegexUtils.validarCnpj(cnpjInformado)) {
-            mostrarErro(request, response, PAGINA_ENDERECO, "CNPJ inválido");
+            mostrarErro(request, response, PAGINA_ENDERECO, ExcecaoDeJSP.valorInvalido("cnpj").getMessage());
             return;
         }
 
@@ -279,7 +280,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
         }
 
         if (!ConsultaCnpjService.cnpjValido(cnpj)) {
-            mostrarErro(request, response, PAGINA_ENDERECO, "CNPJ inválido");
+            mostrarErro(request, response, PAGINA_ENDERECO, ExcecaoDeJSP.valorInvalido("cnpj").getMessage());
             return;
         }
 
@@ -289,7 +290,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
 
             // confere de novo, pois outro cadastro pode ter usado esse cnpj depois da busca
             if (enderecoDAO.pesquisarPorCnpj(cnpj) != null) {
-                mostrarErro(request, response, PAGINA_ENDERECO, "Esse CNPJ já está cadastrado");
+                mostrarErro(request, response, PAGINA_ENDERECO, ExcecaoDeJSP.cnpjDuplicado().getMessage());
                 return;
             }
 

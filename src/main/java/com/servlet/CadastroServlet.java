@@ -294,7 +294,7 @@ public class CadastroServlet extends HttpServlet{
             // verifica se esse cnpj já está cadastrado, e se estiver dá erro
             if (enderecoDAO.pesquisarPorCnpj(cnpjFormatado) != null){
 
-                request.setAttribute("erro", "Esse cnpj já está cadastrado");
+                request.setAttribute("erro", ExcecaoDeJSP.cnpjDuplicado().getMessage());
                 request.setAttribute("cnpj", cnpj);
 
                 request
@@ -309,7 +309,7 @@ public class CadastroServlet extends HttpServlet{
 
             if (dados == null) {
 
-                request.setAttribute("erro", "CNPJ inválido ou não encontrado");
+                request.setAttribute("erro", ExcecaoDeJSP.cnpjNaoEncontrado().getMessage());
                 request.setAttribute("cnpj", cnpj);
 
                 request
