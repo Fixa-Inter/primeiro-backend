@@ -9,6 +9,7 @@
       Área Restrita
     </title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/senha.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -47,7 +48,19 @@
             <label for="senha">
               Senha
             </label>
-            <input type="password" id="senha" name="senha" placeholder="Digite sua senha">
+            <div class="campo-senha">
+              <input type="password" id="senha" name="senha" placeholder="Digite sua senha">
+              <button class="mostrar-senha" type="button" data-campo="senha" aria-controls="senha" aria-label="Mostrar senha" aria-pressed="false" title="Mostrar senha">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z">
+                  </path>
+                  <circle cx="12" cy="12" r="3">
+                  </circle>
+                  <path class="risco-senha" d="m3 3 18 18">
+                  </path>
+                </svg>
+              </button>
+            </div>
           </div>
           <button type="submit">
             Entrar
@@ -55,5 +68,7 @@
         </form>
       </div>
     </main>
+    <script src="${pageContext.request.contextPath}/assets/js/senha.js" defer>
+    </script>
   </body>
 </html>
