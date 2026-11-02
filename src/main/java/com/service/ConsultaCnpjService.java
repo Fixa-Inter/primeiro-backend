@@ -12,18 +12,18 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
-
+// Consulta e valida CNPJ
 public class ConsultaCnpjService {
 
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    // consulta o cnpj na BrasilAPI e devolve os dados do endereço, ou null se o cnpj for inválido ou a API falhar
+    // Consulta o CNPJ na BrasilAPI, ou devolve null se for inválido ou a API falhar
     public EnderecoViaCnpjDTO consultar(String cnpj){
 
-        String cnpjFormatado = cnpj.replaceAll("\\D", ""); // \\D significa tirar qualquer caractere que não seja número
+        String cnpjFormatado = cnpj.replaceAll("\\D", "");  // Remove tudo que não for dígito
 
-        // confere os dígitos verificadores antes de chamar a API, para não gastar uma requisição com cnpj inválido
+        // Confere os dígitos verificadores antes de chamar a API
         if (!cnpjValido(cnpjFormatado)){
             return null;
         }
@@ -65,13 +65,13 @@ public class ConsultaCnpjService {
         return null;
     }
 
-    // devolve o texto do campo, ou null se ele não existir ou vier nulo no JSON
+    // Devolve o texto do campo, ou null se não existir ou vier nulo
     private String textoOuNull(JsonNode jsonNode, String campo){
         JsonNode node = jsonNode.get(campo);
         return (node == null || node.isNull() ? null : node.asText());
     }
 
-    // valida o cnpj pelo cálculo dos dois dígitos verificadores (rejeita também os de números repetidos, como 11111111111111)
+    // Valida o CNPJ pelos dois dígitos verificadores, rejeitando números repetidos
     public static  boolean cnpjValido(String cnpj){
 
         cnpj = cnpj.replaceAll("\\D", "");
@@ -89,6 +89,7 @@ public class ConsultaCnpjService {
 
     }
 
+    // Calcula um dígito verificador a partir da base e dos pesos
     private static int calcularDigito(String base, int[] pesos){
         int soma = 0;
         for (int i = 0; i < base.length(); i++) {

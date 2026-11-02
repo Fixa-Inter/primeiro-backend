@@ -12,25 +12,27 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+// Carrega os indicadores da página inicial da área restrita
 @WebServlet("/analiticos")
 public class AnaliticosServlet extends HttpServlet {
 
     private static final String AREA_RESTRITA = "/WEB-INF/views/restrita/index.jsp";
 
+    // Abre o painel inicial com os indicadores
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         carregarIndicadores(request, response);
     }
 
+    // Abre o painel inicial com os indicadores
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         carregarIndicadores(request, response);
     }
 
-    // busca os dados das views analíticas, coloca na requisição e abre a página inicial da área restrita
-    // (get e post usam o mesmo método, pois a página só mostra os números)
+    // Carrega os dados das views analíticas e abre a página inicial da área restrita
     private void carregarIndicadores(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try(AnaliticosDAO analiticosDAO = new AnaliticosDAO()) {

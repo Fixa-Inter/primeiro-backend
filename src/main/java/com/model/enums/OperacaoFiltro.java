@@ -1,5 +1,6 @@
 package com.model.enums;
 
+// Operações disponíveis nos filtros das listagens
 public enum OperacaoFiltro {
     IGUAL("Igual","="),
     MAIOR_QUE("Maior que",">"),
@@ -24,6 +25,7 @@ public enum OperacaoFiltro {
         return operadorSQL;
     }
 
+    // Converte o nome da operação no enum
     public static OperacaoFiltro converterEnumPorNome(String nome) {
         for (OperacaoFiltro operacaoFiltro : OperacaoFiltro.values()) {
             if (nome.toLowerCase().equals(operacaoFiltro.nome.toLowerCase())) {
@@ -33,6 +35,7 @@ public enum OperacaoFiltro {
         throw new IllegalArgumentException("Operacao de filtro invalida");
     }
 
+    // Converte o operador SQL no enum
     public static OperacaoFiltro converterEnumPorOperador(String operador) {
         for (OperacaoFiltro operacaoFiltro : OperacaoFiltro.values()) {
             if (operador.equalsIgnoreCase(operacaoFiltro.operadorSQL)) {

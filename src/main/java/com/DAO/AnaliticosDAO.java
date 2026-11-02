@@ -10,14 +10,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+// Consulta as views analíticas do painel inicial
 public class AnaliticosDAO extends DAO{
 
+    // Abre a conexão com o banco
     public AnaliticosDAO() throws SQLException {
         super();
     }
 
-    // Seleção de views analíticas
-
+    // Conta as instituições por tipo
     public List<InstituicoesPorTipoDTO> instituicoesPorTipo() throws SQLException {
 
         List<InstituicoesPorTipoDTO> resultado = new ArrayList<>();
@@ -41,6 +42,7 @@ public class AnaliticosDAO extends DAO{
         return resultado;
     }
 
+    // Conta os usuários ativos e inativos
     public List<UsuariosPorAtividadeDTO> usuariosPorAtividade() throws SQLException {
 
         List<UsuariosPorAtividadeDTO> resultado = new ArrayList<>();
@@ -64,6 +66,7 @@ public class AnaliticosDAO extends DAO{
         return resultado;
     }
 
+    // Conta os contratos por plano
     public List<ContratosPorPlanoDTO> contratosPorPlano() throws SQLException {
 
         List<ContratosPorPlanoDTO> resultado = new ArrayList<>();
@@ -87,6 +90,7 @@ public class AnaliticosDAO extends DAO{
         return resultado;
     }
 
+    // Conta os endereços por instituição
     public List<EnderecosPorInstituicaoDTO> enderecosPorInstituicao() throws SQLException {
 
         List<EnderecosPorInstituicaoDTO> resultado = new ArrayList<>();
@@ -110,6 +114,7 @@ public class AnaliticosDAO extends DAO{
         return resultado;
     }
 
+    // Soma os totais de instituições, usuários e endereços
     public ResumoDTO resumo() throws SQLException {
         ResumoDTO resultado;
 

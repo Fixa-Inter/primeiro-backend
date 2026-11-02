@@ -1,13 +1,12 @@
 package com.model;
 
+// Representa a tabela super_administrador
 public class SuperAdministrador {
 
     private Integer id;                // coluna: id
     private String nome;               // coluna: nome
     private String senhaHash;          // coluna: senha_hash
     private String email;              // coluna: email
-
-    // construtor
 
     public SuperAdministrador(Integer id, String nome, String senhaHash, String email) {
         this.id = id;
@@ -21,9 +20,6 @@ public class SuperAdministrador {
         this.senhaHash = senhaHash;
         this.email = email;
     }
-
-
-    // getters e setters
 
     public Integer getId() {
         return id;
@@ -56,9 +52,6 @@ public class SuperAdministrador {
     public void setEmail(String email) {
         this.email = email;
     }
-
-
-    // toString
 
     @Override
     public String toString(){

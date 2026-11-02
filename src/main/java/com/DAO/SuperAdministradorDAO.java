@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+// Acesso ao banco para a tabela de super administradores
 public class SuperAdministradorDAO extends DAO{
     public static final Map<String,String> camposFiltraveis = Map.of(
             "ID", "ID",
@@ -39,7 +40,7 @@ public class SuperAdministradorDAO extends DAO{
             )
     );
 
-    // Método que converte o valor de acordo com o campo que será filtrado
+    // Converte o valor para o tipo do campo filtrado
     public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
@@ -52,12 +53,12 @@ public class SuperAdministradorDAO extends DAO{
         }
     }
 
-    // construtor de DAO
+    // Abre a conexão com o banco
     public SuperAdministradorDAO() throws SQLException {
         super();
     }
 
-    // insert
+    // Insere um super administrador e devolve o id gerado
     public int cadastrar(SuperAdministrador superAdministrador) throws SQLException{
         String nome = superAdministrador.getNome();
         String senhaHash = superAdministrador.getSenhaHash();
@@ -82,12 +83,14 @@ public class SuperAdministradorDAO extends DAO{
         }
     }
 
+    // Insere um super administrador e registra a ação para desfazer
     public int cadastrar(SuperAdministrador superAdministrador, HttpServletRequest request) throws SQLException {
         int id = cadastrar(superAdministrador);
         GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
         return id;
     }
 
+    // Insere um super administrador com o id original, para desfazer uma exclusão
     public int cadastrarCompleto(SuperAdministrador superAdministrador) throws SQLException {
         String sql = "INSERT INTO super_administrador (id, nome, senha_hash, email) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -102,7 +105,7 @@ public class SuperAdministradorDAO extends DAO{
         } catch (SQLException e) { conn.rollback(); throw e; }
     }
 
-    // select
+    // Lista super administradores, aplicando filtros, ordenação e pesquisa
     public List<SuperAdministrador> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException{
 
         ArrayList<SuperAdministrador> resultado = new ArrayList<>();
@@ -116,12 +119,12 @@ public class SuperAdministradorDAO extends DAO{
 
                 Filtro filtro = filtros.get(i);
 
-                // Verifica se o campo existe
+                // Valida se o campo é filtrável
                 if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
                     throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
                 }
 
-                // Verifica se a operação é permitida para esse campo
+                // Valida se a operação é permitida para o campo
                 if (!operacoesPorCampo
                         .get(filtro.getCampoFiltravel())
                         .contains(filtro.getOperacaoFiltro())) {
@@ -131,12 +134,12 @@ public class SuperAdministradorDAO extends DAO{
                     );
                 }
 
-                // Coloca AND a partir do segundo filtro
+                // Liga os filtros com AND a partir do segundo
                 if (i > 0) {
                     sql += " AND ";
                 }
 
-                // Adiciona a condição
+                // Adiciona a condição do filtro
                 if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
 
                     sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
@@ -151,7 +154,7 @@ public class SuperAdministradorDAO extends DAO{
             }
         }
 
-        // Verificando campo e direção da ordenação
+        // Define a ordenação, com id crescente como padrão
         if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)) {
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
@@ -159,7 +162,7 @@ public class SuperAdministradorDAO extends DAO{
         }
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Verifica se tem filtro, se sim define a variável do comando SQL
+            // Preenche os parâmetros do SQL com os valores dos filtros
             if (filtros != null && !filtros.isEmpty()) {
                 for (int i = 0; i < filtros.size(); i++) {
                     Filtro filtro = filtros.get(i);
@@ -194,7 +197,7 @@ public class SuperAdministradorDAO extends DAO{
         return resultado;
     }
 
-    // pesquisar por id
+    // Busca um super administrador pelo id
     public SuperAdministrador pesquisarPorId(int id) throws SQLException {
         String sql = "SELECT NOME, EMAIL, SENHA_HASH FROM SUPER_ADMINISTRADOR WHERE id = ?";
         SuperAdministrador superAdministrador;
@@ -218,7 +221,7 @@ public class SuperAdministradorDAO extends DAO{
         return superAdministrador;
     }
 
-    // pesquisar por email
+    // Busca o super administrador pelo e-mail
     public SuperAdministrador pesquisarPorEmail(String email){
         {
             String sql = "SELECT ID, NOME, EMAIL, SENHA_HASH FROM SUPER_ADMINISTRADOR WHERE EMAIL = ?";
@@ -244,7 +247,7 @@ public class SuperAdministradorDAO extends DAO{
         }
     }
 
-    // alter
+    // Atualiza um super administrador, só nos campos que mudaram
     public void atualizar(SuperAdministrador original, SuperAdministrador alterado) throws SQLException{
         String nome = alterado.getNome();
         String email = alterado.getEmail();
@@ -291,12 +294,13 @@ public class SuperAdministradorDAO extends DAO{
         }
     }
 
+    // Atualiza um super administrador e registra a ação para desfazer
     public void atualizar(SuperAdministrador original, SuperAdministrador alterado, HttpServletRequest request) throws SQLException {
         atualizar(original, alterado);
         GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
     }
 
-    // delete
+    // Exclui um super administrador pelo id
     public void remover(int id) throws SQLException {
 
         String sql = "DELETE FROM SUPER_ADMINISTRADOR WHERE id = ?";
@@ -311,6 +315,7 @@ public class SuperAdministradorDAO extends DAO{
         }
     }
 
+    // Exclui um super administrador e registra a ação para desfazer
     public void remover(int id, HttpServletRequest request) throws SQLException {
         DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
         remover(id);

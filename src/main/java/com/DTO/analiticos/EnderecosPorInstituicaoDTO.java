@@ -1,5 +1,6 @@
 package com.DTO.analiticos;
 
+// Quantidade e percentual de endereços por instituição
 public class EnderecosPorInstituicaoDTO {
     private String instituicao;
     private int enderecos;

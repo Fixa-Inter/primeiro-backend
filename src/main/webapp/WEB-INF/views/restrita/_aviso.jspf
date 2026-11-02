@@ -1,4 +1,4 @@
-<%-- Aviso depois de criar, editar, excluir ou desfazer. O GerenciadorDesfazer guarda o texto na sessao; aqui ele e lido e apagado, entao aparece uma vez so. O botao Desfazer chama o /DesfazerController. mostrarAviso vem do feedback.js. --%>
+<%-- Aviso após criar, editar, excluir ou desfazer, lido da sessão e exibido uma vez --%>
 <%
     String avisoTexto = (String) session.getAttribute("AVISO_TEXTO");
     boolean avisoComDesfazer = Boolean.TRUE.equals(session.getAttribute("AVISO_COM_DESFAZER"));

@@ -1,4 +1,4 @@
-<%-- Barra de filtros das listagens. Cada lista define antes: String urlLista (rota do servlet) e String[][] campos (CAMPO, rotulo). --%>
+<%-- Barra de filtros das listagens, que define antes urlLista e campos --%>
 <%@ page import="java.util.List, com.model.Filtro, com.model.enums.OperacaoFiltro, com.utils.ListaWeb" %>
 <%
     List<Filtro> filtros = (List<Filtro>) request.getAttribute("filtros");
@@ -8,7 +8,7 @@
 %>
 <form id="filtro-form" class="filtros" role="search" action="${pageContext.request.contextPath}/<%= urlLista %>" method="get">
   <input type="hidden" name="action" value="read">
-  <%-- filtros que ja estao valendo: sao reenviados a cada clique para continuarem aplicados --%>
+  <%-- Reenvia os filtros ativos a cada clique --%>
   <% if (filtros != null) { for (Filtro filtro : filtros) { %>
   <input type="hidden" name="campoFiltro" value="<%= filtro.getCampoFiltravel() %>">
   <input type="hidden" name="operacaoFiltro" value="<%= filtro.getOperacaoFiltro().name() %>">

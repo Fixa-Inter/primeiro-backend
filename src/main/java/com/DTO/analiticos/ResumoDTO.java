@@ -1,5 +1,6 @@
 package com.DTO.analiticos;
 
+// Totais de instituições, usuários e endereços
 public class ResumoDTO {
     private int instituicoes;
     private int usuarios;

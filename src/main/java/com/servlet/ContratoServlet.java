@@ -20,8 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
+// Controla o CRUD de contratos na área restrita
 @WebServlet(name="ContratoServlet", value = "/contratos")
 public class ContratoServlet extends HttpServlet{
 
@@ -29,6 +28,7 @@ public class ContratoServlet extends HttpServlet{
     private static final String PAGINA_CADASTRO = "/WEB-INF/views/restrita/cadastro-contrato.jsp";
     private static final String PAGINA_EDICAO = "/WEB-INF/views/restrita/editar-contrato.jsp";
 
+    // Abre a lista, o formulário de cadastro ou o de edição, conforme a action
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
@@ -72,7 +72,7 @@ public class ContratoServlet extends HttpServlet{
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
 
-                // opções dos menus de endereço e plano da tela de edicao (igual ao cadastro)
+                // Carrega os menus de endereço e plano da edição
                 try (com.DAO.EnderecoDAO enderecoDAO = new com.DAO.EnderecoDAO();
                      com.DAO.PlanoDAO planoDAO = new com.DAO.PlanoDAO()) {
                     request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
@@ -108,6 +108,7 @@ public class ContratoServlet extends HttpServlet{
 
     }
 
+    // Executa o cadastro, a edição ou a exclusão, conforme a action
     @Override
     protected void doPost(
             HttpServletRequest request,
@@ -132,6 +133,7 @@ public class ContratoServlet extends HttpServlet{
         }
     }
 
+    // Lista contratos com filtros, ordenação e pesquisa da requisição
     private void listarContratos(
             HttpServletRequest request,
             HttpServletResponse response
@@ -175,13 +177,12 @@ public class ContratoServlet extends HttpServlet{
                         continue;
                     }
 
-
                     String campo = campos[i].trim().toUpperCase();
                     String valor = valores[i].trim();
 
-                    // ignora filtro sem valor ou com campo que não existe
+                    // Ignora filtro sem valor ou com campo inexistente
                     if (valor.isEmpty()
-                            || !ContratoDAO.camposFiltraveis.containsKey(campo)) {
+                            || !ContratoDAO.camposDaView.contains(campo)) {
 
                         continue;
                     }
@@ -194,7 +195,7 @@ public class ContratoServlet extends HttpServlet{
                         continue;
                     }
 
-                    // ignora operação que o campo não aceita
+                    // Ignora operação que o campo não aceita
                     List<OperacaoFiltro> operacoesPermitidas =
                             ContratoDAO.operacoesPorCampo.get(campo);
 
@@ -207,7 +208,7 @@ public class ContratoServlet extends HttpServlet{
                     Object valorConvertido =
                             dao.converterValor(campo, valor);
 
-                    // valor que não converte para o tipo do campo
+                    // Ignora valor que não converte para o tipo do campo
                     if (valorConvertido == null) {
                         continue;
                     }
@@ -249,14 +250,14 @@ public class ContratoServlet extends HttpServlet{
         }
     }
 
+    // Cadastra um contrato com os dados do formulário
     private void cadastrarContrato(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
         LocalDate dataVencimento = Parametros.data(request, "dataVencimento");
 
-        // a data de início é gerada pelo banco no momento do cadastro (a data de criação do contrato);
-        // como o contrato está sendo criado agora, ela é a data de hoje
+        // O vencimento não pode ser anterior ao início, que no cadastro é hoje
         if (dataVencimento.isBefore(LocalDate.now())) {
             throw ExcecaoDeJSP.vencimentoAntesDoInicio();
         }
@@ -285,6 +286,7 @@ public class ContratoServlet extends HttpServlet{
         }
     }
 
+    // Exclui um contrato pelo id da requisição
     private void deletarContrato(
             HttpServletRequest request,
             HttpServletResponse response
@@ -305,6 +307,7 @@ public class ContratoServlet extends HttpServlet{
 
     }
 
+    // Atualiza um contrato com os dados do formulário
     private void atualizarContrato(
             HttpServletRequest request,
             HttpServletResponse response
@@ -318,19 +321,17 @@ public class ContratoServlet extends HttpServlet{
         int fkPlano = Parametros.inteiro(request, "fkPlano");
         int statusContrato = Parametros.inteiro(request, "statusContrato");
 
-
-
         try (ContratoDAO dao = new ContratoDAO()) {
 
-            // Busca como está atualmente no banco
+            // Busca o registro atual no banco
             Contrato original = dao.pesquisarPorId(id);
 
-            // compara com a data de início gravada (e não com hoje): contrato já vencido continua editável
+            // Compara com a data de início gravada, assim contrato vencido continua editável
             if (original.getDataInicio() != null && dataVencimento.isBefore(original.getDataInicio())) {
                 throw ExcecaoDeJSP.vencimentoAntesDoInicio();
             }
 
-            // Monta o objeto com os novos dados
+            // Monta o objeto com os dados novos
             Contrato alterado = new Contrato(
                     id,
                     original.getDataInicio(),
@@ -339,7 +340,6 @@ public class ContratoServlet extends HttpServlet{
                     fkPlano,
                     StatusContrato.converterEnum(statusContrato)
             );
-
 
             dao.atualizar(original, alterado, request);
 

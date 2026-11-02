@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+// Acesso ao banco para a tabela de fotos de usuário
 public class FotoUsuarioDAO extends DAO{
 
     public static final Map<String, String> camposFiltraveis = Map.of(
@@ -46,13 +47,12 @@ public class FotoUsuarioDAO extends DAO{
             "USUARIO_EMAIL", List.of(OperacaoFiltro.IGUAL, OperacaoFiltro.CONTEM)
     );
 
-    // construtor
-
+    // Abre a conexão com o banco
     public FotoUsuarioDAO() throws SQLException {
         super();
     }
 
-    // insert
+    // Insere uma foto de usuário e devolve o id gerado
     public int cadastrar(FotoUsuario fotoUsuario) throws SQLException {
 
         String url = fotoUsuario.getUrl();
@@ -79,14 +79,14 @@ public class FotoUsuarioDAO extends DAO{
         }
     }
 
+    // Insere uma foto de usuário e registra a ação para desfazer
     public int cadastrar(FotoUsuario fotoUsuario, HttpServletRequest request) throws SQLException {
         int id = cadastrar(fotoUsuario);
         GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
         return id;
     }
 
-    // select
-
+    // Lista as fotos de usuário filtrando pela pesquisa
     public List<FotoUsuario> listar(String pesquisa) throws SQLException {
 
         List<FotoUsuario> fotos = new ArrayList<>();
@@ -140,6 +140,7 @@ public class FotoUsuarioDAO extends DAO{
         return fotos;
     }
 
+    // Lista as fotos de usuário filtrando pela pesquisa
     public List<FotoUsuario> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia,
                                     String pesquisa) throws SQLException {
         StringBuilder sql = new StringBuilder(
@@ -178,6 +179,7 @@ public class FotoUsuarioDAO extends DAO{
         return fotos;
     }
 
+    // Busca a foto pelo id do usuário
     public FotoUsuario pesquisarFkID(int fkId) throws SQLException {
 
         String sql = "SELECT id, data_registro, url, fk_usuario_id FROM foto_usuario WHERE fk_usuario_id = ?";
@@ -199,7 +201,6 @@ public class FotoUsuarioDAO extends DAO{
                 String url = rs.getString("url");
                 Integer fk_usuario_id = rs.getInt("fk_usuario_id");
 
-
                 fu = new FotoUsuario(id, data_registro, url, fk_usuario_id);
             }
 
@@ -208,6 +209,7 @@ public class FotoUsuarioDAO extends DAO{
         return fu;
     }
 
+    // Busca a foto pelo id, ou null se não existir
     public FotoUsuario pesquisarPorId(int id) {
         String sql = "SELECT URL, DATA_REGISTRO, fk_usuario_id FROM foto_usuario WHERE id = ?";
         FotoUsuario fotoUsuario;
@@ -232,13 +234,12 @@ public class FotoUsuarioDAO extends DAO{
         return fotoUsuario;
     }
 
-    // update
+    // Atualiza uma foto de usuário, só nos campos que mudaram
     public void atualizar(FotoUsuario original, FotoUsuario alterado) throws SQLException {
 
         Integer id = alterado.getId();
         String url = alterado.getUrl();
         Integer fk_usuario_id = alterado.getFkUsuario();
-
 
         StringBuilder sql = new StringBuilder("UPDATE foto_usuario SET ");
         List<Object> valores = new ArrayList<>();
@@ -277,15 +278,14 @@ public class FotoUsuarioDAO extends DAO{
         }
     }
 
+    // Atualiza uma foto de usuário e registra a ação para desfazer
     public void atualizar(FotoUsuario original, FotoUsuario alterado, HttpServletRequest request) throws SQLException {
         atualizar(original, alterado);
         GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
     }
 
-
-    // delete
+    // Exclui uma foto de usuário pelo id
     public void remover(int id) throws SQLException {
-
 
         String sql = "DELETE FROM foto_usuario WHERE ID = ?";
 
@@ -302,12 +302,14 @@ public class FotoUsuarioDAO extends DAO{
         }
     }
 
+    // Exclui uma foto de usuário e registra a ação para desfazer
     public void remover(int id, HttpServletRequest request) throws SQLException {
         DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
         remover(id);
         GerenciadorDesfazer.registrarComando(request, comando);
     }
 
+    // Lista as fotos com nome e e-mail do usuário
     public List<FotoUsuarioDTO> listarFotoUsuarioDTO(String pesquisa) throws SQLException {
         List<FotoUsuarioDTO> resultado = new ArrayList<>();
         String sql = "SELECT * FROM vw_foto_usuario";
@@ -329,14 +331,13 @@ public class FotoUsuarioDAO extends DAO{
         return resultado;
     }
 
-    // cadastrar completo, ignorando os default. usado para desfazer um delete
+    // Insere uma foto de usuário com o id original, para desfazer uma exclusão
     public int cadastrarCompleto(FotoUsuario fotoUsuario) throws SQLException {
 
         int id = fotoUsuario.getId();
         LocalDateTime dataRegistro = fotoUsuario.getDataRegistro();
         String url = fotoUsuario.getUrl();
         Integer fkUsuarioId = fotoUsuario.getFkUsuario();
-
 
         String sql = """
                      INSERT INTO foto_usuario (URL, FK_USUARIO_ID, ID, DATA_REGISTRO)
@@ -352,7 +353,7 @@ public class FotoUsuarioDAO extends DAO{
 
             pstmt.execute();
 
-            // Ajusta o serial do banco caso o id do cadastro for maior que o serial atual
+            // Ajusta o serial do banco se o id for maior que o atual
             String sqlAjustarSerial = "SELECT setval(pg_get_serial_sequence('foto_usuario', 'id'), COALESCE(max(id), 1)) FROM foto_usuario";
             try (PreparedStatement stmtSerial = conn.prepareStatement(sqlAjustarSerial);
                  ResultSet rs = stmtSerial.executeQuery()) {

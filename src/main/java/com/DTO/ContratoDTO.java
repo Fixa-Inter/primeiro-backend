@@ -2,7 +2,7 @@ package com.DTO;
 
 import java.time.LocalDate;
 
-/** Dados de contrato combinados com plano e instituição. */
+// Dados de contrato combinados com plano e instituição
 public class ContratoDTO {
     private Integer id;
     private LocalDate dataInicio;

@@ -8,26 +8,27 @@ import jakarta.mail.internet.MimeMessage;
 
 import java.util.Properties;
 
+// Envia e-mails do sistema
 public class EnviadorEmail {
 
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
     private final TemplateEmail templateEmail = new TemplateEmail();
 
-    // envia o código de verificação do cadastro por email, usando o template html e o gmail como servidor SMTP
+    // Envia o código de verificação por e-mail, usando o Gmail como servidor SMTP
     public void enviarCodigo(String destinatario, String nomeInstituicao, String codigo) {
 
-        // usuário e senha do email vêm do arquivo .env, para não ficarem escritos no código
+        // Usuário e senha do e-mail vêm do arquivo .env
         String remetente = dotenv.get("EMAIL_USER");
         String senha = dotenv.get("EMAIL_SENHA");
 
         Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");                // vai precisar fazer login de usuário e senha
-        props.put("mail.smtp.starttls.enable", "true");     // liga criptografia TLS para a senha e nome não serem enviadas pelo server de forma exposta
-        props.put("mail.smtp.host", "smtp.gmail.com");      // sai do gmail
-        props.put("mail.smtp.port", "587");                 // a porta de envio do TLS
+        props.put("mail.smtp.auth", "true");  // Exige login com usuário e senha
+        props.put("mail.smtp.starttls.enable", "true");  // Liga a criptografia TLS
+        props.put("mail.smtp.host", "smtp.gmail.com");  // Servidor SMTP do Gmail
+        props.put("mail.smtp.port", "587");  // Porta do TLS
 
-        Session session = Session.getInstance(props, new Authenticator() {      // ambiente do email
+        Session session = Session.getInstance(props, new Authenticator() {  // Sessão de e-mail
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(remetente, senha);

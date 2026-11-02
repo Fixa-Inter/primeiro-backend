@@ -23,8 +23,10 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Objects;
 
+// Acesso ao banco para a tabela de endereços
 public class EnderecoDAO extends DAO{
 
     public static final Map<String, String> camposFiltraveis = Map.of(
@@ -77,6 +79,10 @@ public class EnderecoDAO extends DAO{
             )
     );
 
+    // Campos filtráveis e ordenáveis na listagem, só os que a view traz
+    public static final Set<String> camposDaView = Set.of("ID", "NOME", "RUA", "BAIRRO", "CIDADE", "ESTADO", "CEP");
+
+    // Converte o valor para o tipo do campo filtrado
     public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
@@ -91,12 +97,12 @@ public class EnderecoDAO extends DAO{
         }
     }
 
-    // construtor de DAO
+    // Abre a conexão com o banco
     public EnderecoDAO() throws SQLException {
         super();
     }
 
-    // insert
+    // Insere um endereço e devolve o id gerado
     public int cadastrar(Endereco endereco) throws SQLException {
         String nome = endereco.getNome();
         String rua = endereco.getRua();
@@ -109,11 +115,9 @@ public class EnderecoDAO extends DAO{
         Integer fkInstituicao = endereco.getFkInstituicao();
         String cnpj = endereco.getCnpj();
 
-
         if (complemento == null || complemento.isBlank()){
             complemento = null;
         }
-
 
         String sql = """
                 INSERT INTO endereco (NOME, RUA, BAIRRO, COMPLEMENTO, CIDADE, ESTADO, NUMERO, CEP, FK_INSTITUICAO_ID, cnpj)
@@ -146,13 +150,14 @@ public class EnderecoDAO extends DAO{
 
     }
 
+    // Insere um endereço e registra a ação para desfazer
     public int cadastrar(Endereco endereco, HttpServletRequest request) throws SQLException {
         int id = cadastrar(endereco);
         GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
         return id;
     }
 
-    // select
+    // Lista endereços, aplicando filtros, ordenação e pesquisa
     public List<Endereco> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException{
 
         List<Endereco> resultado =  new ArrayList<Endereco>();
@@ -167,12 +172,12 @@ public class EnderecoDAO extends DAO{
 
                 Filtro filtro = filtros.get(i);
 
-                // Verifica se o campo existe
+                // Valida se o campo é filtrável
                 if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
                     throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
                 }
 
-                // Verifica se a operação é permitida para esse campo
+                // Valida se a operação é permitida para o campo
                 if (!operacoesPorCampo
                         .get(filtro.getCampoFiltravel())
                         .contains(filtro.getOperacaoFiltro())) {
@@ -182,12 +187,12 @@ public class EnderecoDAO extends DAO{
                     );
                 }
 
-                // Coloca AND a partir do segundo filtro
+                // Liga os filtros com AND a partir do segundo
                 if (i > 0) {
                     sql += " AND ";
                 }
 
-                // Adiciona a condição
+                // Adiciona a condição do filtro
                 if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
 
                     sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
@@ -209,7 +214,7 @@ public class EnderecoDAO extends DAO{
         }
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Verifica se tem filtro, se sim define a variável do comando SQL
+            // Preenche os parâmetros do SQL com os valores dos filtros
             if (filtros != null && !filtros.isEmpty()) {
                 for (int i = 0; i < filtros.size(); i++) {
                     Filtro filtro = filtros.get(i);
@@ -241,13 +246,12 @@ public class EnderecoDAO extends DAO{
                             ? null
                             : dataCriacaoSQL.toLocalDateTime());
 
-
                     resultado.add(new Endereco(id, nome, rua, bairro, complemento, cidade, estado, numero, cep, cnpj, dataCriacao, fkInstituicao));
                 }
 
             }
 
-            // começo da pesquisa
+            // Início da pesquisa
             if (pesquisa != null && !pesquisa.isEmpty()){
                 String pesquisaNormalizada = pesquisa.toLowerCase().trim().replace(" ", "");
                 resultado.removeIf(endereco -> !endereco.toString()
@@ -256,7 +260,7 @@ public class EnderecoDAO extends DAO{
                         .replace(" ", "")
                         .contains(pesquisaNormalizada));
             }
-            // fim da pesquisa
+            // Fim da pesquisa
 
         }
 
@@ -265,8 +269,8 @@ public class EnderecoDAO extends DAO{
 
     }
 
+    // Busca um endereço pelo id
     public Endereco pesquisarPorId(int idEndereco) throws SQLException {
-
 
         String sql = "SELECT id, nome, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id, cnpj, data_criacao FROM endereco WHERE id = ?";
 
@@ -302,9 +306,9 @@ public class EnderecoDAO extends DAO{
         return e;
     }
 
-    // select cnpj para o servlet, pois como a tabela cnpj é unique, precisa de um método para verificar se já existe um cnpj igual e mostrar
-    // uma exceção com mensagem para isso, e retorna null caso não tenha esse cnpj registrado, liberando para o registro no sistema
+    // Busca o endereço pelo CNPJ, ou null se ainda não estiver cadastrado
 
+    // Busca o endereço pelo CNPJ, ou null se ainda não estiver cadastrado
     public Endereco pesquisarPorCnpj(String cnpjInsert) throws SQLException{
 
         String sql = "SELECT id, nome, rua, bairro, complemento, cidade, estado, numero, cep, fk_instituicao_id, cnpj, data_criacao FROM endereco WHERE cnpj = ?";;
@@ -343,7 +347,7 @@ public class EnderecoDAO extends DAO{
 
     }
 
-    // update
+    // Atualiza um endereço, só nos campos que mudaram
     public void atualizar(Endereco original, Endereco alterado) throws SQLException {
         Integer id = alterado.getId();
         String nome = alterado.getNome();
@@ -355,9 +359,8 @@ public class EnderecoDAO extends DAO{
         String numero = alterado.getNumero();
         String cep = alterado.getCep();
         String cnpj = alterado.getCnpj();
-        // ignora data_cricao pois é um valor que não deve ser atualizado
+        // Não atualiza data_criacao
         Integer fkInstituicao = alterado.getFkInstituicao();
-
 
         StringBuilder sql = new StringBuilder("UPDATE endereco SET ");
         List<Object> valores = new ArrayList<>();
@@ -366,7 +369,6 @@ public class EnderecoDAO extends DAO{
             sql.append("nome = ?, ");
             valores.add(nome);
         }
-
 
         if(!Objects.equals(rua, original.getRua())){
             sql.append("rua = ?, ");
@@ -408,7 +410,7 @@ public class EnderecoDAO extends DAO{
             valores.add(fkInstituicao);
         }
 
-        // não tem dataCriacao pois é um campo que não deve ser atualizado
+        // Não atualiza data_criacao
 
         if (valores.isEmpty()){
             return;
@@ -434,12 +436,13 @@ public class EnderecoDAO extends DAO{
         }
     }
 
+    // Atualiza um endereço e registra a ação para desfazer
     public void atualizar(Endereco original, Endereco alterado, HttpServletRequest request) throws SQLException {
         atualizar(original, alterado);
         GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
     }
 
-    // delete
+    // Exclui um endereço pelo id
     public void remover(int id) throws SQLException {
 
         String sql = "DELETE FROM endereco WHERE ID = ?";
@@ -457,12 +460,14 @@ public class EnderecoDAO extends DAO{
         }
     }
 
+    // Exclui um endereço e registra a ação para desfazer
     public void remover(int id, HttpServletRequest request) throws SQLException {
         DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
         remover(id);
         GerenciadorDesfazer.registrarComando(request, comando);
     }
 
+    // Lista endereços com o nome da instituição, aplicando filtros e pesquisa
     public List<EnderecoDTO> listarEnderecoDTO(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
         List<EnderecoDTO> resultado = new ArrayList<>();
         String sql = "SELECT * FROM vw_endereco";
@@ -471,7 +476,7 @@ public class EnderecoDAO extends DAO{
             for (int i = 0; i < filtros.size(); i++) {
                 Filtro filtro = filtros.get(i);
                 String campo = filtro.getCampoFiltravel();
-                if (!camposFiltraveis.containsKey(campo)) throw new IllegalArgumentException("Campo inválido: " + campo);
+                if (!camposDaView.contains(campo)) throw new IllegalArgumentException("Campo inválido: " + campo);
                 if (!operacoesPorCampo.get(campo).contains(filtro.getOperacaoFiltro())) {
                     throw new IllegalArgumentException("Operação inválida para o campo: " + campo);
                 }
@@ -485,13 +490,13 @@ public class EnderecoDAO extends DAO{
                 }
             }
         }
-        if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
+        if (campoSequencia != null && camposDaView.contains(campoSequencia)){
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
             sql += " ORDER BY id ASC";
         }
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Verifica se tem filtro, se sim define a variável do comando SQL
+            // Preenche os parâmetros do SQL com os valores dos filtros
             if (filtros != null && !filtros.isEmpty()) {
                 for (int i = 0; i < filtros.size(); i++) {
                     Filtro filtro = filtros.get(i);
@@ -520,7 +525,7 @@ public class EnderecoDAO extends DAO{
         return resultado;
     }
 
-    // cadastrar completo, ignorando os default. usado para desfazer um delete
+    // Insere um endereço com o id original, para desfazer uma exclusão
     public int cadastrarCompleto(Endereco endereco) throws SQLException {
         int id = endereco.getId();
         String nome = endereco.getNome();
@@ -535,11 +540,9 @@ public class EnderecoDAO extends DAO{
         Integer fkInstituicao = endereco.getFkInstituicao();
         String cnpj = endereco.getCnpj();
 
-
         if (complemento == null || complemento.isBlank()){
             complemento = null;
         }
-
 
         String sql = """
                 INSERT INTO endereco (NOME, RUA, BAIRRO, COMPLEMENTO, CIDADE, ESTADO, NUMERO, CEP, FK_INSTITUICAO_ID, CNPJ, ID, DATA_CRIACAO)
@@ -563,7 +566,7 @@ public class EnderecoDAO extends DAO{
 
             pstmt.executeUpdate();
 
-            // Ajusta o serial do banco caso o id do cadastro for maior que o serial atual
+            // Ajusta o serial do banco se o id for maior que o atual
             String sqlAjustarSerial = "SELECT setval(pg_get_serial_sequence('endereco', 'id'), COALESCE(max(id), 1)) FROM endereco";
             PreparedStatement stmtSerial = conn.prepareStatement(sqlAjustarSerial);
             stmtSerial.executeQuery();

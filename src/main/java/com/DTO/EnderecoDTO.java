@@ -1,6 +1,6 @@
 package com.DTO;
 
-/** Dados de endereço combinados com o nome da instituição. */
+// Dados de endereço combinados com o nome da instituição
 public class EnderecoDTO {
     private Integer id;
     private String nome;

@@ -1,5 +1,6 @@
 package com.DTO.analiticos;
 
+// Quantidade e percentual de usuários ativos e inativos
 public class UsuariosPorAtividadeDTO {
     private String atividade;
     private int usuarios;

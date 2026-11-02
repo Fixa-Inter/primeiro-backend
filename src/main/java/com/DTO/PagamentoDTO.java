@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/** Dados de pagamento combinados com contrato, plano e instituição. */
+// Dados de pagamento combinados com contrato, plano e instituição
 public class PagamentoDTO {
     private Integer id;
     private BigDecimal valor;

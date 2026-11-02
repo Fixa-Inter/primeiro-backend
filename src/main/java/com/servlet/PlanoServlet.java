@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+// Controla o CRUD de planos na área restrita
 @WebServlet(name = "PlanoServlet", value = "/planos")
 public class PlanoServlet extends HttpServlet {
 
@@ -24,6 +25,7 @@ public class PlanoServlet extends HttpServlet {
     private static final String PAGINA_CADASTRO = "/WEB-INF/views/restrita/cadastro-plano.jsp";
     private static final String PAGINA_EDICAO = "/WEB-INF/views/restrita/editar-plano.jsp";
 
+    // Abre a lista, o formulário de cadastro ou o de edição, conforme a action
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -71,6 +73,7 @@ public class PlanoServlet extends HttpServlet {
         else request.getRequestDispatcher(destino).forward(request, response);
     }
 
+    // Executa o cadastro, a edição ou a exclusão, conforme a action
     @Override
     protected void doPost(
             HttpServletRequest request,
@@ -94,6 +97,7 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
+    // Lista planos com filtros, ordenação e pesquisa da requisição
     private void listarPlanos(
             HttpServletRequest request,
             HttpServletResponse response
@@ -137,11 +141,10 @@ public class PlanoServlet extends HttpServlet {
                         continue;
                     }
 
-
                     String campo = campos[i].trim().toUpperCase();
                     String valor = valores[i].trim();
 
-                    // ignora filtro sem valor ou com campo que não existe
+                    // Ignora filtro sem valor ou com campo inexistente
                     if (valor.isEmpty()
                             || !PlanoDAO.camposFiltraveis.containsKey(campo)) {
 
@@ -156,7 +159,7 @@ public class PlanoServlet extends HttpServlet {
                         continue;
                     }
 
-                    // ignora operação que o campo não aceita
+                    // Ignora operação que o campo não aceita
                     List<OperacaoFiltro> operacoesPermitidas =
                             PlanoDAO.operacoesPorCampo.get(campo);
 
@@ -169,7 +172,7 @@ public class PlanoServlet extends HttpServlet {
                     Object valorConvertido =
                             dao.converterValor(campo, valor);
 
-                    // valor que não converte para o tipo do campo
+                    // Ignora valor que não converte para o tipo do campo
                     if (valorConvertido == null) {
                         continue;
                     }
@@ -211,6 +214,7 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
+    // Cadastra um plano com os dados do formulário
     private void cadastrarPlano(
             HttpServletRequest request,
             HttpServletResponse response
@@ -243,6 +247,7 @@ public class PlanoServlet extends HttpServlet {
         }
     }
 
+    // Exclui um plano pelo id da requisição
     private void deletarPlano(
             HttpServletRequest request,
             HttpServletResponse response
@@ -263,6 +268,7 @@ public class PlanoServlet extends HttpServlet {
 
     }
 
+    // Atualiza um plano com os dados do formulário
     private void atualizarPlano(
             HttpServletRequest request,
             HttpServletResponse response
@@ -278,14 +284,12 @@ public class PlanoServlet extends HttpServlet {
 
         String descricao = request.getParameter("descricao");
 
-
-
         try (PlanoDAO dao = new PlanoDAO()) {
 
-            // Busca como está atualmente no banco
+            // Busca o registro atual no banco
             Plano original = dao.pesquisarPorId(id);
 
-            // Monta o objeto com os novos dados
+            // Monta o objeto com os dados novos
             Plano alterado = new Plano(
                     nome,
                     valorMensal,

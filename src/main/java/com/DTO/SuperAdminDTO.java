@@ -1,5 +1,6 @@
 package com.DTO;
 
+// Dados do super administrador logado
 public class SuperAdminDTO {
     private Integer id;                // coluna: id
     private String nome;               // coluna: nome

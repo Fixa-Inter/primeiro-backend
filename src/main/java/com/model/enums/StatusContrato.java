@@ -1,5 +1,6 @@
 package com.model.enums;
 
+// Situações possíveis de um contrato
 public enum StatusContrato {
 
     ATIVO("Ativo", 1),
@@ -22,7 +23,7 @@ public enum StatusContrato {
         return nome;
     }
 
-    // método para converter o código para o valor
+    // Devolve o nome a partir do código
     public static String getNomeComBaseCodigo(int codigo) {
         for (StatusContrato statusContrato : StatusContrato.values()) {
             if (codigo == statusContrato.codigo) {
@@ -33,7 +34,7 @@ public enum StatusContrato {
         throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
     }
 
-    // método para converter o enum
+    // Converte o nome no enum
     public static StatusContrato converterEnum(String nome) {
         for (StatusContrato statusContrato : StatusContrato.values()) {
             if (nome.toLowerCase().equals(statusContrato.nome.toLowerCase())) {
@@ -43,6 +44,7 @@ public enum StatusContrato {
         throw new IllegalArgumentException("Status de contrato invalido");
     }
 
+    // Converte o código no enum
     public static StatusContrato converterEnum(int codigo) {
         for (StatusContrato statusContrato : StatusContrato.values()) {
             if (codigo == statusContrato.codigo) {

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+// Controla o CRUD de instituições na área restrita
 @WebServlet(name = "InstituicaoServlet", value = "/instituicoes")
 public class InstituicaoServlet extends HttpServlet{
 
@@ -28,6 +29,7 @@ public class InstituicaoServlet extends HttpServlet{
     private static final String PAGINA_CADASTRO = "/WEB-INF/views/restrita/cadastro-instituicao.jsp";
     private static final String PAGINA_EDICAO = "/WEB-INF/views/restrita/editar-instituicao.jsp";
 
+    // Abre a lista, o formulário de cadastro ou o de edição, conforme a action
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -75,6 +77,7 @@ public class InstituicaoServlet extends HttpServlet{
         else request.getRequestDispatcher(destino).forward(request, response);
     }
 
+    // Executa o cadastro, a edição ou a exclusão, conforme a action
     @Override
     protected void doPost(
             HttpServletRequest request,
@@ -100,6 +103,7 @@ public class InstituicaoServlet extends HttpServlet{
         }
     }
 
+    // Lista instituições com filtros, ordenação e pesquisa da requisição
     private void listarInstituicoes(
             HttpServletRequest request,
             HttpServletResponse response
@@ -143,11 +147,10 @@ public class InstituicaoServlet extends HttpServlet{
                         continue;
                     }
 
-
                     String campo = campos[i].trim().toUpperCase();
                     String valor = valores[i].trim();
 
-                    // ignora filtro sem valor ou com campo que não existe
+                    // Ignora filtro sem valor ou com campo inexistente
                     if (valor.isEmpty()
                             || !InstituicaoDAO.camposFiltraveis.containsKey(campo)) {
 
@@ -162,7 +165,7 @@ public class InstituicaoServlet extends HttpServlet{
                         continue;
                     }
 
-                    // ignora operação que o campo não aceita
+                    // Ignora operação que o campo não aceita
                     List<OperacaoFiltro> operacoesPermitidas =
                             InstituicaoDAO.operacoesPorCampo.get(campo);
 
@@ -175,7 +178,7 @@ public class InstituicaoServlet extends HttpServlet{
                     Object valorConvertido =
                             dao.converterValor(campo, valor);
 
-                    // valor que não converte para o tipo do campo
+                    // Ignora valor que não converte para o tipo do campo
                     if (valorConvertido == null) {
                         continue;
                     }
@@ -217,11 +220,11 @@ public class InstituicaoServlet extends HttpServlet{
         }
     }
 
+    // Cadastra uma instituição com os dados do formulário
     private void cadastrarInstituicao(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException, ExcecaoDeJSP{
-
 
         String nome = Parametros.obrigatorio(request, "nome");
         String emailCorporativo = Parametros.obrigatorio(request, "emailCorporativo");
@@ -229,7 +232,7 @@ public class InstituicaoServlet extends HttpServlet{
             throw ExcecaoDeJSP.valorInvalido("emailCorporativo");
         }
 
-        // o domínio não e digitado: sai do e-mail (mesma regra do cadastro publico)
+        // O domínio não é digitado, sai do e-mail
         String dominioEmail = emailCorporativo.substring(emailCorporativo.indexOf("@") + 1);
 
         Integer tipoInstituicao = Parametros.inteiro(request, "tipoInstituicao");
@@ -259,6 +262,7 @@ public class InstituicaoServlet extends HttpServlet{
         }
     }
 
+    // Exclui uma instituição pelo id da requisição
     private void deletarInstituicao(
             HttpServletRequest request,
             HttpServletResponse response
@@ -279,6 +283,7 @@ public class InstituicaoServlet extends HttpServlet{
 
     }
 
+    // Atualiza uma instituição com os dados do formulário
     private void atualizarInstituicao(
             HttpServletRequest request,
             HttpServletResponse response
@@ -292,23 +297,23 @@ public class InstituicaoServlet extends HttpServlet{
             throw ExcecaoDeJSP.valorInvalido("emailCorporativo");
         }
 
-        // o domínio não e digitado: sai do e-mail (mesma regra do cadastro publico)
+        // O domínio não é digitado, sai do e-mail
         String dominioEmail = emailCorporativo.substring(emailCorporativo.indexOf("@") + 1);
 
         Integer tipoInstituicao = Parametros.inteiro(request, "tipoInstituicao");
 
         try (InstituicaoDAO dao = new InstituicaoDAO()) {
 
-            // Busca como está atualmente no banco
+            // Busca o registro atual no banco
             Instituicao original = dao.pesquisarPorId(id);
 
-            // senha em branco = mantem a atual; preenchida = troca (só o hash e guardado)
+            // Senha em branco mantém a atual, preenchida troca
             String senha = Parametros.senhaOpcional(request, "senha");
             String senhaHash = (senha == null)
                     ? original.getSenhaHash()
                     : HashSenha.gerarHash(senha);
 
-            // Monta o objeto com os novos dados
+            // Monta o objeto com os dados novos
             Instituicao alterado = new Instituicao(id, nome, emailCorporativo, original.getDataCadastro(), TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail, senhaHash);
 
             Instituicao instituicaoApoioDominio = dao.pesquisarPorDominioEmail(dominioEmail);

@@ -2,7 +2,7 @@ package com.DTO;
 
 import java.time.LocalDate;
 
-/** Dados de usuário combinados com informações de endereço e instituição. */
+// Dados de usuário combinados com informações de endereço e instituição
 public class UsuarioDTO {
     private Integer id;
     private String nome;

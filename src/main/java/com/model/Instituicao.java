@@ -4,6 +4,7 @@ import com.model.enums.TipoInstituicao;
 
 import java.time.LocalDate;
 
+// Representa a tabela instituicao
 public class Instituicao {
 
     private Integer id;                          // coluna: id
@@ -13,9 +14,6 @@ public class Instituicao {
     private TipoInstituicao tipoDeInstituicao;   // coluna: tipo_de_instituicao
     private String dominioEmail;                 // coluna: dominio_email
     private String senhaHash;                    // coluna: senha_hash
-
-    // Construtor
-
 
     public Instituicao(Integer id, String nome, String emailCorporativo, LocalDate dataCadastro, TipoInstituicao tipoDeInstituicao, String dominioEmail, String senhaHash) {
         this.id = id;
@@ -34,8 +32,6 @@ public class Instituicao {
         this.dominioEmail = dominioEmail;
         this.senhaHash = senhaHash;
     }
-
-    // Getters e setters
 
     public Integer getId() {
         return id;
@@ -92,8 +88,6 @@ public class Instituicao {
     public void setSenhaHash(String senhaHash) {
         this.senhaHash = senhaHash;
     }
-
-    // toString
 
     @Override
     public String toString(){

@@ -5,14 +5,16 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
+// Renderiza os templates HTML de e-mail
 public class TemplateEmail {
 
-    // base para o funcionamento do thymeleaf
+    // Motor do Thymeleaf que renderiza os templates
     private static final TemplateEngine engine = criarEngine();
 
+    // Cria o motor do Thymeleaf que busca os templates
     private static TemplateEngine criarEngine() {
 
-        // configura o thymeleaf onde e como achar o template
+        // Define onde o Thymeleaf procura os templates
 
         ClassLoaderTemplateResolver resolver  = new ClassLoaderTemplateResolver();
 
@@ -26,6 +28,7 @@ public class TemplateEmail {
         return e;
     }
 
+    // Monta o HTML do e-mail com o nome, o código e a validade
     public String renderizarCodigo(String nome, String codigo, String validade){
 
         Context context = new Context();

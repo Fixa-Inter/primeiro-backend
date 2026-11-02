@@ -1,5 +1,6 @@
 package com.model.enums;
 
+// Níveis de acesso de um usuário
 public enum TipoAcesso {
 
     ADMINISTRADOR("Administrador",1),
@@ -23,7 +24,7 @@ public enum TipoAcesso {
         return codigo;
     }
 
-    // método para converter o código para o valor
+    // Devolve o nome a partir do código
     public static String getNomeComBaseCodigo(int codigo) {
 
         for (TipoAcesso tipoAcesso : TipoAcesso.values()) {
@@ -35,7 +36,7 @@ public enum TipoAcesso {
         throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
     }
 
-    // método para converter o valor para o código
+    // Converte o nome no enum
     public static TipoAcesso converterEnum(String nome) {
         for (TipoAcesso tipoAcesso : TipoAcesso.values()) {
             if (nome.toLowerCase().equals(tipoAcesso.nome.toLowerCase())) {
@@ -46,6 +47,7 @@ public enum TipoAcesso {
         throw new IllegalArgumentException("Tipo de acesso invalido");
     }
 
+    // Converte o código no enum
     public static TipoAcesso converterEnum(int codigo) {
         for (TipoAcesso tipoAcesso : TipoAcesso.values()) {
             if (codigo == tipoAcesso.getCodigo()) {

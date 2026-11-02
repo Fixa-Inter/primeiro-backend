@@ -18,8 +18,10 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Objects;
 
+// Acesso ao banco para a tabela de contratos
 public class ContratoDAO extends DAO{
     public static final Map<String,String> camposFiltraveis = Map.of(
             "ID", "ID",
@@ -60,7 +62,10 @@ public class ContratoDAO extends DAO{
             )
     );
 
-    // Método que converte o valor de acordo com o campo que será filtrado
+    // Campos filtráveis e ordenáveis na listagem, só os que a view traz
+    public static final Set<String> camposDaView = Set.of("ID", "DATA_INICIO", "DATA_VENCIMENTO", "STATUS_CONTRATO");
+
+    // Converte o valor para o tipo do campo filtrado
     public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
@@ -84,12 +89,12 @@ public class ContratoDAO extends DAO{
         }
     }
 
-    // construtor de DAO
+    // Abre a conexão com o banco
     public ContratoDAO() throws SQLException{
         super();
     }
 
-    // insert
+    // Insere um contrato e devolve o id gerado
     public int cadastrar(Contrato contrato) throws SQLException{
         LocalDate dataInicio = contrato.getDataInicio();
         LocalDate dataVencimento = contrato.getDataVencimento();
@@ -107,7 +112,7 @@ public class ContratoDAO extends DAO{
             pstmt.setInt(3,fkEndereco);
             pstmt.setObject(4,statusContrato);
 
-            // tira as colunas data_criacao e data_inicio
+            // Omite data_criacao e data_inicio, preenchidas pelo banco
 
             int id;
             try (ResultSet rs = pstmt.executeQuery()) { rs.next(); id = rs.getInt("ID"); }
@@ -119,13 +124,14 @@ public class ContratoDAO extends DAO{
         }
     }
 
+    // Insere um contrato e registra a ação para desfazer
     public int cadastrar(Contrato contrato, HttpServletRequest request) throws SQLException {
         int id = cadastrar(contrato);
         GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
         return id;
     }
 
-    // select
+    // Lista contratos, aplicando filtros, ordenação e pesquisa
     public List<Contrato> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException{
 
         ArrayList<Contrato> resultado = new ArrayList<>();
@@ -139,12 +145,12 @@ public class ContratoDAO extends DAO{
 
                 Filtro filtro = filtros.get(i);
 
-                // Verifica se o campo existe
+                // Valida se o campo é filtrável
                 if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
                     throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
                 }
 
-                // Verifica se a operação é permitida para esse campo
+                // Valida se a operação é permitida para o campo
                 if (!operacoesPorCampo
                         .get(filtro.getCampoFiltravel())
                         .contains(filtro.getOperacaoFiltro())) {
@@ -154,17 +160,17 @@ public class ContratoDAO extends DAO{
                     );
                 }
 
-                // Coloca AND a partir do segundo filtro
+                // Liga os filtros com AND a partir do segundo
                 if (i > 0) {
                     sql += " AND ";
                 }
 
-                // Adiciona a condição
+                // Adiciona a condição do filtro
                 sql += filtro.getCampoFiltravel() + " " +filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
             }
         }
 
-        // Verificando campo e direção da ordenação
+        // Define a ordenação, com id crescente como padrão
         if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)) {
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
@@ -172,7 +178,7 @@ public class ContratoDAO extends DAO{
         }
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Verifica se tem filtro, se sim define a variável do comando SQL
+            // Preenche os parâmetros do SQL com os valores dos filtros
             if (filtros != null && !filtros.isEmpty()) {
                 for (int i = 0; i < filtros.size(); i++) {
                     Filtro filtro = filtros.get(i);
@@ -212,7 +218,7 @@ public class ContratoDAO extends DAO{
         return resultado;
     }
 
-    // pesquisar por id
+    // Busca um contrato pelo id
     public Contrato pesquisarPorId(int id) throws SQLException {
         String sql = "SELECT DATA_INICIO,DATA_VENCIMENTO,FK_ENDERECO_ID,FK_PLANO_ID,STATUS_CONTRATO FROM CONTRATO WHERE id = ?";
         Contrato contrato;
@@ -238,13 +244,12 @@ public class ContratoDAO extends DAO{
         return contrato;
     }
 
-
-    // alter
+    // Atualiza um contrato, só nos campos que mudaram
     public void atualizar(Contrato original, Contrato alterado) throws SQLException{
 
         Integer id = alterado.getId();
         LocalDate dataVencimento = alterado.getDataVencimento();
-        // data_inicio pode ser alterada? consideramos que não
+        // Não atualiza data_inicio
         int fkEndereco = alterado.getFkEndereco();
         int fkPlano = alterado.getFkPlano();
         Integer statusContrato = alterado.getStatusContrato().getCodigo();
@@ -295,12 +300,13 @@ public class ContratoDAO extends DAO{
         }
     }
 
+    // Atualiza um contrato e registra a ação para desfazer
     public void atualizar(Contrato original, Contrato alterado, HttpServletRequest request) throws SQLException {
         atualizar(original, alterado);
         GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
     }
 
-    // delete
+    // Exclui um contrato pelo id
     public void remover(int id) throws SQLException {
 
         String sql = "DELETE FROM CONTRATO WHERE id = ?";
@@ -316,12 +322,14 @@ public class ContratoDAO extends DAO{
         }
     }
 
+    // Exclui um contrato e registra a ação para desfazer
     public void remover(int id, HttpServletRequest request) throws SQLException {
         DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
         remover(id);
         GerenciadorDesfazer.registrarComando(request, comando);
     }
 
+    // Lista contratos com plano e instituição, aplicando filtros e pesquisa
     public List<ContratoDTO> listarContratoDTO(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
         List<ContratoDTO> resultado = new ArrayList<>();
         String sql = "SELECT * FROM vw_contrato";
@@ -331,7 +339,7 @@ public class ContratoDAO extends DAO{
             for (int i = 0; i < filtros.size(); i++) {
                 Filtro filtro = filtros.get(i);
                 String campo = filtro.getCampoFiltravel();
-                if (!camposFiltraveis.containsKey(campo)) {
+                if (!camposDaView.contains(campo)) {
                     throw new IllegalArgumentException("Campo inválido: " + campo);
                 }
                 if (!operacoesPorCampo.get(campo).contains(filtro.getOperacaoFiltro())) {
@@ -346,14 +354,14 @@ public class ContratoDAO extends DAO{
             }
         }
 
-        if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
+        if (campoSequencia != null && camposDaView.contains(campoSequencia)){
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
             sql += " ORDER BY id ASC";
         }
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Verifica se tem filtro, se sim define a variável do comando SQL
+            // Preenche os parâmetros do SQL com os valores dos filtros
             if (filtros != null && !filtros.isEmpty()) {
                 for (int i = 0; i < filtros.size(); i++) {
                     Filtro filtro = filtros.get(i);
@@ -387,7 +395,7 @@ public class ContratoDAO extends DAO{
         return resultado;
     }
 
-    // cadastrar completo, ignorando os default. usado para desfazer um delete
+    // Insere um contrato com o id original, para desfazer uma exclusão
     public int cadastrarCompleto(Contrato contrato) throws SQLException {
         String sql = "INSERT INTO contrato (id, data_inicio, data_vencimento, fk_plano_id, fk_endereco_id, status_contrato) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {

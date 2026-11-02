@@ -9,9 +9,12 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.List;
 
+// Monta o desfazer de uma exclusão, incluindo os registros dependentes
 public final class DesfazerDeleteFactory {
+    // Classe utilitária, não deve ser instanciada
     private DesfazerDeleteFactory() {}
 
+    // Monta o comando que restaura o registro e seus dependentes
     public static DesfazerDelete criar(Class<?> daoClass, int id) throws SQLException {
         DesfazerDelete comando = new DesfazerDelete();
         Object registro = buscarPorId(daoClass, id);
@@ -22,6 +25,7 @@ public final class DesfazerDeleteFactory {
         return comando;
     }
 
+    // Busca o registro no DAO pelo id
     private static Object buscarPorId(Class<?> daoClass, int id) throws SQLException {
         try (AutoCloseable dao = (AutoCloseable) daoClass.getConstructor().newInstance()) {
             return daoClass.getMethod("pesquisarPorId", int.class).invoke(dao, id);
@@ -36,6 +40,7 @@ public final class DesfazerDeleteFactory {
         }
     }
 
+    // Adiciona o registro e, em cascata, os que dependem dele
     private static void adicionarComDependentes(DesfazerDelete comando, Class<?> daoClass, Object model)
             throws SQLException {
         comando.adicionarParaRestaurar(daoClass, model);
@@ -67,6 +72,7 @@ public final class DesfazerDeleteFactory {
         }
     }
 
+    // Busca os registros do DAO em que o campo tem o valor informado
     private static List<?> buscar(Class<?> daoClass, String campo, int valor) throws SQLException {
         try (AutoCloseable dao = (AutoCloseable) daoClass.getConstructor().newInstance()) {
             Filtro filtro = new Filtro(campo, valor, OperacaoFiltro.IGUAL);
@@ -85,17 +91,19 @@ public final class DesfazerDeleteFactory {
         }
     }
 
+    // Localiza o método de busca com filtros do DAO
     private static Method localizarBusca(Class<?> daoClass) throws NoSuchMethodException {
         for (String nome : List.of("buscar", "listar")) {
             try {
                 return daoClass.getMethod(nome, List.class, String.class, String.class, String.class);
             } catch (NoSuchMethodException ignored) {
-                // Tenta o outro nome usado pelos DAOs do projeto.
+                // Tenta o outro nome de busca usado pelos DAOs
             }
         }
         throw new NoSuchMethodException("DAO não possui busca com filtros: " + daoClass.getSimpleName());
     }
 
+    // Lê o id do registro
     private static int idDe(Object model) throws SQLException {
         try {
             return ((Number) model.getClass().getMethod("getId").invoke(model)).intValue();

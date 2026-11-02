@@ -2,6 +2,7 @@ package com.model;
 
 import java.time.LocalDateTime;
 
+// Representa a tabela endereco
 public class Endereco {
 
     private Integer id;                 // coluna: id
@@ -16,8 +17,6 @@ public class Endereco {
     private String cnpj;                // coluna: cnpj
     private LocalDateTime dataCriacao;  // coluna: data_criacao
     private Integer fkInstituicao;      // coluna: fk_instituicao_id
-
-    // construtor
 
     public Endereco(Integer id, String rua, String bairro, String complemento, String cidade, String estado, String numero, String cep, String cnpj, LocalDateTime dataCriacao, Integer fkInstituicao) {
         this.id = id;
@@ -58,8 +57,6 @@ public class Endereco {
     public String getNome() { return nome; }
 
     public void setNome(String nome) { this.nome = nome; }
-
-    // getters e setters
 
     public Integer getId() {
         return id;
@@ -152,8 +149,6 @@ public class Endereco {
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
-
-    // toString
 
     @Override
     public String toString(){

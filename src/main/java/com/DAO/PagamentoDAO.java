@@ -28,12 +28,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+// Acesso ao banco para a tabela de pagamentos
 public class PagamentoDAO extends DAO{
 
-    // colunas de data e hora filtradas só pela data (o usuário digita o dia, sem a hora)
+    // Colunas de data e hora filtradas só pelo dia
     private static final Set<String> CAMPOS_DATA_E_HORA = Set.of("DATA_PAGAMENTO");
 
-    // map dos campos que são filtráveis
+    // Campos filtráveis e suas colunas
     public static final Map<String, String> camposFiltraveis = Map.of(
             "ID", "ID",
             "VALOR", "Valor",
@@ -72,7 +73,10 @@ public class PagamentoDAO extends DAO{
             )
     );
 
-    // convertendo String recebida do Servlet
+    // Campos filtráveis e ordenáveis na listagem, só os que a view traz
+    public static final Set<String> camposDaView = Set.of("ID", "VALOR", "DATA_PAGAMENTO", "FOI_REALIZADO");
+
+    // Converte o valor para o tipo do campo filtrado
     public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
@@ -107,13 +111,12 @@ public class PagamentoDAO extends DAO{
         }
     }
 
-    // construtor
+    // Abre a conexão com o banco
     public PagamentoDAO() throws SQLException {
         super();
     }
 
-    // insert
-
+    // Insere um pagamento e devolve o id gerado
     public int cadastrar(Pagamento pagamento) throws SQLException {
 
         BigDecimal valor = pagamento.getValor();
@@ -141,12 +144,14 @@ public class PagamentoDAO extends DAO{
         }
     }
 
+    // Insere um pagamento e registra a ação para desfazer
     public int cadastrar(Pagamento pagamento, HttpServletRequest request) throws SQLException {
         int id = cadastrar(pagamento);
         GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
         return id;
     }
 
+    // Insere um pagamento com o id original, para desfazer uma exclusão
     public int cadastrarCompleto(Pagamento pagamento) throws SQLException {
         String sql = "INSERT INTO pagamento (id, valor, data_pagamento, foi_realizado, fk_contrato_id, metodo_pagamento) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -163,11 +168,10 @@ public class PagamentoDAO extends DAO{
         } catch (SQLException e) { conn.rollback(); throw e; }
     }
 
-    // select
+    // Lista pagamentos, aplicando filtros, ordenação e pesquisa
     public List<Pagamento> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
 
         List<Pagamento> resultado = new ArrayList<>();
-
 
         String sql = "SELECT ID, VALOR, DATA_PAGAMENTO, FOI_REALIZADO, FK_CONTRATO_ID, METODO_PAGAMENTO FROM pagamento";
 
@@ -179,12 +183,12 @@ public class PagamentoDAO extends DAO{
 
                 Filtro filtro = filtros.get(i);
 
-                // Verifica se o campo existe
+                // Valida se o campo é filtrável
                 if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
                     throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
                 }
 
-                // Verifica se a operação é permitida para esse campo
+                // Valida se a operação é permitida para o campo
                 if (!operacoesPorCampo
                         .get(filtro.getCampoFiltravel())
                         .contains(filtro.getOperacaoFiltro())) {
@@ -194,12 +198,12 @@ public class PagamentoDAO extends DAO{
                     );
                 }
 
-                // Coloca AND a partir do segundo filtro
+                // Liga os filtros com AND a partir do segundo
                 if (i > 0) {
                     sql += " AND ";
                 }
 
-                // Adiciona a condição
+                // Adiciona a condição do filtro
                 if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
 
                     sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
@@ -210,7 +214,7 @@ public class PagamentoDAO extends DAO{
 
                     String coluna = filtro.getCampoFiltravel();
 
-                    // compara só o dia, ignorando a hora
+                    // Compara só o dia, ignorando a hora
                     if (CAMPOS_DATA_E_HORA.contains(coluna)) {
                         coluna = "CAST(" + coluna + " AS DATE)";
                     }
@@ -228,7 +232,7 @@ public class PagamentoDAO extends DAO{
         }
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Verifica se tem filtro, se sim define a variável do comando SQL
+            // Preenche os parâmetros do SQL com os valores dos filtros
             if (filtros != null && !filtros.isEmpty()) {
                 for (int i = 0; i < filtros.size(); i++) {
                     Filtro filtro = filtros.get(i);
@@ -270,7 +274,7 @@ public class PagamentoDAO extends DAO{
         return resultado;
     }
 
-    // select id
+    // Busca um pagamento pelo id
     public Pagamento pesquisarPorId(int idPagamento) throws SQLException{
 
         String sql = "SELECT ID, VALOR, DATA_PAGAMENTO, FOI_REALIZADO, FK_CONTRATO_ID, METODO_PAGAMENTO FROM pagamento WHERE id = ?";
@@ -303,8 +307,7 @@ public class PagamentoDAO extends DAO{
         return p;
     }
 
-
-    // update
+    // Atualiza um pagamento, só nos campos que mudaram
     public void atualizar(Pagamento original, Pagamento alterado) throws SQLException{
 
         int id = alterado.getId();
@@ -316,7 +319,6 @@ public class PagamentoDAO extends DAO{
 
         StringBuilder sql = new StringBuilder("UPDATE pagamento SET ");
         List<Object> valores = new ArrayList<>();
-
 
         if(!Objects.equals(valor, original.getValor())){
             sql.append("valor = ?, ");
@@ -367,13 +369,13 @@ public class PagamentoDAO extends DAO{
         }
     }
 
+    // Atualiza um pagamento e registra a ação para desfazer
     public void atualizar(Pagamento original, Pagamento alterado, HttpServletRequest request) throws SQLException {
         atualizar(original, alterado);
         GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
     }
 
-    // delete
-
+    // Exclui um pagamento pelo id
     public void remover(int id) throws SQLException {
 
         String sql = "DELETE FROM pagamento WHERE id = ?";
@@ -390,12 +392,14 @@ public class PagamentoDAO extends DAO{
         }
     }
 
+    // Exclui um pagamento e registra a ação para desfazer
     public void remover(int id, HttpServletRequest request) throws SQLException {
         DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
         remover(id);
         GerenciadorDesfazer.registrarComando(request, comando);
     }
 
+    // Lista pagamentos com contrato, plano e instituição, aplicando filtros e pesquisa
     public List<PagamentoDTO> listarPagamentoDTO(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
         List<PagamentoDTO> resultado = new ArrayList<>();
         String sql = "SELECT * FROM vw_pagamento";
@@ -404,23 +408,23 @@ public class PagamentoDAO extends DAO{
             for (int i = 0; i < filtros.size(); i++) {
                 Filtro filtro = filtros.get(i);
                 String campo = filtro.getCampoFiltravel();
-                if (!camposFiltraveis.containsKey(campo)) throw new IllegalArgumentException("Campo inválido: " + campo);
+                if (!camposDaView.contains(campo)) throw new IllegalArgumentException("Campo inválido: " + campo);
                 if (!operacoesPorCampo.get(campo).contains(filtro.getOperacaoFiltro())) {
                     throw new IllegalArgumentException("Operação inválida para o campo: " + campo);
                 }
                 if (i > 0) sql += " AND ";
-                // compara só o dia, ignorando a hora
+                // Compara só o dia, ignorando a hora
                 String coluna = CAMPOS_DATA_E_HORA.contains(campo) ? "CAST(" + campo + " AS DATE)" : campo;
                 sql += coluna + " " + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
             }
         }
-        if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
+        if (campoSequencia != null && camposDaView.contains(campoSequencia)){
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
             sql += " ORDER BY id ASC";
         }
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Verifica se tem filtro, se sim define a variável do comando SQL
+            // Preenche os parâmetros do SQL com os valores dos filtros
             if (filtros != null && !filtros.isEmpty()) {
                 for (int i = 0; i < filtros.size(); i++) {
                     Filtro filtro = filtros.get(i);

@@ -1,13 +1,13 @@
 package com.utils;
 
-// Apoio das telas de listagem (JSP): ordenação pelas setas e texto seguro dentro do HTML.
-// A ordenação viaja no formato CAMPO-ASC ou CAMPO-DESC (ex: RUA-ASC), o mesmo que os servlets leem.
+// Apoio das listagens (JSP): ordenação pelas setas e texto seguro no HTML
 public class ListaWeb {
 
+    // Classe utilitária, não deve ser instanciada
     private ListaWeb() {
     }
 
-    // valor de aria-sort do cabecalho: diz ao CSS qual seta destacar
+    // Devolve o aria-sort do cabeçalho, que diz ao CSS qual seta destacar
     public static String ariaSort(String ordenacao, String campo) {
         String atual = ordenacao == null ? "" : ordenacao.toUpperCase();
 
@@ -20,7 +20,7 @@ public class ListaWeb {
         return "none";
     }
 
-    // ordenação que a seta envia ao ser clicada: crescente, depois decrescente e, no terceiro clique, envia vazio (sem seta acesa) e o DAO usa a ordem padrão, ID ASC
+    // Devolve a próxima ordenação do clique: crescente, decrescente e vazia (ordem padrão)
     public static String proximaOrdenacao(String ordenacao, String campo) {
         String atual = ordenacao == null ? "" : ordenacao.toUpperCase();
 
@@ -33,7 +33,7 @@ public class ListaWeb {
         return campo + "-ASC";
     }
 
-    // evita que aspas ou < > quebrem o HTML quando o valor volta para a tela
+    // Escapa os caracteres especiais para não quebrar o HTML
     public static String escapar(Object valor) {
         if (valor == null) {
             return "";

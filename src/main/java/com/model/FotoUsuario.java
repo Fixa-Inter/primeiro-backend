@@ -2,14 +2,13 @@ package com.model;
 
 import java.time.LocalDateTime;
 
+// Representa a tabela foto_usuario
 public class FotoUsuario {
 
     private Integer id;              // coluna: id
     private LocalDateTime dataRegistro;  // coluna: data_registro
     private String url;              // coluna: url
     private Integer fkUsuario;       // coluna: fk_usuario_id
-
-    // construtor
 
     public FotoUsuario(String url, Integer fkUsuario) {
 
@@ -23,8 +22,6 @@ public class FotoUsuario {
         this.url = url;
         this.fkUsuario = fkUsuario;
     }
-
-    // getters e setters
 
     public Integer getId() {
         return id;
@@ -57,8 +54,6 @@ public class FotoUsuario {
     public void setFkUsuario(Integer fkUsuario) {
         this.fkUsuario = fkUsuario;
     }
-
-    // toString
 
     @Override
     public String toString(){

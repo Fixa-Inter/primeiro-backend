@@ -1,4 +1,4 @@
-<%-- Filtros que estao valendo: uma etiqueta para cada um. O X envia o indice do filtro em removerFiltro (botao ligado ao formulario da barra de filtros). --%>
+<%-- Etiquetas dos filtros ativos, com X para removê-los --%>
 <% if (filtros != null && !filtros.isEmpty()) { %>
 <div class="filtros-ativos" id="filtros-ativos">
   <span class="filtros-ativos-titulo">Filtros ativos:</span>

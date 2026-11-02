@@ -10,14 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+// Acesso ao banco para os códigos de verificação do cadastro
 public class VerificacaoCadastroDAO extends DAO{
 
-    // construtor de DAO
+    // Abre a conexão com o banco
     public VerificacaoCadastroDAO() throws SQLException {
         super();
     }
 
-    // insert
+    // Insere um código de verificação e devolve o id gerado
     public int cadastrar(VerificacaoCadastro verificacaoCadastro) throws SQLException {
         String codigoVerificacao = verificacaoCadastro.getCodigoVerificacao();
         String email = verificacaoCadastro.getEmail();
@@ -41,7 +42,7 @@ public class VerificacaoCadastroDAO extends DAO{
         }
     }
 
-    // select da verificação de um email, retorna null caso não tenha nenhuma registrada
+    // Busca o código válido de um e-mail, ou null se não houver
     public VerificacaoCadastro buscarCodigoValido(String email) throws SQLException {
 
         String sql = "SELECT ID, CODIGO_VERIFICACAO, DATA_EXPIRACAO, EMAIL, ESTA_VALIDO FROM VERIFICACAO_CADASTRO WHERE EMAIL = ? AND ESTA_VALIDO = TRUE AND DATA_EXPIRACAO > NOW() ORDER BY ID DESC LIMIT 1";
@@ -70,7 +71,7 @@ public class VerificacaoCadastroDAO extends DAO{
         return verificacaoCadastro;
     }
 
-    // update
+    // Atualiza só os campos que mudaram entre o original e o alterado
     public void atualizar(VerificacaoCadastro original, VerificacaoCadastro alterado) throws SQLException {
 
         String codigoVerificacao = alterado.getCodigoVerificacao();
@@ -117,7 +118,7 @@ public class VerificacaoCadastroDAO extends DAO{
             throw e;
         }
     }
-    // invalida todos os códigos de um email (após uso com sucesso ou antes de reenviar)
+    // Invalida todos os códigos de um e-mail
     public void invalidarPorEmail(String email) throws SQLException {
 
         String sql = "UPDATE VERIFICACAO_CADASTRO SET ESTA_VALIDO = FALSE WHERE EMAIL = ?";
@@ -134,8 +135,7 @@ public class VerificacaoCadastroDAO extends DAO{
         }
     }
 
-
-    // delete
+    // Exclui o código de verificação pelo id
     public void remover(int id) throws SQLException {
 
         String sql = "DELETE FROM VERIFICACAO_CADASTRO WHERE ID = ?";

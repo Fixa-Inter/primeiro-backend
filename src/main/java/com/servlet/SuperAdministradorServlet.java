@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+// Controla o CRUD de super administradores na área restrita
 @WebServlet(name = "SuperAdministradorServlet", value = "/superAdmin")
 public class SuperAdministradorServlet extends HttpServlet{
 
@@ -27,6 +28,7 @@ public class SuperAdministradorServlet extends HttpServlet{
     private static final String PAGINA_CADASTRO = "/WEB-INF/views/restrita/cadastro-super-admin.jsp";
     private static final String PAGINA_EDICAO = "/WEB-INF/views/restrita/editar-super-admin.jsp";
 
+    // Abre a lista, o formulário de cadastro ou o de edição, conforme a action
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -74,6 +76,7 @@ public class SuperAdministradorServlet extends HttpServlet{
         else request.getRequestDispatcher(destino).forward(request, response);
     }
 
+    // Executa o cadastro, a edição ou a exclusão, conforme a action
     @Override
     protected void doPost(
             HttpServletRequest request,
@@ -97,6 +100,7 @@ public class SuperAdministradorServlet extends HttpServlet{
         }
     }
 
+    // Lista os super administradores com filtros, ordenação e pesquisa da requisição
     private void listarAdmins(
             HttpServletRequest request,
             HttpServletResponse response
@@ -138,11 +142,10 @@ public class SuperAdministradorServlet extends HttpServlet{
                         continue;
                     }
 
-
                     String campo = campos[i].trim().toUpperCase();
                     String valor = valores[i].trim();
 
-                    // ignora filtro sem valor ou com campo que não existe
+                    // Ignora filtro sem valor ou com campo inexistente
                     if (valor.isEmpty()
                             || !SuperAdministradorDAO.camposFiltraveis.containsKey(campo)) {
 
@@ -157,7 +160,7 @@ public class SuperAdministradorServlet extends HttpServlet{
                         continue;
                     }
 
-                    // ignora operação que o campo não aceita
+                    // Ignora operação que o campo não aceita
                     List<OperacaoFiltro> operacoesPermitidas =
                             SuperAdministradorDAO.operacoesPorCampo.get(campo);
 
@@ -170,7 +173,7 @@ public class SuperAdministradorServlet extends HttpServlet{
                     Object valorConvertido =
                             dao.converterValor(campo, valor);
 
-                    // valor que não converte para o tipo do campo
+                    // Ignora valor que não converte para o tipo do campo
                     if (valorConvertido == null) {
                         continue;
                     }
@@ -212,6 +215,7 @@ public class SuperAdministradorServlet extends HttpServlet{
         }
     }
 
+    // Cadastra um super administrador com os dados do formulário
     private void cadastrarAdmin(
             HttpServletRequest request,
             HttpServletResponse response
@@ -249,6 +253,7 @@ public class SuperAdministradorServlet extends HttpServlet{
         }
     }
 
+    // Exclui um super administrador pelo id da requisição
     private void deletarAdmin(
             HttpServletRequest request,
             HttpServletResponse response
@@ -257,13 +262,13 @@ public class SuperAdministradorServlet extends HttpServlet{
 
         try (SuperAdministradorDAO dao = new SuperAdministradorDAO()){
 
-            // não pode excluir a propria conta (a sessão continuaria aberta com uma conta que não existe mais)
+            // Não pode excluir a própria conta
             SuperAdminDTO logado = (SuperAdminDTO) request.getSession().getAttribute("usuario");
             if (logado != null && logado.getId() == id) {
                 throw ExcecaoDeJSP.naoPodeExcluirPropriaConta();
             }
 
-            // não pode excluir o único administrador (ninguém mais entraria na área restrita)
+            // Não pode excluir o único administrador
             if (dao.buscar(null, null, null, null).size() <= 1) {
                 throw ExcecaoDeJSP.naoPodeExcluirUltimoAdmin();
             }
@@ -274,7 +279,7 @@ public class SuperAdministradorServlet extends HttpServlet{
                     request.getContextPath() + "/superAdmin"
             );
         } catch (ExcecaoDeJSP e) {
-            // volta para a lista mostrando o motivo (o doGet responderia 400 para action=delete)
+            // Volta para a lista com o motivo do bloqueio
             request.setAttribute("erro", e.getMessage());
             listarAdmins(request, response);
             request.getRequestDispatcher(PAGINA_PRINCIPAL).forward(request, response);
@@ -286,6 +291,7 @@ public class SuperAdministradorServlet extends HttpServlet{
 
     }
 
+    // Atualiza um super administrador com os dados do formulário
     private void atualizarAdmin(
             HttpServletRequest request,
             HttpServletResponse response
@@ -300,7 +306,7 @@ public class SuperAdministradorServlet extends HttpServlet{
             throw ExcecaoDeJSP.valorInvalido("email");
         }
 
-        // em branco = null (mantem a atual); preenchida = já validada pela regra de senha
+        // Em branco vira null e mantém a senha atual
         String senha = Parametros.senhaOpcional(request, "senha");
 
         if (senha != null) {
@@ -309,10 +315,10 @@ public class SuperAdministradorServlet extends HttpServlet{
 
         try (SuperAdministradorDAO dao = new SuperAdministradorDAO()) {
 
-            // Busca como está atualmente no banco
+            // Busca o registro atual no banco
             SuperAdministrador original = dao.pesquisarPorId(id);
 
-            // Monta o objeto com os novos dados
+            // Monta o objeto com os dados novos
             SuperAdministrador alterado = new SuperAdministrador(
                     nome,
                     senha,
