@@ -63,14 +63,6 @@
       <p class="descricao-cadastro">
         Tudo pronto. O novo endereço já está vinculado à sua instituição.
       </p>
-      <div class="aviso-cadastro">
-        <h2>
-          COMO ENTRAR
-        </h2>
-        <p>
-          Nos próximos acessos, use o e-mail da instituição, a senha que você criou e o CNPJ.
-        </p>
-      </div>
       <a class="botao-principal" href="${pageContext.request.contextPath}/cadastrar-endereco?action=adicionar">
         Adicionar outro endereço
       </a>

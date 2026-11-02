@@ -218,3 +218,12 @@ button:hover,
     font-size: 14px;
   }
 }
+.mensagem-erro {
+  margin: 0 0 24px;
+  padding: 16px;
+  border: 1px solid #EDC2C2;
+  border-radius: 10px;
+  color: #A92A2A;
+  background-color: #FFF1F1;
+  line-height: 24px;
+}

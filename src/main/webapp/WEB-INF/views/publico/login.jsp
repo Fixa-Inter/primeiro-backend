@@ -33,7 +33,7 @@
           para acessar o painel Fixa.
         </p>
         <% if (erro != null) { %>
-        <p class="descricao">
+        <p class="mensagem-erro" role="alert">
           <%= com.utils.ListaWeb.escapar(erro) %>
         </p>
         <% } %>
