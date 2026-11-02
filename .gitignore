@@ -30,7 +30,7 @@ bin/
 .DS_Store
 
 ## PROJETO ##
-.env
+src/main/resources/.env
 target/
 .claude/
 .idea/
