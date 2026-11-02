@@ -510,7 +510,7 @@
       <main class="conteudo" id="conteudo">
         <section class="painel-graficos" aria-label="Resumo e gráficos do CRUD">
           <div class="resumos">
-            <article class="resumo" tabindex="0" data-dica="Instituições <%= resumo.getInstituicoes() %> <%= instituicoes.size() %> tipos cadastrados">
+            <article class="resumo" tabindex="0" data-dica="Instituições <%= ListaWeb.escapar(resumo.getInstituicoes()) %> <%= instituicoes.size() %> tipos cadastrados">
               <span class="resumo-titulo">
                 <svg class="resumo-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                   <rect x="4" y="3" width="16" height="18" rx="1.5">
@@ -521,7 +521,7 @@
                 Instituições
               </span>
               <strong class="resumo-numero">
-                <%= resumo.getInstituicoes() %>
+                <%= ListaWeb.escapar(resumo.getInstituicoes()) %>
               </strong>
               <span class="resumo-detalhe">
                 <%= instituicoes.size() %> tipos cadastrados
@@ -530,7 +530,7 @@
                 Ver tabela →
               </a>
             </article>
-            <article class="resumo" tabindex="0" data-dica="Usuários <%= resumo.getUsuarios() %> <%= ativos %> ativos (<%= percentualAtivos %>%)">
+            <article class="resumo" tabindex="0" data-dica="Usuários <%= ListaWeb.escapar(resumo.getUsuarios()) %> <%= ativos %> ativos (<%= percentualAtivos %>%)">
               <span class="resumo-titulo">
                 <svg class="resumo-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                   <circle cx="9" cy="7" r="4">
@@ -541,7 +541,7 @@
                 Usuários
               </span>
               <strong class="resumo-numero">
-                <%= resumo.getUsuarios() %>
+                <%= ListaWeb.escapar(resumo.getUsuarios()) %>
               </strong>
               <span class="resumo-detalhe">
                 <%= ativos %> ativos (<%= percentualAtivos %>%)
@@ -550,7 +550,7 @@
                 Ver tabela →
               </a>
             </article>
-            <article class="resumo" tabindex="0" data-dica="Endereços <%= resumo.getEnderecos() %> <%= mediaEnderecos %> por instituição, em média">
+            <article class="resumo" tabindex="0" data-dica="Endereços <%= ListaWeb.escapar(resumo.getEnderecos()) %> <%= mediaEnderecos %> por instituição, em média">
               <span class="resumo-titulo">
                 <svg class="resumo-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                   <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0Z">
@@ -561,7 +561,7 @@
                 Endereços
               </span>
               <strong class="resumo-numero">
-                <%= resumo.getEnderecos() %>
+                <%= ListaWeb.escapar(resumo.getEnderecos()) %>
               </strong>
               <span class="resumo-detalhe">
                 <%= mediaEnderecos %> por instituição, em média
@@ -603,12 +603,12 @@
                 Quantas instituições existem de cada tipo
               </p>
               <% for (InstituicoesPorTipoDTO item : instituicoes) { %>
-              <div class="barra-linha" tabindex="0" data-dica="<%= ListaWeb.escapar(item.getTipo()) %> <%= item.getInstituicoes() %> · <%= item.getPercentual() %>%">
+              <div class="barra-linha" tabindex="0" data-dica="<%= ListaWeb.escapar(item.getTipo()) %> <%= ListaWeb.escapar(item.getInstituicoes()) %> · <%= ListaWeb.escapar(item.getPercentual()) %>%">
                 <span class="barra-nome"><%= ListaWeb.escapar(item.getTipo()) %></span>
                 <div class="barra-fundo" aria-hidden="true">
-                  <div class="barra-preenchida" style="width: <%= item.getPercentual() %>%;"></div>
+                  <div class="barra-preenchida" style="width: <%= ListaWeb.escapar(item.getPercentual()) %>%;"></div>
                 </div>
-                <span class="barra-valor"><%= item.getInstituicoes() %> · <%= item.getPercentual() %>%</span>
+                <span class="barra-valor"><%= ListaWeb.escapar(item.getInstituicoes()) %> · <%= ListaWeb.escapar(item.getPercentual()) %>%</span>
               </div>
               <% } %>
             </article>
@@ -664,8 +664,8 @@
               </p>
               <div class="colunas">
                 <% for (ContratosPorPlanoDTO item : topPlanos) { %>
-                <div class="coluna" tabindex="0" data-dica="<%= item.getContratos() %> <%= ListaWeb.escapar(item.getPlano()) %>">
-                  <span class="coluna-valor"><%= item.getContratos() %></span>
+                <div class="coluna" tabindex="0" data-dica="<%= ListaWeb.escapar(item.getContratos()) %> <%= ListaWeb.escapar(item.getPlano()) %>">
+                  <span class="coluna-valor"><%= ListaWeb.escapar(item.getContratos()) %></span>
                   <div class="coluna-barra" aria-hidden="true" style="height: <%= Math.max(6, 120 * item.getContratos() / maiorPlano) %>px;"></div>
                   <span class="coluna-nome"><%= ListaWeb.escapar(item.getPlano()) %></span>
                 </div>
@@ -682,14 +682,14 @@
                 </a>
               </header>
               <p class="grafico-descricao">
-                Top <%= topInstituicoes.size() %> de <%= resumo.getInstituicoes() %> instituições cadastradas
+                Top <%= topInstituicoes.size() %> de <%= ListaWeb.escapar(resumo.getInstituicoes()) %> instituições cadastradas
               </p>
               <ol class="ranking">
                 <% int posicao = 1; for (EnderecosPorInstituicaoDTO item : topInstituicoes) { %>
                 <li>
                   <span class="ranking-posicao"><%= posicao++ %></span>
                   <span class="ranking-nome"><%= ListaWeb.escapar(item.getInstituicao()) %></span>
-                  <strong><%= item.getEnderecos() %></strong>
+                  <strong><%= ListaWeb.escapar(item.getEnderecos()) %></strong>
                 </li>
                 <% } %>
               </ol>

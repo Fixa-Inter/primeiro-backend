@@ -278,12 +278,12 @@
                     Selecione um endereço
                   </option>
                   <% if (enderecosDisponiveis != null) { for (Endereco endereco : enderecosDisponiveis) { %>
-                  <option value="<%= endereco.getId() %>">
-                    <%= endereco.getNome() %>
+                  <option value="<%= com.utils.ListaWeb.escapar(endereco.getId()) %>">
+                    <%= com.utils.ListaWeb.escapar(endereco.getNome()) %>
                     -
-                    <%= endereco.getRua() %>
+                    <%= com.utils.ListaWeb.escapar(endereco.getRua()) %>
                     ,
-                    <%= endereco.getNumero() %>
+                    <%= com.utils.ListaWeb.escapar(endereco.getNumero()) %>
                   </option>
                   <% } } %>
                 </select>

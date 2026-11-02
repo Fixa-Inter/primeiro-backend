@@ -34,7 +34,7 @@
         </p>
         <% if (erro != null) { %>
         <p class="descricao">
-          <%= erro %>
+          <%= com.utils.ListaWeb.escapar(erro) %>
         </p>
         <% } %>
         <form action="${pageContext.request.contextPath}/login-handler?action=login" method="post" novalidate>

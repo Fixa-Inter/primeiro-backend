@@ -65,7 +65,7 @@
       </p>
       <% if (erro != null && !erro.isBlank()) { %>
       <p class="mensagem-erro" role="alert">
-        <%= erro %>
+        <%= com.utils.ListaWeb.escapar(erro) %>
       </p>
       <% } %>
       <form action="${pageContext.request.contextPath}/cadastro?action=buscarCnpj" method="post">
@@ -73,7 +73,7 @@
           <label for="cnpj">
             CNPJ *
           </label>
-          <input type="text" id="cnpj" name="cnpj" value="${empty cnpj ? param.cnpj : cnpj}" required inputmode="numeric" title="Informe os 14 números do CNPJ, com ou sem pontuação." placeholder="00.000.000/0000-00">
+          <input type="text" id="cnpj" name="cnpj" value="<%= com.utils.ListaWeb.escapar(request.getAttribute("cnpj") == null || "".equals(request.getAttribute("cnpj")) ? request.getParameter("cnpj") : request.getAttribute("cnpj")) %>" required inputmode="numeric" title="Informe os 14 números do CNPJ, com ou sem pontuação." placeholder="00.000.000/0000-00">
         </div>
         <button class="botao-principal" type="submit">
           Buscar CNPJ

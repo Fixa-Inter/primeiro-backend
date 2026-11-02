@@ -319,38 +319,38 @@
                 %>
                 <tr>
                   <td data-rotulo="ID" data-campo="id">
-                    <%= endereco.getId() %>
+                    <%= ListaWeb.escapar(endereco.getId()) %>
                   </td>
                   <td data-rotulo="Nome do endereço" data-campo="nome" class=" registro-titulo">
-                    <%= endereco.getNome() %>
+                    <%= ListaWeb.escapar(endereco.getNome()) %>
                   </td>
                   <td data-rotulo="Rua" data-campo="rua" class=" campo-largo">
-                    <%= endereco.getRua() %>
+                    <%= ListaWeb.escapar(endereco.getRua()) %>
                   </td>
                   <td data-rotulo="Número" data-campo="numero">
-                    <%= endereco.getNumero() %>
+                    <%= ListaWeb.escapar(endereco.getNumero()) %>
                   </td>
                   <td data-rotulo="Complemento" data-campo="complemento">
-                    <%= endereco.getComplemento() %>
+                    <%= ListaWeb.escapar(endereco.getComplemento()) %>
                   </td>
                   <td data-rotulo="Bairro" data-campo="bairro">
-                    <%= endereco.getBairro() %>
+                    <%= ListaWeb.escapar(endereco.getBairro()) %>
                   </td>
                   <td data-rotulo="Cidade" data-campo="cidade">
-                    <%= endereco.getCidade() %>
+                    <%= ListaWeb.escapar(endereco.getCidade()) %>
                   </td>
                   <td data-rotulo="Estado (UF)" data-campo="estado">
-                    <%= endereco.getEstado() %>
+                    <%= ListaWeb.escapar(endereco.getEstado()) %>
                   </td>
                   <td data-rotulo="CEP" data-campo="cep">
-                    <%= endereco.getCep() %>
+                    <%= ListaWeb.escapar(endereco.getCep()) %>
                   </td>
                   <td class="coluna-relacionada" data-rotulo="Instituição" data-campo="instituicao">
-                    <%= endereco.getInstituicaoNome() %>
+                    <%= ListaWeb.escapar(endereco.getInstituicaoNome()) %>
                   </td>
                   <td class="coluna-acoes" data-rotulo="Ações" data-campo="acoes">
                     <div class="acoes-linha">
-                      <a class="editar" href="${pageContext.request.contextPath}/enderecos?action=update&id=<%= endereco.getId() %>">
+                      <a class="editar" href="${pageContext.request.contextPath}/enderecos?action=update&id=<%= ListaWeb.escapar(endereco.getId()) %>">
                         <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                           <path d="M16 3l5 5L8 21H3v-5L16 3Z M14 5l5 5">
                           </path>
@@ -359,7 +359,7 @@
                       </a>
                       <form action="${pageContext.request.contextPath}/enderecos" method="post" class="form-excluir">
                         <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="id" value="<%= endereco.getId() %>">
+                        <input type="hidden" name="id" value="<%= ListaWeb.escapar(endereco.getId()) %>">
                         <button class="excluir" type="submit">
                           <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                             <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7">

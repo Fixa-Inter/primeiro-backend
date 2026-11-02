@@ -217,10 +217,10 @@
                     Selecione um usuário
                   </option>
                   <% if (usuariosDisponiveis != null) { for (Usuario usuario : usuariosDisponiveis) { %>
-                  <option value="<%= usuario.getId() %>">
-                    <%= usuario.getNome() %>
+                  <option value="<%= com.utils.ListaWeb.escapar(usuario.getId()) %>">
+                    <%= com.utils.ListaWeb.escapar(usuario.getNome()) %>
                     -
-                    <%= usuario.getEmail() %>
+                    <%= com.utils.ListaWeb.escapar(usuario.getEmail()) %>
                   </option>
                   <% } } %>
                 </select>

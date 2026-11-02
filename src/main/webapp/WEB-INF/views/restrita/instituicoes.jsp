@@ -303,26 +303,26 @@
                 %>
                 <tr>
                   <td data-rotulo="ID" data-campo="id">
-                    <%= instituicao.getId() %>
+                    <%= ListaWeb.escapar(instituicao.getId()) %>
                   </td>
                   <td data-rotulo="Nome" data-campo="nome" class=" registro-titulo">
-                    <%= instituicao.getNome() %>
+                    <%= ListaWeb.escapar(instituicao.getNome()) %>
                   </td>
                   <td data-rotulo="E-mail corporativo" data-campo="email_corporativo">
-                    <%= instituicao.getEmailCorporativo() %>
+                    <%= ListaWeb.escapar(instituicao.getEmailCorporativo()) %>
                   </td>
                   <td data-rotulo="Data de cadastro" data-campo="data_cadastro">
-                    <%= instituicao.getDataCadastro() %>
+                    <%= ListaWeb.escapar(instituicao.getDataCadastro()) %>
                   </td>
                   <td data-rotulo="Domínio do e-mail" data-campo="dominio_email">
-                    <%= instituicao.getDominioEmail() %>
+                    <%= ListaWeb.escapar(instituicao.getDominioEmail()) %>
                   </td>
                   <td data-rotulo="Tipo de instituição" data-campo="tipo_instituicao">
                     <%= instituicao.getTipoInstituicao().getNome() %>
                   </td>
                   <td class="coluna-acoes" data-rotulo="Ações" data-campo="acoes">
                     <div class="acoes-linha">
-                      <a class="editar" href="${pageContext.request.contextPath}/instituicoes?action=update&id=<%= instituicao.getId() %>">
+                      <a class="editar" href="${pageContext.request.contextPath}/instituicoes?action=update&id=<%= ListaWeb.escapar(instituicao.getId()) %>">
                         <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                           <path d="M16 3l5 5L8 21H3v-5L16 3Z M14 5l5 5">
                           </path>
@@ -331,7 +331,7 @@
                       </a>
                       <form action="${pageContext.request.contextPath}/instituicoes" method="post" class="form-excluir">
                         <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="id" value="<%= instituicao.getId() %>">
+                        <input type="hidden" name="id" value="<%= ListaWeb.escapar(instituicao.getId()) %>">
                         <button class="excluir" type="submit">
                           <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                             <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7">

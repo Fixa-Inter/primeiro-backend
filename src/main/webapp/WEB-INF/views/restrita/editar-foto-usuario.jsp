@@ -200,7 +200,7 @@ return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
             </h2>
           </div>
           <form action="${pageContext.request.contextPath}/fotoUsuario" method="post" aria-describedby="aviso-formulario erro-formulario" id="registro-form">
-            <input type="hidden" name="id" value="<%= fotoUsuario.getId() %>">
+            <input type="hidden" name="id" value="<%= com.utils.ListaWeb.escapar(fotoUsuario.getId()) %>">
             <input type="hidden" name="action" value="update">
             <div class="corpo-formulario">
               <p class="orientacao" id="aviso-formulario">
@@ -231,7 +231,7 @@ return valor.toString().replace("&", "&amp;").replace("\"", "&quot;")
                   </option>
                   <% if (usuariosDisponiveis != null) {
                   for (Usuario usuarioOpcao : usuariosDisponiveis) { %>
-                  <option value="<%= usuarioOpcao.getId() %>" <%= usuarioOpcao.getId().equals(fotoUsuario.getFkUsuario()) ? "selected" : "" %>>
+                  <option value="<%= com.utils.ListaWeb.escapar(usuarioOpcao.getId()) %>" <%= usuarioOpcao.getId().equals(fotoUsuario.getFkUsuario()) ? "selected" : "" %>>
                     <%= escaparHtml(usuarioOpcao.getNome()) %>
                     —
                     <%= escaparHtml(usuarioOpcao.getEmail()) %>

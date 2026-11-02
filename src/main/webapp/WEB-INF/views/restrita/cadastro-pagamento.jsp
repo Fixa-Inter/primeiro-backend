@@ -217,9 +217,9 @@
                     Selecione um contrato
                   </option>
                   <% if (contratosDisponiveis != null) { for (Contrato contrato : contratosDisponiveis) { %>
-                  <option value="<%= contrato.getId() %>">
+                  <option value="<%= com.utils.ListaWeb.escapar(contrato.getId()) %>">
                     Contrato #
-                    <%= contrato.getId() %>
+                    <%= com.utils.ListaWeb.escapar(contrato.getId()) %>
                   </option>
                   <% } } %>
                 </select>

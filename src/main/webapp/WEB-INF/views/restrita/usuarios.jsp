@@ -329,38 +329,38 @@
                 %>
                 <tr>
                   <td data-rotulo="ID" data-campo="id">
-                    <%= usuario.getId() %>
+                    <%= ListaWeb.escapar(usuario.getId()) %>
                   </td>
                   <td data-rotulo="Nome" data-campo="nome" class=" registro-titulo">
-                    <%= usuario.getNome() %>
+                    <%= ListaWeb.escapar(usuario.getNome()) %>
                   </td>
                   <td data-rotulo="Está ativo" data-campo="esta_ativo">
                     <%= usuario.getEstaAtivo() ? "Sim" : "Não" %>
                   </td>
                   <td data-rotulo="E-mail" data-campo="email">
-                    <%= usuario.getEmail() %>
+                    <%= ListaWeb.escapar(usuario.getEmail()) %>
                   </td>
                   <td data-rotulo="Cargo" data-campo="cargo">
-                    <%= usuario.getCargo() %>
+                    <%= ListaWeb.escapar(usuario.getCargo()) %>
                   </td>
                   <td data-rotulo="Tipo de acesso" data-campo="tipo_acesso">
-                    <%= usuario.getTipoAcesso() %>
+                    <%= ListaWeb.escapar(usuario.getTipoAcesso()) %>
                   </td>
                   <td data-rotulo="Data de nascimento" data-campo="data_nascimento">
-                    <%= usuario.getDataNascimento() %>
+                    <%= ListaWeb.escapar(usuario.getDataNascimento()) %>
                   </td>
                   <td data-rotulo="Primeiro acesso" data-campo="primeiro_acesso">
                     <%= usuario.getPrimeiroAcesso() ? "Sim" : "Não" %>
                   </td>
                   <td class="coluna-relacionada" data-rotulo="Estado (UF)" data-campo="estado">
-                    <%= usuario.getEstado() %>
+                    <%= ListaWeb.escapar(usuario.getEstado()) %>
                   </td>
                   <td class="coluna-relacionada" data-rotulo="Instituição" data-campo="instituicao">
-                    <%= usuario.getInstituicaoNome() %>
+                    <%= ListaWeb.escapar(usuario.getInstituicaoNome()) %>
                   </td>
                   <td class="coluna-acoes" data-rotulo="Ações" data-campo="acoes">
                     <div class="acoes-linha">
-                      <a class="editar" href="${pageContext.request.contextPath}/usuarios?action=update&id=<%= usuario.getId() %>">
+                      <a class="editar" href="${pageContext.request.contextPath}/usuarios?action=update&id=<%= ListaWeb.escapar(usuario.getId()) %>">
                         <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                           <path d="M16 3l5 5L8 21H3v-5L16 3Z M14 5l5 5">
                           </path>
@@ -369,7 +369,7 @@
                       </a>
                       <form action="${pageContext.request.contextPath}/usuarios" method="post" class="form-excluir">
                         <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="id" value="<%= usuario.getId() %>">
+                        <input type="hidden" name="id" value="<%= ListaWeb.escapar(usuario.getId()) %>">
                         <button class="excluir" type="submit">
                           <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                             <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7">
