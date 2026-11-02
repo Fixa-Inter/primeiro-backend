@@ -75,7 +75,7 @@
         Adicionar outro endereço
       </a>
       <a class="voltar-cadastro" href="${pageContext.request.contextPath}/cadastrar-endereco?action=logout">
-        Sair
+        Voltar ao site
       </a>
     </main>
   </body>
