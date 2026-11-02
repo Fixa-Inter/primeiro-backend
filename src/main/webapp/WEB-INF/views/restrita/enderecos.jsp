@@ -199,8 +199,7 @@
         {"BAIRRO", "Bairro"},
         {"CIDADE", "Cidade"},
         {"ESTADO", "Estado (UF)"},
-        {"CEP", "CEP"},
-        {"FK_INSTITUICAO_ID", "Instituição (ID)"}
+        {"CEP", "CEP"}
     };
 %>
 <%@ include file="/WEB-INF/views/restrita/_filtro.jspf" %>

@@ -168,7 +168,7 @@ public class EnderecoServlet extends HttpServlet{
 
                     // Ignora filtro sem valor ou com campo inexistente
                     if (valor.isEmpty()
-                            || !EnderecoDAO.camposFiltraveis.containsKey(campo)) {
+                            || !EnderecoDAO.camposDaView.contains(campo)) {
 
                         continue;
                     }

@@ -161,7 +161,7 @@ public class PagamentoServlet extends HttpServlet {
 
                     // Ignora filtro sem valor ou com campo inexistente
                     if (valor.isEmpty()
-                            || !PagamentoDAO.camposFiltraveis.containsKey(campo)) {
+                            || !PagamentoDAO.camposDaView.contains(campo)) {
 
                         continue;
                     }

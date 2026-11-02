@@ -196,7 +196,6 @@
         {"ID", "ID"},
         {"DATA_INICIO", "Data de início"},
         {"DATA_VENCIMENTO", "Data de vencimento"},
-        {"FK_PLANO_ID", "Plano (ID)"},
         {"STATUS_CONTRATO", "Status do contrato"}
     };
 %>

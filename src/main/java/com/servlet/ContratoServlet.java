@@ -182,7 +182,7 @@ public class ContratoServlet extends HttpServlet{
 
                     // Ignora filtro sem valor ou com campo inexistente
                     if (valor.isEmpty()
-                            || !ContratoDAO.camposFiltraveis.containsKey(campo)) {
+                            || !ContratoDAO.camposDaView.contains(campo)) {
 
                         continue;
                     }

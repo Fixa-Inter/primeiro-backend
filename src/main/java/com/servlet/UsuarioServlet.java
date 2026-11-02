@@ -166,7 +166,7 @@ public class UsuarioServlet extends HttpServlet{
 
                     // Ignora filtro sem valor ou com campo inexistente
                     if (valor.isEmpty()
-                            || !UsuarioDAO.camposFiltraveis.containsKey(campo)) {
+                            || !UsuarioDAO.camposDaView.contains(campo)) {
 
                         continue;
                     }

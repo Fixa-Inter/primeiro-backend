@@ -87,6 +87,9 @@ public class UsuarioDAO extends DAO{
             )
     );
 
+    // Campos filtráveis e ordenáveis na listagem, só os que a view traz
+    public static final Set<String> camposDaView = Set.of("ID", "NOME", "ESTA_ATIVO", "EMAIL", "CARGO", "TIPO_ACESSO", "DATA_NASCIMENTO", "PRIMEIRO_ACESSO");
+
     // Converte o valor para o tipo do campo filtrado
     public Object converterValor(String campo, String valor){
         try {
@@ -507,7 +510,7 @@ public class UsuarioDAO extends DAO{
                 Filtro filtro = filtros.get(i);
 
                 // Valida se o campo é filtrável
-                if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
+                if (!camposDaView.contains(filtro.getCampoFiltravel())) {
                     throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
                 }
 
@@ -548,7 +551,7 @@ public class UsuarioDAO extends DAO{
             }
         }
 
-        if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
+        if (campoSequencia != null && camposDaView.contains(campoSequencia)){
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
             sql += " ORDER BY ID ASC";

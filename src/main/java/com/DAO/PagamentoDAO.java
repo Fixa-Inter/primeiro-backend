@@ -73,6 +73,9 @@ public class PagamentoDAO extends DAO{
             )
     );
 
+    // Campos filtráveis e ordenáveis na listagem, só os que a view traz
+    public static final Set<String> camposDaView = Set.of("ID", "VALOR", "DATA_PAGAMENTO", "FOI_REALIZADO");
+
     // Converte o valor para o tipo do campo filtrado
     public Object converterValor(String campo, String valor) {
         try {
@@ -405,7 +408,7 @@ public class PagamentoDAO extends DAO{
             for (int i = 0; i < filtros.size(); i++) {
                 Filtro filtro = filtros.get(i);
                 String campo = filtro.getCampoFiltravel();
-                if (!camposFiltraveis.containsKey(campo)) throw new IllegalArgumentException("Campo inválido: " + campo);
+                if (!camposDaView.contains(campo)) throw new IllegalArgumentException("Campo inválido: " + campo);
                 if (!operacoesPorCampo.get(campo).contains(filtro.getOperacaoFiltro())) {
                     throw new IllegalArgumentException("Operação inválida para o campo: " + campo);
                 }
@@ -415,7 +418,7 @@ public class PagamentoDAO extends DAO{
                 sql += coluna + " " + filtro.getOperacaoFiltro().getOperadorSQL() + " ?";
             }
         }
-        if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
+        if (campoSequencia != null && camposDaView.contains(campoSequencia)){
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
             sql += " ORDER BY id ASC";

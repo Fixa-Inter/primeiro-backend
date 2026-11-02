@@ -18,6 +18,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Objects;
 
 // Acesso ao banco para a tabela de contratos
@@ -60,6 +61,9 @@ public class ContratoDAO extends DAO{
                     OperacaoFiltro.IGUAL
             )
     );
+
+    // Campos filtráveis e ordenáveis na listagem, só os que a view traz
+    public static final Set<String> camposDaView = Set.of("ID", "DATA_INICIO", "DATA_VENCIMENTO", "STATUS_CONTRATO");
 
     // Converte o valor para o tipo do campo filtrado
     public Object converterValor(String campo, String valor) {
@@ -335,7 +339,7 @@ public class ContratoDAO extends DAO{
             for (int i = 0; i < filtros.size(); i++) {
                 Filtro filtro = filtros.get(i);
                 String campo = filtro.getCampoFiltravel();
-                if (!camposFiltraveis.containsKey(campo)) {
+                if (!camposDaView.contains(campo)) {
                     throw new IllegalArgumentException("Campo inválido: " + campo);
                 }
                 if (!operacoesPorCampo.get(campo).contains(filtro.getOperacaoFiltro())) {
@@ -350,7 +354,7 @@ public class ContratoDAO extends DAO{
             }
         }
 
-        if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)){
+        if (campoSequencia != null && camposDaView.contains(campoSequencia)){
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
             sql += " ORDER BY id ASC";
