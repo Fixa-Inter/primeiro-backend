@@ -116,10 +116,10 @@ public class CadastroServlet extends HttpServlet{
 
         try (InstituicaoDAO instituicaoDAO = new InstituicaoDAO()) {
 
-            // valida se esse email não foi cadastrado antes
+            // valida se o domínio desse email já foi cadastrado antes (cada instituição tem um domínio único)
             if (instituicaoDAO.pesquisarPorDominioEmail(dominioEmail) != null){
 
-                request.setAttribute("erro", "Já existe uma instituicao com esse endereço de email");
+                request.setAttribute("erro", ExcecaoDeJSP.dominioDuplicado().getMessage());
 
                 request
                         .getRequestDispatcher("/WEB-INF/views/publico/cadastro/cadastro-instituicao-info.jsp")
