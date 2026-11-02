@@ -16,7 +16,7 @@ public class AnaliticosDAO extends DAO{
         super();
     }
 
-    //Seleção de views analiticas
+    // Seleção de views analíticas
 
     public List<InstituicoesPorTipoDTO> instituicoesPorTipo() throws SQLException {
 

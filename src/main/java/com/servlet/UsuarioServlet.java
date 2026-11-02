@@ -62,7 +62,7 @@ public class UsuarioServlet extends HttpServlet{
                     request.setAttribute("usuarioDTO", dao.listarUsuariosDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
-                // opcoes do menu de endereco da tela de edicao (igual ao cadastro)
+                // opções do menu de endereço da tela de edicao (igual ao cadastro)
                 try (EnderecoDAO enderecoDAO = new EnderecoDAO()) {
                     request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
                 }
@@ -249,7 +249,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String cargo = request.getParameter("cargo");
 
-        // o formulario envia o codigo do tipo de acesso (1 a 4)
+        // o formulário envia o código do tipo de acesso (1 a 4)
         TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
                 Parametros.inteiro(request, "tipoDeAcesso")
         );
@@ -326,7 +326,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String cargo = request.getParameter("cargo");
 
-        // o formulario envia o codigo do tipo de acesso (1 a 4)
+        // o formulário envia o código do tipo de acesso (1 a 4)
         TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
                 Parametros.inteiro(request, "tipoDeAcesso")
         );

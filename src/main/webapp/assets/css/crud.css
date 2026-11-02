@@ -947,7 +947,7 @@ a.botao {
 #menu-fixado:focus-visible ~ .menu-lateral .botao-travar { outline:3px solid #719BDD; }
 @media (max-width:900px) { .topo-menu .botao-travar { display:none; } }
 
-/* Ajustes do backend: o botao "Excluir" e enviado por POST, entao fica dentro de um <form> */
+/* Ajustes do backend: o botão "Excluir" é enviado por POST, então fica dentro de um <form> */
 .acoes-linha .form-excluir { display: contents; }
 @media (max-width:600px) {
  .tabela-crud .acoes-linha button { flex:1; justify-content:center; border:1px solid #f9e8eb; }

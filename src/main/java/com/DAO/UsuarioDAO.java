@@ -28,7 +28,7 @@ public class UsuarioDAO extends DAO{
     // colunas de data e hora filtradas só pela data (o usuário digita o dia, sem a hora)
     private static final Set<String> CAMPOS_DATA_E_HORA = Set.of("DATA_CRIACAO");
 
-    // map dos campos que sao filtraveis
+    // map dos campos que são filtráveis
     public static final Map<String, String> camposFiltraveis = Map.of(
             "ID","ID",
             "NOME", "Nome",
@@ -128,7 +128,7 @@ public class UsuarioDAO extends DAO{
         LocalDate dataAniversario = usuario.getDataAniversario();
         Integer tipoAcesso = usuario.getTipoDeAcesso().getCodigo();
 
-        // tira id, data_cricao, esta_ativo e primeiro_acesso pois o default do BD já define eles automáticamente
+        // tira id, data_cricao, esta_ativo e primeiro_acesso pois o default do BD já define eles automaticamente
 
         String sql = """
                      INSERT INTO usuario (nome, senha_hash, email, cargo, tipo_acesso, fk_endereco_id, data_nascimento)

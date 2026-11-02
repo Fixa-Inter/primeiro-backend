@@ -33,7 +33,7 @@ public class Pagamento {
         this.fkContrato = fkContrato;
         this.valor = valor;
     }
-    // gettes e setters
+    // getters e setters
 
     public Integer getId() {
         return id;

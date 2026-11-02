@@ -29,6 +29,8 @@ public class AnaliticosServlet extends HttpServlet {
         carregarIndicadores(request, response);
     }
 
+    // busca os dados das views analíticas, coloca na requisição e abre a página inicial da área restrita
+    // (get e post usam o mesmo método, pois a página só mostra os números)
     private void carregarIndicadores(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try(AnaliticosDAO analiticosDAO = new AnaliticosDAO()) {

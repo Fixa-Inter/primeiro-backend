@@ -257,13 +257,13 @@ public class SuperAdministradorServlet extends HttpServlet{
 
         try (SuperAdministradorDAO dao = new SuperAdministradorDAO()){
 
-            // nao pode excluir a propria conta (a sessao continuaria aberta com uma conta que nao existe mais)
+            // não pode excluir a propria conta (a sessão continuaria aberta com uma conta que não existe mais)
             SuperAdminDTO logado = (SuperAdminDTO) request.getSession().getAttribute("usuario");
             if (logado != null && logado.getId() == id) {
                 throw ExcecaoDeJSP.naoPodeExcluirPropriaConta();
             }
 
-            // nao pode excluir o unico administrador (ninguem mais entraria na area restrita)
+            // não pode excluir o único administrador (ninguém mais entraria na área restrita)
             if (dao.buscar(null, null, null, null).size() <= 1) {
                 throw ExcecaoDeJSP.naoPodeExcluirUltimoAdmin();
             }
@@ -300,7 +300,7 @@ public class SuperAdministradorServlet extends HttpServlet{
             throw ExcecaoDeJSP.valorInvalido("email");
         }
 
-        // em branco = null (mantem a atual); preenchida = ja validada pela regra de senha
+        // em branco = null (mantem a atual); preenchida = já validada pela regra de senha
         String senha = Parametros.senhaOpcional(request, "senha");
 
         if (senha != null) {

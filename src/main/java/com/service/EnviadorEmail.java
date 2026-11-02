@@ -14,14 +14,16 @@ public class EnviadorEmail {
 
     private final TemplateEmail templateEmail = new TemplateEmail();
 
+    // envia o código de verificação do cadastro por email, usando o template html e o gmail como servidor SMTP
     public void enviarCodigo(String destinatario, String nomeInstituicao, String codigo) {
 
+        // usuário e senha do email vêm do arquivo .env, para não ficarem escritos no código
         String remetente = dotenv.get("EMAIL_USER");
         String senha = dotenv.get("EMAIL_SENHA");
 
         Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");                // vai precisa fazer login de usuario e senha
-        props.put("mail.smtp.starttls.enable", "true");     // liga cliptografia TLS para a senha e nome nao serem enviadas pelo server de forma exposta
+        props.put("mail.smtp.auth", "true");                // vai precisar fazer login de usuário e senha
+        props.put("mail.smtp.starttls.enable", "true");     // liga criptografia TLS para a senha e nome não serem enviadas pelo server de forma exposta
         props.put("mail.smtp.host", "smtp.gmail.com");      // sai do gmail
         props.put("mail.smtp.port", "587");                 // a porta de envio do TLS
 

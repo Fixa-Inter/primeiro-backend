@@ -33,7 +33,7 @@ public class PagamentoDAO extends DAO{
     // colunas de data e hora filtradas só pela data (o usuário digita o dia, sem a hora)
     private static final Set<String> CAMPOS_DATA_E_HORA = Set.of("DATA_PAGAMENTO");
 
-    // map dos campos que sao filtraveis
+    // map dos campos que são filtráveis
     public static final Map<String, String> camposFiltraveis = Map.of(
             "ID", "ID",
             "VALOR", "Valor",

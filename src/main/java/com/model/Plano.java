@@ -9,7 +9,7 @@ public class Plano {
     private Double valorMensal;          // coluna: valor_mensal
     private Integer duracaoMeses;        // coluna: duracao_meses
     private String descricao;            // coluna: descricao
-    private LocalDateTime dataCriacao;   //coluna: data_criacao
+    private LocalDateTime dataCriacao;   // coluna: data_criacao
 
     // construtor
 

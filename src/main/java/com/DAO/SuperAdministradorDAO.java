@@ -39,7 +39,7 @@ public class SuperAdministradorDAO extends DAO{
             )
     );
 
-    // Metodo que converte o valor de acordo com o campo que será filtrado
+    // Método que converte o valor de acordo com o campo que será filtrado
     public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
@@ -57,7 +57,7 @@ public class SuperAdministradorDAO extends DAO{
         super();
     }
 
-    //insert
+    // insert
     public int cadastrar(SuperAdministrador superAdministrador) throws SQLException{
         String nome = superAdministrador.getNome();
         String senhaHash = superAdministrador.getSenhaHash();
@@ -102,7 +102,7 @@ public class SuperAdministradorDAO extends DAO{
         } catch (SQLException e) { conn.rollback(); throw e; }
     }
 
-    //select
+    // select
     public List<SuperAdministrador> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException{
 
         ArrayList<SuperAdministrador> resultado = new ArrayList<>();
@@ -151,7 +151,7 @@ public class SuperAdministradorDAO extends DAO{
             }
         }
 
-        // Verificando campo e direcao da ordenação
+        // Verificando campo e direção da ordenação
         if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)) {
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
@@ -194,7 +194,7 @@ public class SuperAdministradorDAO extends DAO{
         return resultado;
     }
 
-    //pesquisar por id
+    // pesquisar por id
     public SuperAdministrador pesquisarPorId(int id) throws SQLException {
         String sql = "SELECT NOME, EMAIL, SENHA_HASH FROM SUPER_ADMINISTRADOR WHERE id = ?";
         SuperAdministrador superAdministrador;
@@ -218,7 +218,7 @@ public class SuperAdministradorDAO extends DAO{
         return superAdministrador;
     }
 
-    //pesquisar por email
+    // pesquisar por email
     public SuperAdministrador pesquisarPorEmail(String email){
         {
             String sql = "SELECT NOME, EMAIL FROM SUPER_ADMINISTRADOR WHERE EMAIL = ?";
@@ -244,7 +244,7 @@ public class SuperAdministradorDAO extends DAO{
         }
     }
 
-    //alter
+    // alter
     public void atualizar(SuperAdministrador original, SuperAdministrador alterado) throws SQLException{
         String nome = alterado.getNome();
         String email = alterado.getEmail();
@@ -296,7 +296,7 @@ public class SuperAdministradorDAO extends DAO{
         GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
     }
 
-    //delete
+    // delete
     public void remover(int id) throws SQLException {
 
         String sql = "DELETE FROM SUPER_ADMINISTRADOR WHERE id = ?";

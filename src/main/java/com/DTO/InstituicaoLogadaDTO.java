@@ -1,6 +1,6 @@
 package com.DTO;
 
-// guarda na sessao so o necessario da instituicao logada (sem o hash da senha)
+// guarda na sessão só o necessario da instituição logada (sem o hash da senha)
 public class InstituicaoLogadaDTO {
 
     private Integer id;

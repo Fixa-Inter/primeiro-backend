@@ -11,8 +11,8 @@ public class Instituicao {
     private String emailCorporativo;             // coluna: email_corporativo
     private LocalDate dataCadastro;              // coluna: data_cadastro
     private TipoInstituicao tipoDeInstituicao;   // coluna: tipo_de_instituicao
-    private String dominioEmail;                 // coluna: dominioEmail
-    private String senhaHash;                    // coluna: senhaHash
+    private String dominioEmail;                 // coluna: dominio_email
+    private String senhaHash;                    // coluna: senha_hash
 
     // Construtor
 

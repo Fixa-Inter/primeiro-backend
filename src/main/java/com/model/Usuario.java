@@ -12,14 +12,14 @@ public class Usuario {
     private Integer id;                     // coluna: id
     private String nome;                    // coluna: nome
     private String senhaHash;               // coluna: senha_hash
-    private Boolean estaAtivo;              // coluna: esta_Ativo
+    private Boolean estaAtivo;              // coluna: esta_ativo
     private String email;                   // coluna: email
     private LocalDateTime dataCriacao;          // coluna: data_criacao
     private String cargo;                   // coluna: cargo
     private TipoAcesso tipoDeAcesso;        // coluna: tipo_de_acesso
     private Integer fkEndereco;             // coluna: fk_endereco_id
     private LocalDate dataAniversario;  // coluna: data_nascimento
-    private Boolean primeiroAcesso;         // coluna: primeiro acesso
+    private Boolean primeiroAcesso;         // coluna: primeiro_acesso
 
 
     // construtor

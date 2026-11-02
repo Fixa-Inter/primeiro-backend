@@ -90,7 +90,7 @@ public class Parametros {
         return data(request, nome);
     }
 
-    // data que nao pode estar no futuro (ex.: data de nascimento)
+    // data que não pode estar no futuro (ex.: data de nascimento)
     public static LocalDate dataNaoFutura(HttpServletRequest request, String nome) {
         LocalDate valor = data(request, nome);
 
@@ -125,7 +125,7 @@ public class Parametros {
 
     // ---------- senha ----------
 
-    // senha obrigatoria e dentro da regra. Nao usa trim: espacos fazem parte da senha
+    // senha obrigatória e dentro da regra. Não usa trim: espaços fazem parte da senha
     public static String senha(HttpServletRequest request, String nome) {
         String valor = request.getParameter(nome);
 

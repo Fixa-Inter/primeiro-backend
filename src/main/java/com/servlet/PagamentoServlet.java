@@ -60,7 +60,7 @@ public class PagamentoServlet extends HttpServlet {
                     request.setAttribute("pagamentoDTO", dao.listarPagamentoDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
-                // opcoes do menu de contrato da tela de edicao (igual ao cadastro)
+                // opções do menu de contrato da tela de edicao (igual ao cadastro)
                 try (com.DAO.ContratoDAO contratoDAO = new com.DAO.ContratoDAO()) {
                     request.setAttribute("contratosDisponiveis", contratoDAO.buscar(null, null, null, null));
                 }
@@ -231,7 +231,7 @@ public class PagamentoServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        // o formulario envia o codigo do metodo de pagamento (1 a 3)
+        // o formulário envia o código do método de pagamento (1 a 3)
         MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(
                 Parametros.inteiro(request, "metodoPagamento")
         );
@@ -286,7 +286,7 @@ public class PagamentoServlet extends HttpServlet {
 
         int id = Parametros.inteiro(request, "id");
 
-        // o formulario envia o codigo do metodo de pagamento (1 a 3)
+        // o formulário envia o código do método de pagamento (1 a 3)
         MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(
                 Parametros.inteiro(request, "metodoPagamento")
         );

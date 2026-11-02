@@ -229,7 +229,7 @@ public class InstituicaoServlet extends HttpServlet{
             throw ExcecaoDeJSP.valorInvalido("emailCorporativo");
         }
 
-        // o dominio nao e digitado: sai do e-mail (mesma regra do cadastro publico)
+        // o domínio não e digitado: sai do e-mail (mesma regra do cadastro publico)
         String dominioEmail = emailCorporativo.substring(emailCorporativo.indexOf("@") + 1);
 
         Integer tipoInstituicao = Parametros.inteiro(request, "tipoInstituicao");
@@ -292,7 +292,7 @@ public class InstituicaoServlet extends HttpServlet{
             throw ExcecaoDeJSP.valorInvalido("emailCorporativo");
         }
 
-        // o dominio nao e digitado: sai do e-mail (mesma regra do cadastro publico)
+        // o domínio não e digitado: sai do e-mail (mesma regra do cadastro publico)
         String dominioEmail = emailCorporativo.substring(emailCorporativo.indexOf("@") + 1);
 
         Integer tipoInstituicao = Parametros.inteiro(request, "tipoInstituicao");
@@ -302,7 +302,7 @@ public class InstituicaoServlet extends HttpServlet{
             // Busca como está atualmente no banco
             Instituicao original = dao.pesquisarPorId(id);
 
-            // senha em branco = mantem a atual; preenchida = troca (so o hash e guardado)
+            // senha em branco = mantem a atual; preenchida = troca (só o hash e guardado)
             String senha = Parametros.senhaOpcional(request, "senha");
             String senhaHash = (senha == null)
                     ? original.getSenhaHash()

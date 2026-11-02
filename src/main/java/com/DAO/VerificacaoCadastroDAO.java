@@ -41,7 +41,7 @@ public class VerificacaoCadastroDAO extends DAO{
         }
     }
 
-    // select da verificacao de um email, retorna null caso n tenha nenhuma registrada
+    // select da verificação de um email, retorna null caso não tenha nenhuma registrada
     public VerificacaoCadastro buscarCodigoValido(String email) throws SQLException {
 
         String sql = "SELECT ID, CODIGO_VERIFICACAO, DATA_EXPIRACAO, EMAIL, ESTA_VALIDO FROM VERIFICACAO_CADASTRO WHERE EMAIL = ? AND ESTA_VALIDO = TRUE AND DATA_EXPIRACAO > NOW() ORDER BY ID DESC LIMIT 1";

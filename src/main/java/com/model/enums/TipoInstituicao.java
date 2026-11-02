@@ -23,7 +23,7 @@ public enum TipoInstituicao {
         return codigo;
     }
 
-    // metodo para converter o codigo para o valor
+    // método para converter o código para o valor
     public static String getNomeComBaseCodigo(int codigo) {
         for (TipoInstituicao tipoInstituicao : TipoInstituicao.values()) {
             if (codigo == tipoInstituicao.codigo) {
@@ -34,7 +34,7 @@ public enum TipoInstituicao {
         throw new IllegalArgumentException("Tipo de instituicao invalido");
     }
 
-    // metodo para converter o valor para o codigo
+    // método para converter o valor para o código
     public static TipoInstituicao converterEnum(String nome) {
         for (TipoInstituicao tipoInstituicao : TipoInstituicao.values()) {
             if (nome.toLowerCase().equals(tipoInstituicao.nome.toLowerCase())) {

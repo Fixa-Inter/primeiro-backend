@@ -19,7 +19,7 @@ import java.sql.SQLException;
 @WebServlet({"/login-handler", "/login"})
 public class LoginServlet extends HttpServlet {
 
-    // rota do servlet: o redirect do navegador nao alcanca arquivos dentro de WEB-INF
+    // rota do servlet: o redirect do navegador não alcança arquivos dentro de WEB-INF
     private static final String AREA_RESTRITA = "/analiticos";
     private static final String PAGINA_LOGIN = "/WEB-INF/views/publico/login.jsp";
 
@@ -66,7 +66,7 @@ public class LoginServlet extends HttpServlet {
             destino = AREA_RESTRITA;
 
         }
-        // Se houver alguma exceção de JSP, aciona o metodo doGet
+        // Se houver alguma exceção de JSP, aciona o método doGet
         catch (ExcecaoDeJSP e) {
             req.setAttribute("erro", e.getMessage());
             doGet(req, resp);

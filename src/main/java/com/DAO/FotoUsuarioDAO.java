@@ -329,7 +329,7 @@ public class FotoUsuarioDAO extends DAO{
         return resultado;
     }
 
-    //cadastrar completo, ignorando os default. usado para desfazer um delete
+    // cadastrar completo, ignorando os default. usado para desfazer um delete
     public int cadastrarCompleto(FotoUsuario fotoUsuario) throws SQLException {
 
         int id = fotoUsuario.getId();
@@ -352,7 +352,7 @@ public class FotoUsuarioDAO extends DAO{
 
             pstmt.execute();
 
-            //Ajusta o serial do banco caso o id do cadastro for maior que o serial atual
+            // Ajusta o serial do banco caso o id do cadastro for maior que o serial atual
             String sqlAjustarSerial = "SELECT setval(pg_get_serial_sequence('foto_usuario', 'id'), COALESCE(max(id), 1)) FROM foto_usuario";
             try (PreparedStatement stmtSerial = conn.prepareStatement(sqlAjustarSerial);
                  ResultSet rs = stmtSerial.executeQuery()) {

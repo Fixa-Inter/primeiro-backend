@@ -12,7 +12,7 @@ public class TemplateEmail {
 
     private static TemplateEngine criarEngine() {
 
-        //  configura o thymeleaf a onde e como achar o template
+        // configura o thymeleaf onde e como achar o template
 
         ClassLoaderTemplateResolver resolver  = new ClassLoaderTemplateResolver();
 
