@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
-// fluxo 2: instituição já cadastrada faz login e adiciona mais um endereço ligado ao seu id
+// Fluxo em que uma instituição já cadastrada faz login e adiciona outro endereço
 @WebServlet(name = "CadastrarEnderecoServlet", value = "/cadastrar-endereco")
 public class CadastrarEnderecoServlet extends HttpServlet {
 
@@ -29,9 +29,10 @@ public class CadastrarEnderecoServlet extends HttpServlet {
     private static final String PAGINA_ENDERECO = "/WEB-INF/views/publico/cadastrar-endereco/adicionar-endereco.jsp";
     private static final String PAGINA_CONCLUIDO = "/WEB-INF/views/publico/cadastrar-endereco/endereco-concluido.jsp";
 
-    // nome do atributo da sessão que guarda a instituição logada
+    // Atributo da sessão com a instituição logada
     private static final String SESSAO_INSTITUICAO = "instituicaoLogada";
 
+    // Abre a tela de login, de dados do endereço ou de conclusão
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -43,7 +44,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
 
         if (action.equals("login")) {
 
-            // se já está logada, pula direto para a tela de endereço
+            // Se já está logada, vai direto para a tela de endereço
             HttpSession session = request.getSession(false);
 
             if (session != null && session.getAttribute(SESSAO_INSTITUICAO) != null) {
@@ -59,7 +60,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
 
             HttpSession session = request.getSession(false);
 
-            // sem login, volta para a tela de login
+            // Sem login, volta para a tela de login
             if (session == null || session.getAttribute(SESSAO_INSTITUICAO) == null) {
                 response.sendRedirect(request.getContextPath() + "/cadastrar-endereco");
                 return;
@@ -73,7 +74,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
 
             HttpSession session = request.getSession(false);
 
-            // sem login, volta para a tela de login
+            // Sem login, volta para a tela de login
             if (session == null || session.getAttribute(SESSAO_INSTITUICAO) == null) {
                 response.sendRedirect(request.getContextPath() + "/cadastrar-endereco");
                 return;
@@ -87,7 +88,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
 
             HttpSession session = request.getSession(false);
 
-            // sem login, volta para a tela de login
+            // Sem login, volta para a tela de login
             if (session == null || session.getAttribute(SESSAO_INSTITUICAO) == null) {
                 response.sendRedirect(request.getContextPath() + "/cadastrar-endereco");
                 return;
@@ -109,6 +110,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
         }
     }
 
+    // Executa o login, a busca do CNPJ ou a finalização, conforme a action
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -123,6 +125,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
         }
     }
 
+    // Valida o login da instituição e guarda na sessão
     private void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String email = parametro(request, "email");
@@ -137,13 +140,13 @@ public class CadastrarEnderecoServlet extends HttpServlet {
 
             Instituicao instituicao = instituicaoDAO.pesquisarPorEmailCorporativo(email);
 
-            // mesma mensagem para email inexistente e senha errada, para não revelar quais emails estão cadastrados
+            // Mesma mensagem para e-mail inexistente e senha errada
             if (instituicao == null || !HashSenha.conferir(senha, instituicao.getSenhaHash())) {
                 mostrarErro(request, response, PAGINA_LOGIN, ExcecaoDeJSP.falhaLogin().getMessage());
                 return;
             }
 
-            // gera um novo id de sessão no login, para não reaproveitar uma sessão anterior
+            // Gera um novo id de sessão no login
             HttpSession session = request.getSession();
             request.changeSessionId();
 
@@ -161,11 +164,12 @@ public class CadastrarEnderecoServlet extends HttpServlet {
         }
     }
 
+    // Consulta o CNPJ na API e abre a confirmação dos dados
     private void buscarCnpj(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
 
-        // sem login, volta para a tela de login
+        // Sem login, volta para a tela de login
         if (session == null || session.getAttribute(SESSAO_INSTITUICAO) == null) {
             response.sendRedirect(request.getContextPath() + "/cadastrar-endereco");
             return;
@@ -183,14 +187,14 @@ public class CadastrarEnderecoServlet extends HttpServlet {
 
         try (EnderecoDAO enderecoDAO = new EnderecoDAO()) {
 
-            // verifica se esse cnpj já está cadastrado, e se estiver dá erro
+            // Erro se o CNPJ já estiver cadastrado
             if (enderecoDAO.pesquisarPorCnpj(cnpjFormatado) != null) {
                 request.setAttribute("cnpj", cnpj);
                 mostrarErro(request, response, PAGINA_ENDERECO, ExcecaoDeJSP.cnpjDuplicado().getMessage());
                 return;
             }
 
-            // consulta a api
+            // Consulta a API de CNPJ
             EnderecoViaCnpjDTO dados = new ConsultaCnpjService().consultar(cnpjFormatado);
 
             if (dados == null) {
@@ -199,7 +203,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
                 return;
             }
 
-            // a jsp usa "etapa" para saber se mostra o passo 1 (buscar) ou o passo 2 (confirmar)
+            // A JSP usa "etapa" para mostrar o passo 1 (buscar) ou o 2 (confirmar)
             request.setAttribute("etapa", "confirmar");
             request.setAttribute("cnpj", cnpjFormatado);
             request.setAttribute("rua", dados.getRua());
@@ -221,20 +225,21 @@ public class CadastrarEnderecoServlet extends HttpServlet {
         }
     }
 
+    // Valida e salva o novo endereço da instituição logada
     private void finalizar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
 
-        // o id da instituição vem sempre da sessão, nunca do formulário
+        // O id da instituição vem da sessão, não do formulário
         InstituicaoLogadaDTO instituicao = (session == null) ? null : (InstituicaoLogadaDTO) session.getAttribute(SESSAO_INSTITUICAO);
 
-        // sem login, volta para a tela de login
+        // Sem login, volta para a tela de login
         if (instituicao == null) {
             response.sendRedirect(request.getContextPath() + "/cadastrar-endereco");
             return;
         }
 
-        // o valor como foi digitado é usado na validação do formato, e o só com dígitos vai para o banco
+        // O valor digitado valida o formato e o só com dígitos vai para o banco
         String cnpjInformado = parametro(request, "cnpj");
         String cepInformado = parametro(request, "cep");
         String cnpj = cnpjInformado.replaceAll("\\D", "");
@@ -247,7 +252,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
         String estado = parametro(request, "estado");
         String numero = parametro(request, "numero");
 
-        // devolve o que foi digitado para a tela de confirmação, caso dê algum erro
+        // Devolve o que foi digitado para a tela em caso de erro
         request.setAttribute("etapa", "confirmar");
         request.setAttribute("cnpj", cnpj);
         request.setAttribute("nomeEndereco", nomeEndereco);
@@ -288,7 +293,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
 
         try (EnderecoDAO enderecoDAO = new EnderecoDAO()) {
 
-            // confere de novo, pois outro cadastro pode ter usado esse cnpj depois da busca
+            // Confere de novo, pois outro cadastro pode ter usado o CNPJ
             if (enderecoDAO.pesquisarPorCnpj(cnpj) != null) {
                 mostrarErro(request, response, PAGINA_ENDERECO, ExcecaoDeJSP.cnpjDuplicado().getMessage());
                 return;
@@ -304,7 +309,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
         }
     }
 
-    // lê o parâmetro sem espaços nas pontas, e devolve vazio no lugar de null
+    // Lê o parâmetro sem espaços nas pontas, ou vazio se for null
     private String parametro(HttpServletRequest request, String nome) {
 
         String valor = request.getParameter(nome);
@@ -312,6 +317,7 @@ public class CadastrarEnderecoServlet extends HttpServlet {
         return valor == null ? "" : valor.trim();
     }
 
+    // Abre a página com a mensagem de erro
     private void mostrarErro(HttpServletRequest request, HttpServletResponse response, String pagina, String mensagem) throws ServletException, IOException {
 
         request.setAttribute("erro", mensagem);

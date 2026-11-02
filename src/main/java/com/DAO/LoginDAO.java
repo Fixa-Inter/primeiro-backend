@@ -8,12 +8,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+// Valida as credenciais do super administrador
 public class LoginDAO extends DAO{
 
+    // Abre a conexão com o banco
     public LoginDAO() throws SQLException {
         super();
     }
 
+    // Devolve o super administrador se e-mail e senha conferem, ou null
     public SuperAdminDTO login(LoginDTO credenciais) throws SQLException {
         String sql = "SELECT id, nome, senha_hash FROM super_administrador WHERE email = ?";
 
@@ -28,15 +31,15 @@ public class LoginDAO extends DAO{
 
             try (ResultSet rs = pstmt.executeQuery()) {
 
-                // Se não encontrar retorna null (o login falhou)
+                // Sem usuário com esse e-mail, o login falha
                 if (!rs.next()) {
                     return null;
                 }
 
-                // Caso contrário, busca o hash da senha no banco
+                // Busca o hash da senha salvo
                 senhaHash = rs.getString("senha_hash");
 
-                // Se a senha não for compatível retorna null (login falhou)
+                // Senha incorreta, o login falha
                 if (!HashSenha.conferir(credenciais.getSenha(), senhaHash)) {
                     return null;
                 }

@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+// Controla o CRUD de usuários na área restrita
 @WebServlet(name = "UsuarioServlet", value = "/usuarios")
 public class UsuarioServlet extends HttpServlet{
 
@@ -29,6 +30,7 @@ public class UsuarioServlet extends HttpServlet{
     private static final String PAGINA_CADASTRO = "/WEB-INF/views/restrita/cadastro-usuario.jsp";
     private static final String PAGINA_EDICAO = "/WEB-INF/views/restrita/editar-usuario.jsp";
 
+    // Abre a lista, o formulário de cadastro ou o de edição, conforme a action
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -62,7 +64,7 @@ public class UsuarioServlet extends HttpServlet{
                     request.setAttribute("usuarioDTO", dao.listarUsuariosDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
-                // opções do menu de endereço da tela de edicao (igual ao cadastro)
+                // Carrega o menu de endereço da edição
                 try (EnderecoDAO enderecoDAO = new EnderecoDAO()) {
                     request.setAttribute("enderecosDisponiveis", enderecoDAO.listar(null, null, null, null));
                 }
@@ -90,6 +92,7 @@ public class UsuarioServlet extends HttpServlet{
         }
     }
 
+    // Executa o cadastro, a edição ou a exclusão, conforme a action
     @Override
     protected void doPost(
             HttpServletRequest request,
@@ -114,6 +117,7 @@ public class UsuarioServlet extends HttpServlet{
         }
     }
 
+    // Lista usuários com filtros, ordenação e pesquisa da requisição
     private void listarUsuarios(
             HttpServletRequest request,
             HttpServletResponse response
@@ -157,11 +161,10 @@ public class UsuarioServlet extends HttpServlet{
                         continue;
                     }
 
-
                     String campo = campos[i].trim().toUpperCase();
                     String valor = valores[i].trim();
 
-                    // ignora filtro sem valor ou com campo que não existe
+                    // Ignora filtro sem valor ou com campo inexistente
                     if (valor.isEmpty()
                             || !UsuarioDAO.camposFiltraveis.containsKey(campo)) {
 
@@ -176,7 +179,7 @@ public class UsuarioServlet extends HttpServlet{
                         continue;
                     }
 
-                    // ignora operação que o campo não aceita
+                    // Ignora operação que o campo não aceita
                     List<OperacaoFiltro> operacoesPermitidas =
                             UsuarioDAO.operacoesPorCampo.get(campo);
 
@@ -189,7 +192,7 @@ public class UsuarioServlet extends HttpServlet{
                     Object valorConvertido =
                             dao.converterValor(campo, valor);
 
-                    // valor que não converte para o tipo do campo
+                    // Ignora valor que não converte para o tipo do campo
                     if (valorConvertido == null) {
                         continue;
                     }
@@ -232,6 +235,7 @@ public class UsuarioServlet extends HttpServlet{
         }
     }
 
+    // Cadastra um usuário com os dados do formulário
     private void cadastrarUsuario(
             HttpServletRequest request,
             HttpServletResponse response
@@ -249,7 +253,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String cargo = request.getParameter("cargo");
 
-        // o formulário envia o código do tipo de acesso (1 a 4)
+        // O formulário envia o código do tipo de acesso (1 a 4)
         TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
                 Parametros.inteiro(request, "tipoDeAcesso")
         );
@@ -285,6 +289,7 @@ public class UsuarioServlet extends HttpServlet{
         }
     }
 
+    // Exclui um usuário pelo id da requisição
     private void deletarUsuario(
             HttpServletRequest request,
             HttpServletResponse response
@@ -305,6 +310,7 @@ public class UsuarioServlet extends HttpServlet{
 
     }
 
+    // Atualiza um usuário com os dados do formulário
     private void atualizarUsuario(
             HttpServletRequest request,
             HttpServletResponse response
@@ -326,7 +332,7 @@ public class UsuarioServlet extends HttpServlet{
 
         String cargo = request.getParameter("cargo");
 
-        // o formulário envia o código do tipo de acesso (1 a 4)
+        // O formulário envia o código do tipo de acesso (1 a 4)
         TipoAcesso tipoDeAcesso = TipoAcesso.converterEnum(
                 Parametros.inteiro(request, "tipoDeAcesso")
         );
@@ -339,13 +345,13 @@ public class UsuarioServlet extends HttpServlet{
 
         try (UsuarioDAO dao = new UsuarioDAO()) {
 
-            // Busca como está atualmente no banco
+            // Busca o registro atual no banco
             Usuario original = dao.pesquisarPorId(id);
             String senhaHash = senha == null || senha.isBlank()
                     ? original.getSenhaHash()
                     : HashSenha.gerarHash(senha);
 
-            // Monta o objeto com os novos dados
+            // Monta o objeto com os dados novos
             Usuario alterado = new Usuario(
                     id,
                     nome,

@@ -2,15 +2,18 @@ package com.utils.desfazer;
 
 import java.lang.reflect.InvocationTargetException;
 
+// Volta o registro para os dados antes da edição
 public class DesfazerUpdate implements ComandoDesfazer {
     private final Class<?> daoClass;
     private final Object modelAntiga;
 
+    // Guarda o DAO e os dados antes da edição
     public DesfazerUpdate(Class<?> daoClass, Object modelAntiga) {
         this.daoClass = daoClass;
         this.modelAntiga = modelAntiga;
     }
 
+    // Reatualiza o registro com os dados antigos
     @Override
     public void desfazer() {
         try (AutoCloseable dao = (AutoCloseable) daoClass.getConstructor().newInstance()) {

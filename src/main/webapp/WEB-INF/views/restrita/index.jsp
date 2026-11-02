@@ -1,6 +1,6 @@
 ﻿<%@ page import="java.util.ArrayList, java.util.List, com.DTO.analiticos.*, com.utils.ListaWeb" %>
 <%
-    // atributos enviados pelo AnaliticosServlet (cada um vem de uma view do banco)
+    // Atributos enviados pelo AnaliticosServlet, um por view do banco
     ResumoDTO resumo = (ResumoDTO) request.getAttribute("resumo");
     List<InstituicoesPorTipoDTO> instituicoes = (List<InstituicoesPorTipoDTO>) request.getAttribute("instituicoes");
     List<UsuariosPorAtividadeDTO> usuarios = (List<UsuariosPorAtividadeDTO>) request.getAttribute("usuarios");
@@ -8,14 +8,14 @@
     List<EnderecosPorInstituicaoDTO> enderecos = (List<EnderecosPorInstituicaoDTO>) request.getAttribute("enderecos");
     String erroIndicadores = (String) request.getAttribute("erroIndicadores");
 
-    // se o banco falhou, o servlet nao manda nada: a tela abre zerada e mostra o aviso
+    // Se o banco falhou, a tela abre zerada e mostra o aviso
     if (resumo == null) { resumo = new ResumoDTO(0, 0, 0); }
     if (instituicoes == null) { instituicoes = new ArrayList<>(); }
     if (usuarios == null) { usuarios = new ArrayList<>(); }
     if (contratos == null) { contratos = new ArrayList<>(); }
     if (enderecos == null) { enderecos = new ArrayList<>(); }
 
-    // usuarios ativos e inativos (a view devolve uma linha para cada situacao)
+    // Usuários ativos e inativos
     int ativos = 0, inativos = 0, percentualAtivos = 0, percentualInativos = 0;
     for (UsuariosPorAtividadeDTO situacao : usuarios) {
         if ("Ativo".equals(situacao.getAtividade())) {
@@ -27,7 +27,7 @@
         }
     }
 
-    // total de contratos e os 5 planos com mais contratos
+    // Total de contratos e os 5 planos com mais contratos
     int totalContratos = 0;
     for (ContratosPorPlanoDTO plano : contratos) { totalContratos += plano.getContratos(); }
     List<ContratosPorPlanoDTO> topPlanos = new ArrayList<>(contratos);
@@ -35,7 +35,7 @@
     if (topPlanos.size() > 5) { topPlanos = topPlanos.subList(0, 5); }
     int maiorPlano = topPlanos.isEmpty() ? 1 : Math.max(1, topPlanos.get(0).getContratos());
 
-    // as 4 instituicoes com mais enderecos
+    // As 4 instituições com mais endereços
     List<EnderecosPorInstituicaoDTO> topInstituicoes = new ArrayList<>(enderecos);
     topInstituicoes.sort((a, b) -> b.getEnderecos() - a.getEnderecos());
     if (topInstituicoes.size() > 4) { topInstituicoes = topInstituicoes.subList(0, 4); }

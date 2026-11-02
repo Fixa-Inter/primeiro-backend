@@ -1,5 +1,6 @@
 package com.model.enums;
 
+// Tipos de instituição
 public enum TipoInstituicao {
 
     ESCOLA("Escola",1),
@@ -23,7 +24,7 @@ public enum TipoInstituicao {
         return codigo;
     }
 
-    // método para converter o código para o valor
+    // Devolve o nome a partir do código
     public static String getNomeComBaseCodigo(int codigo) {
         for (TipoInstituicao tipoInstituicao : TipoInstituicao.values()) {
             if (codigo == tipoInstituicao.codigo) {
@@ -34,7 +35,7 @@ public enum TipoInstituicao {
         throw new IllegalArgumentException("Tipo de instituicao invalido");
     }
 
-    // método para converter o valor para o código
+    // Converte o nome no enum
     public static TipoInstituicao converterEnum(String nome) {
         for (TipoInstituicao tipoInstituicao : TipoInstituicao.values()) {
             if (nome.toLowerCase().equals(tipoInstituicao.nome.toLowerCase())) {
@@ -45,6 +46,7 @@ public enum TipoInstituicao {
         throw new IllegalArgumentException("Codigo de tipo de instituicao invalido");
     }
 
+    // Converte o código no enum
     public static TipoInstituicao converterEnum(int codigo) {
         for (TipoInstituicao tipoInstituicao : TipoInstituicao.values()) {
             if (tipoInstituicao.codigo == codigo) {

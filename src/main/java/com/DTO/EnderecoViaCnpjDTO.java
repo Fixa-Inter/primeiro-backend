@@ -1,10 +1,11 @@
 package com.DTO;
 
+// Dados de endereço devolvidos pela consulta de CNPJ
 public class EnderecoViaCnpjDTO {
 
     private String razaoSocial;
     private String situacaoCadastral;
-    private String rua;               // logradouro
+    private String rua;  // Logradouro
     private String numero;
     private String complemento;
     private String bairro;

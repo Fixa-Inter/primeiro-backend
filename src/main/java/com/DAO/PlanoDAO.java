@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+// Acesso ao banco para a tabela de planos
 public class PlanoDAO extends DAO{
 
     public static final Map<String,String> camposFiltraveis = Map.of(
@@ -61,7 +62,7 @@ public class PlanoDAO extends DAO{
             )
     );
 
-    // Método que converte o valor de acordo com o campo que será filtrado
+    // Converte o valor para o tipo do campo filtrado
     public Object converterValor(String campo, String valor) {
         try {
             return switch (campo) {
@@ -75,12 +76,12 @@ public class PlanoDAO extends DAO{
         }
     }
 
-    // construtor de DAO
+    // Abre a conexão com o banco
     public PlanoDAO() throws SQLException {
         super();
     }
 
-    // insert
+    // Insere um plano e devolve o id gerado
     public int cadastrar(Plano plano) throws SQLException{
         String nome = plano.getNome();
         Double valorMensal = plano.getValorMensal();
@@ -107,12 +108,14 @@ public class PlanoDAO extends DAO{
         }
     }
 
+    // Insere um plano e registra a ação para desfazer
     public int cadastrar(Plano plano, HttpServletRequest request) throws SQLException {
         int id = cadastrar(plano);
         GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
         return id;
     }
 
+    // Insere um plano com o id original, para desfazer uma exclusão
     public int cadastrarCompleto(Plano plano) throws SQLException {
         String sql = "INSERT INTO plano (id, nome, valor_mensal, duracao_meses, descricao, data_criacao) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -129,7 +132,7 @@ public class PlanoDAO extends DAO{
         } catch (SQLException e) { conn.rollback(); throw e; }
     }
 
-    // select
+    // Lista planos, aplicando filtros, ordenação e pesquisa
     public List<Plano> buscar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException{
 
         ArrayList<Plano> resultado = new ArrayList<>();
@@ -143,12 +146,12 @@ public class PlanoDAO extends DAO{
 
                 Filtro filtro = filtros.get(i);
 
-                // Verifica se o campo existe
+                // Valida se o campo é filtrável
                 if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
                     throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
                 }
 
-                // Verifica se a operação é permitida para esse campo
+                // Valida se a operação é permitida para o campo
                 if (!operacoesPorCampo
                         .get(filtro.getCampoFiltravel())
                         .contains(filtro.getOperacaoFiltro())) {
@@ -158,12 +161,12 @@ public class PlanoDAO extends DAO{
                     );
                 }
 
-                // Coloca AND a partir do segundo filtro
+                // Liga os filtros com AND a partir do segundo
                 if (i > 0) {
                     sql += " AND ";
                 }
 
-                // Adiciona a condição
+                // Adiciona a condição do filtro
                 if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
 
                     sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
@@ -178,7 +181,7 @@ public class PlanoDAO extends DAO{
             }
         }
 
-        // Verificando campo e direção da ordenação
+        // Define a ordenação, com id crescente como padrão
         if (campoSequencia != null && camposFiltraveis.containsKey(campoSequencia)) {
             sql += " ORDER BY %s %s".formatted(campoSequencia, direcaoSequencia);
         } else {
@@ -186,7 +189,7 @@ public class PlanoDAO extends DAO{
         }
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Verifica se tem filtro, se sim define a variável do comando SQL
+            // Preenche os parâmetros do SQL com os valores dos filtros
             if (filtros != null && !filtros.isEmpty()) {
                 for (int i = 0; i < filtros.size(); i++) {
                     Filtro filtro = filtros.get(i);
@@ -211,7 +214,6 @@ public class PlanoDAO extends DAO{
                             ? null
                             : dataCriacaoSQL.toLocalDateTime());
 
-
                     resultado.add(new Plano(id,nome, valorMensal, duracaoMeses, descricao, dataCriacao));
                 }
             }
@@ -228,7 +230,7 @@ public class PlanoDAO extends DAO{
         return resultado;
     }
 
-    // pesquisar por id
+    // Busca um plano pelo id
     public Plano pesquisarPorId(int id) throws SQLException{
         String sql = "SELECT NOME, VALOR_MENSAL, DESCRICAO, DURACAO_MESES, DATA_CRIACAO FROM PLANO WHERE id = ?";
 
@@ -238,7 +240,7 @@ public class PlanoDAO extends DAO{
             pstmt.setInt(1, id);
 
             try (ResultSet rs = pstmt.executeQuery()) {
-                // Se não encontrar o plano retorna null
+                // Plano não encontrado
                 if (!rs.next()) {
                     return null;
                 }
@@ -262,8 +264,7 @@ public class PlanoDAO extends DAO{
         return plano;
     }
 
-
-    // update
+    // Atualiza um plano, só nos campos que mudaram
     public void atualizar(Plano original, Plano alterado) throws SQLException{
         String nome = alterado.getNome();
         double valorMensal = alterado.getValorMensal();
@@ -317,12 +318,13 @@ public class PlanoDAO extends DAO{
         }
     }
 
+    // Atualiza um plano e registra a ação para desfazer
     public void atualizar(Plano original, Plano alterado, HttpServletRequest request) throws SQLException {
         atualizar(original, alterado);
         GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
     }
 
-    // delete
+    // Exclui um plano pelo id
     public void remover(int id) throws SQLException {
 
         String sql = "DELETE FROM PLANO WHERE id = ?";
@@ -338,6 +340,7 @@ public class PlanoDAO extends DAO{
         }
     }
 
+    // Exclui um plano e registra a ação para desfazer
     public void remover(int id, HttpServletRequest request) throws SQLException {
         DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
         remover(id);

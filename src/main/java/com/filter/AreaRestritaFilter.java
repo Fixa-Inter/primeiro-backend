@@ -12,8 +12,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-// Servlet para filtrar o acesso a páginas JSP da área-restrita
-
+// Bloqueia o acesso à área restrita sem login
 @WebFilter(
         filterName = "area-restrita-filter",
         urlPatterns = {
@@ -33,11 +32,12 @@ import java.io.IOException;
 )
 public class AreaRestritaFilter extends HttpFilter {
 
+    // Deixa passar quem está logado e responde 401 para os demais
     @Override
     public void doFilter(HttpServletRequest req, HttpServletResponse resp, FilterChain chain) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
 
-        // Não tem usuário, redireciona para página de login
+        // Sem usuário logado, responde 401
         if (session != null && session.getAttribute("usuario") instanceof SuperAdminDTO) {
             chain.doFilter(req, resp);
 

@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// Controla o CRUD de pagamentos na área restrita
 @WebServlet(name = "PagamentoServlet", value = "/pagamentos")
 public class PagamentoServlet extends HttpServlet {
 
@@ -29,6 +30,7 @@ public class PagamentoServlet extends HttpServlet {
     private static final String PAGINA_CADASTRO = "/WEB-INF/views/restrita/cadastro-pagamento.jsp";
     private static final String PAGINA_EDICAO = "/WEB-INF/views/restrita/editar-pagamento.jsp";
 
+    // Abre a lista, o formulário de cadastro ou o de edição, conforme a action
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -60,7 +62,7 @@ public class PagamentoServlet extends HttpServlet {
                     request.setAttribute("pagamentoDTO", dao.listarPagamentoDTO(null, null, null, null).stream()
                             .filter(dto -> dto.getId().equals(id)).findFirst().orElse(null));
                 }
-                // opções do menu de contrato da tela de edicao (igual ao cadastro)
+                // Carrega o menu de contrato da edição
                 try (com.DAO.ContratoDAO contratoDAO = new com.DAO.ContratoDAO()) {
                     request.setAttribute("contratosDisponiveis", contratoDAO.buscar(null, null, null, null));
                 }
@@ -85,6 +87,7 @@ public class PagamentoServlet extends HttpServlet {
         else request.getRequestDispatcher(destino).forward(request, response);
     }
 
+    // Executa o cadastro, a edição ou a exclusão, conforme a action
     @Override
     protected void doPost(
             HttpServletRequest request,
@@ -109,6 +112,7 @@ public class PagamentoServlet extends HttpServlet {
         }
     }
 
+    // Lista pagamentos com filtros, ordenação e pesquisa da requisição
     private void listarPagamentos(
             HttpServletRequest request,
             HttpServletResponse response
@@ -152,11 +156,10 @@ public class PagamentoServlet extends HttpServlet {
                         continue;
                     }
 
-
                     String campo = campos[i].trim().toUpperCase();
                     String valor = valores[i].trim();
 
-                    // ignora filtro sem valor ou com campo que não existe
+                    // Ignora filtro sem valor ou com campo inexistente
                     if (valor.isEmpty()
                             || !PagamentoDAO.camposFiltraveis.containsKey(campo)) {
 
@@ -171,7 +174,7 @@ public class PagamentoServlet extends HttpServlet {
                         continue;
                     }
 
-                    // ignora operação que o campo não aceita
+                    // Ignora operação que o campo não aceita
                     List<OperacaoFiltro> operacoesPermitidas =
                             PagamentoDAO.operacoesPorCampo.get(campo);
 
@@ -184,7 +187,7 @@ public class PagamentoServlet extends HttpServlet {
                     Object valorConvertido =
                             dao.converterValor(campo, valor);
 
-                    // valor que não converte para o tipo do campo
+                    // Ignora valor que não converte para o tipo do campo
                     if (valorConvertido == null) {
                         continue;
                     }
@@ -226,12 +229,13 @@ public class PagamentoServlet extends HttpServlet {
         }
     }
 
+    // Cadastra um pagamento com os dados do formulário
     private void cadastrarPagamento(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        // o formulário envia o código do método de pagamento (1 a 3)
+        // O formulário envia o código do método de pagamento (1 a 3)
         MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(
                 Parametros.inteiro(request, "metodoPagamento")
         );
@@ -259,6 +263,7 @@ public class PagamentoServlet extends HttpServlet {
         }
     }
 
+    // Exclui um pagamento pelo id da requisição
     private void deletarPagamento(
             HttpServletRequest request,
             HttpServletResponse response
@@ -279,6 +284,7 @@ public class PagamentoServlet extends HttpServlet {
 
     }
 
+    // Atualiza um pagamento com os dados do formulário
     private void atualizarPagamento(
             HttpServletRequest request,
             HttpServletResponse response
@@ -286,7 +292,7 @@ public class PagamentoServlet extends HttpServlet {
 
         int id = Parametros.inteiro(request, "id");
 
-        // o formulário envia o código do método de pagamento (1 a 3)
+        // O formulário envia o código do método de pagamento (1 a 3)
         MetodoPagamento metodoPagamento = MetodoPagamento.converterEnum(
                 Parametros.inteiro(request, "metodoPagamento")
         );
@@ -295,17 +301,14 @@ public class PagamentoServlet extends HttpServlet {
 
         BigDecimal valor = Parametros.bigDecimal(request, "valor");
 
-
         boolean foiRealizado = Parametros.booleano(request, "foiRealizado");
-
-
 
         try (PagamentoDAO dao = new PagamentoDAO()) {
 
-            // Busca como está atualmente no banco
+            // Busca o registro atual no banco
             Pagamento original = dao.pesquisarPorId(id);
 
-            // Monta o objeto com os novos dados
+            // Monta o objeto com os dados novos
             Pagamento alterado = new Pagamento(
                     id,
                     valor,

@@ -2,6 +2,7 @@ package com.model;
 
 import java.time.LocalDateTime;
 
+// Representa a tabela plano
 public class Plano {
 
     private Integer id;                  // coluna: id
@@ -10,8 +11,6 @@ public class Plano {
     private Integer duracaoMeses;        // coluna: duracao_meses
     private String descricao;            // coluna: descricao
     private LocalDateTime dataCriacao;   // coluna: data_criacao
-
-    // construtor
 
     public Plano(String nome, Double valorMensal, Integer duracaoMeses, String descricao) {
         this.nome = nome;
@@ -28,8 +27,6 @@ public class Plano {
         this.descricao = descricao;
         this.dataCriacao = dataCriacao;
     }
-
-    // getters e setters
 
     public Integer getId() {
         return id;
@@ -78,8 +75,6 @@ public class Plano {
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
-
-    // toString
 
     @Override
     public String toString(){

@@ -1,5 +1,6 @@
 package com.model.enums;
 
+// Métodos de pagamento aceitos
 public enum MetodoPagamento {
 
     CREDITO("Crédito", 1),
@@ -22,7 +23,7 @@ public enum MetodoPagamento {
         return nome;
     }
 
-    // método para converter o código para o valor
+    // Devolve o nome a partir do código
     public static String getNomeComBaseCodigo(int codigo) {
 
         for (MetodoPagamento metodoPagamento : MetodoPagamento.values()) {
@@ -34,7 +35,7 @@ public enum MetodoPagamento {
         throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
     }
 
-    // método para converter o valor para o código
+    // Converte o nome no enum
     public static MetodoPagamento converterEnum(String nome) {
         for (MetodoPagamento metodoPagamento : MetodoPagamento.values()) {
             if (nome.toLowerCase().equals(metodoPagamento.nome.toLowerCase())) {
@@ -45,6 +46,7 @@ public enum MetodoPagamento {
         throw new IllegalArgumentException("Codigo de metodo de pagamento invalido");
     }
 
+    // Converte o código no enum
     public static MetodoPagamento converterEnum(int codigo) {
         for (MetodoPagamento metodoPagamento : MetodoPagamento.values()) {
             if (codigo == metodoPagamento.codigo) {

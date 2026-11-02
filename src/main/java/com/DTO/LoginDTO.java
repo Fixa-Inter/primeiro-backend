@@ -1,5 +1,6 @@
 package com.DTO;
 
+// Credenciais enviadas no login
 public class LoginDTO {
     private String email;
     private String senha;

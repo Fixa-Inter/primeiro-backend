@@ -4,13 +4,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+// Restaura os registros excluídos
 public class DesfazerDelete implements ComandoDesfazer {
     private final List<Registro> registros = new ArrayList<>();
 
+    // Adiciona um registro excluído para ser restaurado
     public void adicionarParaRestaurar(Class<?> daoClass, Object model) {
         registros.add(new Registro(daoClass, model));
     }
 
+    // Reinsere cada registro excluído
     @Override
     public void desfazer() {
         for (Registro registro : registros) {
@@ -28,6 +31,7 @@ public class DesfazerDelete implements ComandoDesfazer {
         private final Class<?> daoClass;
         private final Object model;
 
+        // Par DAO e registro a restaurar
         private Registro(Class<?> daoClass, Object model) {
             this.daoClass = daoClass;
             this.model = model;

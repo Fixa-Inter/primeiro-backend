@@ -2,7 +2,7 @@
 <%
 String erro = (String) request.getAttribute("erro");
 String razaoSocial = (String) request.getAttribute("razaoSocial");
-// so mostra o formulario de endereco depois que o CNPJ foi consultado (ou apos erro ao finalizar)
+// Só mostra o endereço após consultar o CNPJ ou errar ao finalizar
 boolean dadosCarregados = razaoSocial != null
 || request.getAttribute("rua") != null
 || request.getAttribute("cidade") != null

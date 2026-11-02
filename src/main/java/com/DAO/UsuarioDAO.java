@@ -23,12 +23,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+// Acesso ao banco para a tabela de usuários
 public class UsuarioDAO extends DAO{
 
-    // colunas de data e hora filtradas só pela data (o usuário digita o dia, sem a hora)
+    // Colunas de data e hora filtradas só pelo dia
     private static final Set<String> CAMPOS_DATA_E_HORA = Set.of("DATA_CRIACAO");
 
-    // map dos campos que são filtráveis
+    // Campos filtráveis e suas colunas
     public static final Map<String, String> camposFiltraveis = Map.of(
             "ID","ID",
             "NOME", "Nome",
@@ -86,7 +87,7 @@ public class UsuarioDAO extends DAO{
             )
     );
 
-    // convertendo String recebida do Servlet
+    // Converte o valor para o tipo do campo filtrado
     public Object converterValor(String campo, String valor){
         try {
             return switch (campo) {
@@ -111,13 +112,12 @@ public class UsuarioDAO extends DAO{
         }
     }
 
-    // construtor
+    // Abre a conexão com o banco
     public UsuarioDAO() throws SQLException {
         super();
     }
 
-    // insert
-
+    // Insere um usuário e devolve o id gerado
     public int cadastrar(Usuario usuario) throws SQLException{
 
         String nome = usuario.getNome();
@@ -128,7 +128,7 @@ public class UsuarioDAO extends DAO{
         LocalDate dataAniversario = usuario.getDataAniversario();
         Integer tipoAcesso = usuario.getTipoDeAcesso().getCodigo();
 
-        // tira id, data_cricao, esta_ativo e primeiro_acesso pois o default do BD já define eles automaticamente
+        // Omite id, data_criacao, esta_ativo e primeiro_acesso, preenchidos pelo banco
 
         String sql = """
                      INSERT INTO usuario (nome, senha_hash, email, cargo, tipo_acesso, fk_endereco_id, data_nascimento)
@@ -156,12 +156,14 @@ public class UsuarioDAO extends DAO{
         }
     }
 
+    // Insere um usuário e registra a ação para desfazer
     public int cadastrar(Usuario usuario, HttpServletRequest request) throws SQLException {
         int id = cadastrar(usuario);
         GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
         return id;
     }
 
+    // Insere um usuário com o id original, para desfazer uma exclusão
     public int cadastrarCompleto(Usuario usuario) throws SQLException {
         String sql = "INSERT INTO usuario (id, nome, senha_hash, esta_ativo, email, data_criacao, cargo, tipo_acesso, fk_endereco_id, data_nascimento, primeiro_acesso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -183,7 +185,7 @@ public class UsuarioDAO extends DAO{
         } catch (SQLException e) { conn.rollback(); throw e; }
     }
 
-    // select
+    // Lista usuários, aplicando filtros, ordenação e pesquisa
     public List<Usuario> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
 
         List<Usuario> resultado = new ArrayList<>();
@@ -198,12 +200,12 @@ public class UsuarioDAO extends DAO{
 
                 Filtro filtro = filtros.get(i);
 
-                // Verifica se o campo existe
+                // Valida se o campo é filtrável
                 if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
                     throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
                 }
 
-                // Verifica se a operação é permitida para esse campo
+                // Valida se a operação é permitida para o campo
                 if (!operacoesPorCampo
                         .get(filtro.getCampoFiltravel())
                         .contains(filtro.getOperacaoFiltro())) {
@@ -213,12 +215,12 @@ public class UsuarioDAO extends DAO{
                     );
                 }
 
-                // Coloca AND a partir do segundo filtro
+                // Liga os filtros com AND a partir do segundo
                 if (i > 0) {
                     sql += " AND ";
                 }
 
-                // Adiciona a condição
+                // Adiciona a condição do filtro
                 if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
 
                     sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
@@ -229,7 +231,7 @@ public class UsuarioDAO extends DAO{
 
                     String coluna = filtro.getCampoFiltravel();
 
-                    // compara só o dia, ignorando a hora
+                    // Compara só o dia, ignorando a hora
                     if (CAMPOS_DATA_E_HORA.contains(coluna)) {
                         coluna = "CAST(" + coluna + " AS DATE)";
                     }
@@ -247,7 +249,7 @@ public class UsuarioDAO extends DAO{
         }
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Verifica se tem filtro, se sim define a variável do comando SQL
+            // Preenche os parâmetros do SQL com os valores dos filtros
             if (filtros != null && !filtros.isEmpty()) {
                 for (int i = 0; i < filtros.size(); i++) {
                     Filtro filtro = filtros.get(i);
@@ -277,7 +279,6 @@ public class UsuarioDAO extends DAO{
                     LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
                     Boolean primeiroAcesso = rs.getBoolean("primeiro_acesso");
 
-
                     resultado.add(new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, TipoAcesso.converterEnum(tipoDeAcesso), fkEnderecoID, dataAniversario, primeiroAcesso));
                 }
             }
@@ -294,9 +295,8 @@ public class UsuarioDAO extends DAO{
         return resultado;
     }
 
-    // select id
+    // Busca um usuário pelo id
     public Usuario pesquisarPorId(int idUsuario) throws SQLException{
-
 
         String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario WHERE id = ?";
 
@@ -325,7 +325,6 @@ public class UsuarioDAO extends DAO{
                 LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
                 Boolean primeiroAcesso = rs.getBoolean("primeiro_acesso");
 
-
                 u = new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, TipoAcesso.converterEnum(tipoDeAcesso), fkEnderecoID, dataAniversario, primeiroAcesso);
 
             }
@@ -335,8 +334,7 @@ public class UsuarioDAO extends DAO{
         return u;
     }
 
-
-    // select nome
+    // Busca o usuário pelo e-mail
     public Usuario pesquisarPorEmail(String email) throws SQLException{
 
         String sql = "SELECT id, nome, esta_ativo, senha_hash, email, data_criacao, cargo, tipo_acesso, fk_endereco_id, data_nascimento, primeiro_acesso FROM usuario WHERE email = ?";
@@ -365,7 +363,6 @@ public class UsuarioDAO extends DAO{
                 LocalDate dataAniversario = (dataAniversarioAcessoBD == null ? null : dataAniversarioAcessoBD.toLocalDate());
                 Boolean primeiroAcesso = rs.getBoolean("primeiro_acesso");
 
-
                 u = new Usuario(id, nome, senhaHash, estaAtivo, email, dataCriacao, cargo, TipoAcesso.converterEnum(tipoDeAcesso), fkEnderecoID, dataAniversario, primeiroAcesso);
             }
 
@@ -374,6 +371,7 @@ public class UsuarioDAO extends DAO{
         return u;
     }
 
+    // Atualiza um usuário, só nos campos que mudaram
     public void atualizar(Usuario original, Usuario alterado) throws SQLException{
 
         Integer id = alterado.getId();
@@ -410,7 +408,7 @@ public class UsuarioDAO extends DAO{
             valores.add(email);
         }
 
-        // tira data_criacao pois é campo que não deve ser atualizado
+        // Não atualiza data_criacao
 
         if (!Objects.equals(cargo, original.getCargo())){
             sql.append("cargo = ?, ");
@@ -461,12 +459,13 @@ public class UsuarioDAO extends DAO{
         }
     }
 
+    // Atualiza um usuário e registra a ação para desfazer
     public void atualizar(Usuario original, Usuario alterado, HttpServletRequest request) throws SQLException {
         atualizar(original, alterado);
         GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
     }
 
-    // delete
+    // Exclui um usuário pelo id
     public void remover(int id) throws SQLException{
 
         String sql = "DELETE from usuario where id = ?";
@@ -485,12 +484,14 @@ public class UsuarioDAO extends DAO{
 
     }
 
+    // Exclui um usuário e registra a ação para desfazer
     public void remover(int id, HttpServletRequest request) throws SQLException {
         DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
         remover(id);
         GerenciadorDesfazer.registrarComando(request, comando);
     }
 
+    // Lista usuários com endereço e instituição, aplicando filtros e pesquisa
     public List<UsuarioDTO> listarUsuariosDTO(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
 
         List<UsuarioDTO> resultado = new ArrayList<>();
@@ -505,12 +506,12 @@ public class UsuarioDAO extends DAO{
 
                 Filtro filtro = filtros.get(i);
 
-                // Verifica se o campo existe
+                // Valida se o campo é filtrável
                 if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
                     throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
                 }
 
-                // Verifica se a operação é permitida para esse campo
+                // Valida se a operação é permitida para o campo
                 if (!operacoesPorCampo
                         .get(filtro.getCampoFiltravel())
                         .contains(filtro.getOperacaoFiltro())) {
@@ -520,12 +521,12 @@ public class UsuarioDAO extends DAO{
                     );
                 }
 
-                // Coloca AND a partir do segundo filtro
+                // Liga os filtros com AND a partir do segundo
                 if (i > 0) {
                     sql += " AND ";
                 }
 
-                // Adiciona a condição
+                // Adiciona a condição do filtro
                 if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
 
                     sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
@@ -536,7 +537,7 @@ public class UsuarioDAO extends DAO{
 
                     String coluna = filtro.getCampoFiltravel();
 
-                    // compara só o dia, ignorando a hora
+                    // Compara só o dia, ignorando a hora
                     if (CAMPOS_DATA_E_HORA.contains(coluna)) {
                         coluna = "CAST(" + coluna + " AS DATE)";
                     }
@@ -554,7 +555,7 @@ public class UsuarioDAO extends DAO{
         }
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Verifica se tem filtro, se sim define a variável do comando SQL
+            // Preenche os parâmetros do SQL com os valores dos filtros
             if (filtros != null && !filtros.isEmpty()) {
                 for (int i = 0; i < filtros.size(); i++) {
                     Filtro filtro = filtros.get(i);

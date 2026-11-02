@@ -7,13 +7,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+// Grava a instituição e o primeiro endereço na mesma transação
 public class CadastroDAO extends DAO {
 
+    // Abre a conexão com o banco
     public CadastroDAO() throws SQLException, ClassNotFoundException {
         super();
     }
 
-    // transação única: insere a instituição e o primeiro endereço juntos
+    // Insere a instituição e o endereço juntos e devolve o id da instituição
     public int finalizarCadastro(Instituicao instituicao, Endereco endereco) throws SQLException {
 
         String sqlInstituicao = """
@@ -30,7 +32,7 @@ public class CadastroDAO extends DAO {
         try {
             int idInstituicao;
 
-            // 1. insere a instituição e pega o id gerado
+            // Insere a instituição e pega o id gerado
             try (PreparedStatement pstmt = conn.prepareStatement(sqlInstituicao)) {
                 pstmt.setString(1, instituicao.getNome());
                 pstmt.setString(2, instituicao.getEmailCorporativo());
@@ -44,7 +46,7 @@ public class CadastroDAO extends DAO {
                 }
             }
 
-            // 2. insere o endereço apontando para a instituição recém-criada
+            // Insere o endereço ligado à instituição criada
             try (PreparedStatement pstmt = conn.prepareStatement(sqlEndereco)) {
                 pstmt.setString(1, endereco.getNome());
                 pstmt.setString(2, endereco.getRua());
@@ -60,12 +62,12 @@ public class CadastroDAO extends DAO {
                 pstmt.executeUpdate();
             }
 
-            // 3. só agora confirma tudo de uma vez
+            // Confirma as duas inserções juntas
             conn.commit();
             return idInstituicao;
 
         } catch (SQLException e) {
-            conn.rollback(); // qualquer falha → desfaz os dois inserts
+            conn.rollback();  // Qualquer falha desfaz as duas inserções
             throw e;
         }
     }

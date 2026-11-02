@@ -1,5 +1,6 @@
 package com.DTO.analiticos;
 
+// Quantidade e percentual de contratos por plano
 public class ContratosPorPlanoDTO {
     private String plano;
     private int contratos;

@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+// Controla o CRUD de endereços na área restrita
 @WebServlet(name = "EnderecoServlet", value = "/enderecos")
 public class EnderecoServlet extends HttpServlet{
 
@@ -28,6 +29,7 @@ public class EnderecoServlet extends HttpServlet{
     private static final String PAGINA_CADASTRO = "/WEB-INF/views/restrita/cadastro-endereco.jsp";
     private static final String PAGINA_EDICAO = "/WEB-INF/views/restrita/editar-endereco.jsp";
 
+    // Abre a lista, o formulário de cadastro ou o de edição, conforme a action
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -92,6 +94,7 @@ public class EnderecoServlet extends HttpServlet{
         }
     }
 
+    // Executa o cadastro, a edição ou a exclusão, conforme a action
     @Override
     protected void doPost(
             HttpServletRequest request,
@@ -116,6 +119,7 @@ public class EnderecoServlet extends HttpServlet{
         }
     }
 
+    // Lista endereços com filtros, ordenação e pesquisa da requisição
     private void listarEnderecos(
             HttpServletRequest request,
             HttpServletResponse response
@@ -159,11 +163,10 @@ public class EnderecoServlet extends HttpServlet{
                         continue;
                     }
 
-
                     String campo = campos[i].trim().toUpperCase();
                     String valor = valores[i].trim();
 
-                    // ignora filtro sem valor ou com campo que não existe
+                    // Ignora filtro sem valor ou com campo inexistente
                     if (valor.isEmpty()
                             || !EnderecoDAO.camposFiltraveis.containsKey(campo)) {
 
@@ -178,7 +181,7 @@ public class EnderecoServlet extends HttpServlet{
                         continue;
                     }
 
-                    // ignora operação que o campo não aceita
+                    // Ignora operação que o campo não aceita
                     List<OperacaoFiltro> operacoesPermitidas =
                             EnderecoDAO.operacoesPorCampo.get(campo);
 
@@ -191,7 +194,7 @@ public class EnderecoServlet extends HttpServlet{
                     Object valorConvertido =
                             dao.converterValor(campo, valor);
 
-                    // valor que não converte para o tipo do campo
+                    // Ignora valor que não converte para o tipo do campo
                     if (valorConvertido == null) {
                         continue;
                     }
@@ -233,6 +236,7 @@ public class EnderecoServlet extends HttpServlet{
         }
     }
 
+    // Cadastra um endereço com os dados do formulário
     private void cadastrarEndereco(
             HttpServletRequest request,
             HttpServletResponse response
@@ -297,6 +301,7 @@ public class EnderecoServlet extends HttpServlet{
         }
     }
 
+    // Exclui um endereço pelo id da requisição
     private void deletarEndereco(
             HttpServletRequest request,
             HttpServletResponse response
@@ -317,6 +322,7 @@ public class EnderecoServlet extends HttpServlet{
 
     }
 
+    // Atualiza um endereço com os dados do formulário
     private void atualizarEndereco(
             HttpServletRequest request,
             HttpServletResponse response
@@ -355,10 +361,10 @@ public class EnderecoServlet extends HttpServlet{
 
         try (EnderecoDAO dao = new EnderecoDAO()) {
 
-            // Busca como está atualmente no banco
+            // Busca o registro atual no banco
             Endereco original = dao.pesquisarPorId(id);
 
-            // Monta o objeto com os novos dados
+            // Monta o objeto com os dados novos
             Endereco alterado = new Endereco(
                     id,
                     nome,

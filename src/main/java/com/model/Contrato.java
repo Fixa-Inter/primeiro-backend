@@ -4,6 +4,7 @@ import com.model.enums.StatusContrato;
 
 import java.time.LocalDate;
 
+// Representa a tabela contrato
 public class Contrato {
 
     private Integer id;                       // coluna: id
@@ -12,8 +13,6 @@ public class Contrato {
     private Integer fkPlano;                  // coluna: fk_plano_id
     private Integer fkEndereco;               // coluna: fk_endereco_id
     private StatusContrato statusContrato;    // coluna: status_contrato
-
-    // construtor
 
     public Contrato(Integer id, LocalDate dataInicio, LocalDate dataVencimento, Integer fkPlano, Integer fkEndereco, StatusContrato statusContrato) {
         this.id = id;
@@ -30,9 +29,6 @@ public class Contrato {
         this.fkEndereco = fkEndereco;
         this.statusContrato = statusContrato;
     }
-
-
-    // getters e setters
 
     public Integer getId() {
         return id;
@@ -81,9 +77,6 @@ public class Contrato {
     public void setFkEndereco(Integer fkEndereco) {
         this.fkEndereco = fkEndereco;
     }
-
-
-    // toString
 
     @Override
     public String toString(){

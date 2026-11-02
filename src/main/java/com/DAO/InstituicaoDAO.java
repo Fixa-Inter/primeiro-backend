@@ -24,9 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+// Acesso ao banco para a tabela de instituições
 public class InstituicaoDAO extends DAO{
 
-    // map dos campos que são filtráveis
+    // Campos filtráveis e suas colunas
     public static final Map<String, String> camposFiltraveis = Map.of(
             "ID", "Id",
             "NOME", "Nome",
@@ -66,8 +67,7 @@ public class InstituicaoDAO extends DAO{
 
     );
 
-
-    // convertendo String recebida do Servlet
+    // Converte o valor para o tipo do campo filtrado
     public Object converterValor(String campo, String valor){
 
         try {
@@ -92,13 +92,12 @@ public class InstituicaoDAO extends DAO{
 
     }
 
-
-    // construtor de DAO
+    // Abre a conexão com o banco
     public InstituicaoDAO() throws SQLException {
         super();
     }
 
-    // insert
+    // Insere uma instituição e devolve o id gerado
     public int cadastrar(Instituicao instituicao) throws SQLException {
 
         String nome = instituicao.getNome();
@@ -107,8 +106,7 @@ public class InstituicaoDAO extends DAO{
         Integer tipoInstituicao = instituicao.getTipoInstituicao().getCodigo();
         String senhaHash = instituicao.getSenhaHash();
 
-        // tira as colunas id e data_cadastro pois o default do bd já preenche eles automaticamente
-
+        // Omite id e data_cadastro, preenchidos pelo banco
 
         String sql = """
                      INSERT INTO instituicao (NOME, EMAIL_CORPORATIVO, DOMINIO_EMAIL, TIPO_INSTITUICAO, SENHA_HASH)
@@ -134,12 +132,14 @@ public class InstituicaoDAO extends DAO{
         }
     }
 
+    // Insere uma instituição e registra a ação para desfazer
     public int cadastrar(Instituicao instituicao, HttpServletRequest request) throws SQLException {
         int id = cadastrar(instituicao);
         GerenciadorDesfazer.registrarComando(request, new DesfazerInsert(getClass(), id));
         return id;
     }
 
+    // Insere uma instituição com o id original, para desfazer uma exclusão
     public int cadastrarCompleto(Instituicao instituicao) throws SQLException {
         String sql = "INSERT INTO instituicao (id, nome, email_corporativo, data_cadastro, tipo_instituicao, dominio_email, senha_hash) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -157,11 +157,10 @@ public class InstituicaoDAO extends DAO{
         } catch (SQLException e) { conn.rollback(); throw e; }
     }
 
-    // select
+    // Lista instituições, aplicando filtros, ordenação e pesquisa
     public List<Instituicao> listar(List<Filtro> filtros, String campoSequencia, String direcaoSequencia, String pesquisa) throws SQLException {
 
         List<Instituicao> resultado = new ArrayList<>();
-
 
         String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao, senha_hash FROM instituicao";
 
@@ -173,12 +172,12 @@ public class InstituicaoDAO extends DAO{
 
                 Filtro filtro = filtros.get(i);
 
-                // Verifica se o campo existe
+                // Valida se o campo é filtrável
                 if (!camposFiltraveis.containsKey(filtro.getCampoFiltravel())) {
                     throw new IllegalArgumentException("Campo inválido: " + filtro.getCampoFiltravel());
                 }
 
-                // Verifica se a operação é permitida para esse campo
+                // Valida se a operação é permitida para o campo
                 if (!operacoesPorCampo
                         .get(filtro.getCampoFiltravel())
                         .contains(filtro.getOperacaoFiltro())) {
@@ -188,12 +187,12 @@ public class InstituicaoDAO extends DAO{
                     );
                 }
 
-                // Coloca AND a partir do segundo filtro
+                // Liga os filtros com AND a partir do segundo
                 if (i > 0) {
                     sql += " AND ";
                 }
 
-                // Adiciona a condição
+                // Adiciona a condição do filtro
                 if (filtro.getOperacaoFiltro() == OperacaoFiltro.CONTEM) {
 
                     sql += "REPLACE(unaccent(" + filtro.getCampoFiltravel() + "), ' ', '') "
@@ -215,7 +214,7 @@ public class InstituicaoDAO extends DAO{
         }
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Verifica se tem filtro, se sim define a variável do comando SQL
+            // Preenche os parâmetros do SQL com os valores dos filtros
             if (filtros != null && !filtros.isEmpty()) {
                 for (int i = 0; i < filtros.size(); i++) {
                     Filtro filtro = filtros.get(i);
@@ -239,7 +238,6 @@ public class InstituicaoDAO extends DAO{
                     Integer tipoInstituicao = rs.getInt("tipo_instituicao");
                     String senhaHash = rs.getString("senha_hash");
 
-
                     resultado.add(new Instituicao(id, nome, emailCorporativo,dataCadastro, TipoInstituicao.converterEnum(tipoInstituicao), dominioEmail, senhaHash));
                 }
 
@@ -258,7 +256,7 @@ public class InstituicaoDAO extends DAO{
         return resultado;
     }
 
-    // select id
+    // Busca uma instituição pelo id
     public Instituicao pesquisarPorId(int idInstituicao) throws SQLException{
 
         String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao, senha_hash FROM instituicao WHERE id = ?";
@@ -292,7 +290,7 @@ public class InstituicaoDAO extends DAO{
         return i;
     }
 
-    // select por email corporativo, retorna null caso não tenha nenhuma instituição registrada com esse email
+    // Busca a instituição pelo e-mail corporativo, ou null se não existir
     public Instituicao pesquisarPorEmailCorporativo(String emailCorporativo) throws SQLException{
 
         String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao, senha_hash FROM instituicao WHERE email_corporativo = ?";
@@ -326,8 +324,7 @@ public class InstituicaoDAO extends DAO{
 
     }
 
-    // select domínio email para o servlet, pois como a tabela domínio email é unique, precisa de um método para verificar se já existe um domínio email igual e mostrar
-    // uma exceção com mensagem para isso, e retorna null caso não tenha esse domínio de email registrado, liberando para o registro no sistema
+    // Busca a instituição pelo domínio de e-mail, ou null se ainda não estiver cadastrado
     public Instituicao pesquisarPorDominioEmail(String dominioEmailInsert) throws SQLException{
 
         String sql = "SELECT id, nome, email_corporativo, data_cadastro, dominio_email, tipo_instituicao, senha_hash FROM instituicao WHERE dominio_email = ?";
@@ -362,8 +359,7 @@ public class InstituicaoDAO extends DAO{
 
     }
 
-
-    // update
+    // Atualiza uma instituição, só nos campos que mudaram
     public void atualizar(Instituicao original, Instituicao alterada) throws SQLException {
 
         Integer id = alterada.getId();
@@ -386,7 +382,7 @@ public class InstituicaoDAO extends DAO{
             valores.add(emailCorpoartivo);
         }
 
-        // tira data_cadastro pois é um campo que não deve ser atualizado
+        // Não atualiza data_cadastro
 
         if (!Objects.equals(dominioEmail, original.getDominioEmail())){
             sql.append("dominio_email = ?, ");
@@ -427,13 +423,13 @@ public class InstituicaoDAO extends DAO{
         }
     }
 
+    // Atualiza uma instituição e registra a ação para desfazer
     public void atualizar(Instituicao original, Instituicao alterada, HttpServletRequest request) throws SQLException {
         atualizar(original, alterada);
         GerenciadorDesfazer.registrarComando(request, new DesfazerUpdate(getClass(), original));
     }
 
-
-    // delete
+    // Exclui uma instituição pelo id
     public void remover(int id) throws SQLException {
 
         String sql = "DELETE FROM instituicao WHERE id = ?";
@@ -451,6 +447,7 @@ public class InstituicaoDAO extends DAO{
 
     }
 
+    // Exclui uma instituição e registra a ação para desfazer
     public void remover(int id, HttpServletRequest request) throws SQLException {
         DesfazerDelete comando = DesfazerDeleteFactory.criar(getClass(), id);
         remover(id);

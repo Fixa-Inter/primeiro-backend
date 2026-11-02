@@ -2,6 +2,7 @@ package com.DTO.analiticos;
 
 import com.model.enums.TipoInstituicao;
 
+// Quantidade e percentual de instituições por tipo
 public class InstituicoesPorTipoDTO {
     private String tipo;
     private Integer instituicoes;

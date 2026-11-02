@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+// Representa a tabela usuario
 public class Usuario {
 
     private Integer id;                     // coluna: id
@@ -20,9 +21,6 @@ public class Usuario {
     private Integer fkEndereco;             // coluna: fk_endereco_id
     private LocalDate dataAniversario;  // coluna: data_nascimento
     private Boolean primeiroAcesso;         // coluna: primeiro_acesso
-
-
-    // construtor
 
     public Usuario(Integer id, String nome, String senhaHash, Boolean estaAtivo, String email, LocalDateTime dataCriacao, String cargo, TipoAcesso tipoDeAcesso, Integer fkEndereco, LocalDate dataAniversario, Boolean primeiroAcesso) {
         this.id = id;
@@ -47,9 +45,6 @@ public class Usuario {
         this.fkEndereco = fkEndereco;
         this.dataAniversario = dataAniversario;
     }
-
-
-    // getters e setters
 
     public Integer getId() {
         return id;
@@ -138,8 +133,6 @@ public class Usuario {
     public void setPrimeiroAcesso(Boolean primeiroAcesso) {
         this.primeiroAcesso = primeiroAcesso;
     }
-
-    // toString
 
     @Override
     public String toString(){

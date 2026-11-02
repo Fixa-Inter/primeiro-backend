@@ -1,5 +1,4 @@
-// Barra de filtros das listagens: ao escolher o campo, mostra só os operadores que o backend aceita
-// e troca o campo de valor pelo tipo certo (data, numero, Sim/Nao ou lista de opcoes).
+// Barra de filtros: mostra só os operadores aceitos pelo campo e troca o campo de valor pelo tipo certo
 (() => {
   const operadores = {
     igual: { value: "IGUAL", label: "=" },
@@ -19,7 +18,7 @@
 
   const camposSimNao = new Set(["esta_ativo", "primeiro_acesso", "foi_realizado"]);
 
-  // os valores sao os codigos dos enums do backend
+  // Os valores são os códigos dos enums do backend
   const camposLista = {
     tipo_acesso: [["1", "Administrador"], ["2", "Gestor"], ["3", "Técnico"], ["4", "Solicitante"]],
     status_contrato: [["1", "Ativo"], ["2", "Inativo"], ["3", "Cancelado"]],
@@ -84,7 +83,7 @@
   }
 
   function atualizar() {
-    // o backend recebe o campo em maiusculo (RUA); aqui a regra usa minusculo
+    // O backend recebe o campo em maiúsculo (RUA); aqui a regra usa minúsculo
     const nomeCampo = campo.value.toLowerCase();
     atualizarOperacoes(nomeCampo);
     atualizarValor(nomeCampo);

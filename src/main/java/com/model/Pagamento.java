@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+// Representa a tabela pagamento
 public class Pagamento {
 
     private Integer id;                  // coluna: id
@@ -16,8 +17,6 @@ public class Pagamento {
     private Boolean foiRealizado;        // coluna: foi_realizado
     private Integer fkContrato;          // coluna: fk_contrato_id
     private MetodoPagamento metodoPagamento;   // coluna: metodo_pagamento
-
-    // construtor
 
     public Pagamento(Integer id, BigDecimal valor, LocalDateTime dataPagamento, Boolean foiRealizado, Integer fkContrato, MetodoPagamento metodoPagamento) {
         this.id = id;
@@ -33,7 +32,6 @@ public class Pagamento {
         this.fkContrato = fkContrato;
         this.valor = valor;
     }
-    // getters e setters
 
     public Integer getId() {
         return id;
@@ -83,7 +81,6 @@ public class Pagamento {
         metodoPagamento = metodoPagamento;
     }
 
-    // toString
     @Override
     public String toString(){
         return "%s %s %s %s %s %s"

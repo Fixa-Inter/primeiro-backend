@@ -1,4 +1,4 @@
-// Defina aqui o destino de Entrar quando a página estiver disponível.
+// Defina aqui o destino de Entrar quando a página estiver disponível
 function mostrarAviso(mensagem, desfazer, erro = false) {
   let lista = document.querySelector('.avisos-fixa');
   if (!lista) {

@@ -1,18 +1,19 @@
 package com.DTO;
 
+// Dados do cadastro público em andamento, guardados na sessão
 public class CadastroInstituicaoEnderecoDTO {
 
-    // dados da instituição
+    // Dados da instituição
 
     private String nome;
     private String emailCorporativo;
     private String dominioEmail;
     private String tipoInstituicao;
 
-    // senha
+    // Senha
     private String senha;
 
-    // dados do endereço
+    // Dados do endereço
 
     private String cnpj;
     private String rua;
@@ -24,9 +25,6 @@ public class CadastroInstituicaoEnderecoDTO {
     private String cep;
 
     public CadastroInstituicaoEnderecoDTO(){}
-
-    // getters e setters
-
 
     public String getNome() {
         return nome;

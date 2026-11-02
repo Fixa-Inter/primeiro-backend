@@ -16,24 +16,27 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
+// Login e logout da área restrita
 @WebServlet({"/login-handler", "/login"})
 public class LoginServlet extends HttpServlet {
 
-    // rota do servlet: o redirect do navegador não alcança arquivos dentro de WEB-INF
+    // Rota do servlet, pois o redirect não alcança arquivos dentro de WEB-INF
     private static final String AREA_RESTRITA = "/analiticos";
     private static final String PAGINA_LOGIN = "/WEB-INF/views/publico/login.jsp";
 
+    // Abre a tela de login
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestDispatcher dispatcher = req.getRequestDispatcher(PAGINA_LOGIN);
         dispatcher.forward(req, resp);
     }
 
+    // Executa o login ou o logout, conforme a action
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String action = req.getParameter("action");
 
-        // sem action o pedido esta mal formado (400), em vez de estourar NullPointerException
+        // Sem action o pedido é inválido (400)
         if (action == null || action.isBlank()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
@@ -66,7 +69,7 @@ public class LoginServlet extends HttpServlet {
             destino = AREA_RESTRITA;
 
         }
-        // Se houver alguma exceção de JSP, aciona o método doGet
+        // Em caso de erro de JSP, reabre a tela com a mensagem
         catch (ExcecaoDeJSP e) {
             req.setAttribute("erro", e.getMessage());
             doGet(req, resp);
@@ -92,7 +95,7 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    // === LOGIN ===
+    // Valida as credenciais e devolve o super administrador logado
     private SuperAdminDTO login(HttpServletRequest req) throws SQLException, ClassNotFoundException, ExcecaoDeJSP {
         String email = req.getParameter("email");
         if (!RegexUtils.validarEmail(email)) {
@@ -109,7 +112,7 @@ public class LoginServlet extends HttpServlet {
         try (LoginDAO dao = new LoginDAO()) {
             SuperAdminDTO usuario = dao.login(credenciais);
 
-            // Validação de login
+            // Login inválido
             if (usuario == null) {
                 throw ExcecaoDeJSP.falhaLogin();
             }
@@ -118,11 +121,11 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    // === LOGOUT ===
+    // Remove o usuário da sessão
     private void logout(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
 
-        // Finaliza a sessão do usuário
+        // Encerra a sessão do usuário
         if (session != null) {
             session.removeAttribute("usuario");
         }

@@ -1,4 +1,4 @@
-// Máscaras de CNPJ e CEP: formata enquanto digita e aceita só os dígitos do campo.
+// Máscaras de CNPJ e CEP: formata enquanto digita e aceita só dígitos
 (function () {
   function digitos(s) { return String(s || '').replace(/\D/g, ''); }
   var mascaras = {

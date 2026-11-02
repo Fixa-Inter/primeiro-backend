@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// Controla o CRUD de fotos de usuário na área restrita
 @WebServlet(name = "FotoUsuarioServlet", value = "/fotoUsuario")
 public class FotoUsuarioServlet extends HttpServlet{
 
@@ -29,6 +30,7 @@ public class FotoUsuarioServlet extends HttpServlet{
     private static final String PAGINA_CADASTRO = "/WEB-INF/views/restrita/cadastro-foto-usuario.jsp";
     private static final String PAGINA_EDICAO = "/WEB-INF/views/restrita/editar-foto-usuario.jsp";
 
+    // Abre a lista, o formulário de cadastro ou o de edição, conforme a action
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -88,6 +90,7 @@ public class FotoUsuarioServlet extends HttpServlet{
         }
     }
 
+    // Executa o cadastro, a edição ou a exclusão, conforme a action
     @Override
     protected void doPost(
             HttpServletRequest request,
@@ -112,6 +115,7 @@ public class FotoUsuarioServlet extends HttpServlet{
         }
     }
 
+    // Lista as fotos de usuário com a pesquisa da requisição
     private void listarFotos(
             HttpServletRequest request,
             HttpServletResponse response
@@ -128,6 +132,7 @@ public class FotoUsuarioServlet extends HttpServlet{
         }
     }
 
+    // Cadastra uma foto de usuário com os dados do formulário
     private void cadastrarFotoUsuario(
             HttpServletRequest request,
             HttpServletResponse response
@@ -136,7 +141,6 @@ public class FotoUsuarioServlet extends HttpServlet{
         String url = Parametros.obrigatorio(request, "url");
 
         int fkUsuario = Parametros.inteiro(request, "fkUsuario");
-
 
         FotoUsuario fotoUsuario = new FotoUsuario(
                 url,
@@ -156,6 +160,7 @@ public class FotoUsuarioServlet extends HttpServlet{
         }
     }
 
+    // Exclui uma foto de usuário pelo id da requisição
     private void deletarFotoUsuario(
             HttpServletRequest request,
             HttpServletResponse response
@@ -176,6 +181,7 @@ public class FotoUsuarioServlet extends HttpServlet{
 
     }
 
+    // Atualiza uma foto de usuário com os dados do formulário
     private void atualizarFotoUsuario(
             HttpServletRequest request,
             HttpServletResponse response
@@ -185,14 +191,13 @@ public class FotoUsuarioServlet extends HttpServlet{
 
         try (FotoUsuarioDAO dao = new FotoUsuarioDAO()) {
 
-            // Busca como está atualmente no banco
+            // Busca o registro atual no banco
             FotoUsuario original = dao.pesquisarPorId(id);
 
-            // Monta o objeto com os novos dados
+            // Monta o objeto com os dados novos
             int fkUsuario = Parametros.inteiro(request, "fkUsuario");
 
             String url = request.getParameter("url");
-
 
             FotoUsuario alterado = new FotoUsuario(
                     id,

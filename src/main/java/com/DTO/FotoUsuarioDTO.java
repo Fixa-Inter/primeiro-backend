@@ -2,7 +2,7 @@ package com.DTO;
 
 import java.time.LocalDateTime;
 
-/** Dados da foto acompanhados dos dados de identificação do usuário. */
+// Dados da foto acompanhados dos dados de identificação do usuário
 public class FotoUsuarioDTO {
     private Integer id;
     private LocalDateTime dataRegistro;

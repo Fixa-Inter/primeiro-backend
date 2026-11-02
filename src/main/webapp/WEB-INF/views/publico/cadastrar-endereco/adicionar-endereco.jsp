@@ -2,7 +2,7 @@
 <%
 String erro = (String) request.getAttribute("erro");
 String razaoSocial = (String) request.getAttribute("razaoSocial");
-// o servlet manda etapa=confirmar depois de consultar o CNPJ (ou apos erro ao finalizar)
+// O servlet manda etapa=confirmar após consultar o CNPJ ou errar ao finalizar
 boolean dadosCarregados = "confirmar".equals(request.getAttribute("etapa"));
 %>
 <!DOCTYPE html>

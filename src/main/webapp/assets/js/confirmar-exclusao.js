@@ -1,4 +1,4 @@
-// Confirmação antes de excluir: o botão Excluir da linha abre o diálogo e só envia o formulário (POST) ao confirmar.
+// Pede confirmação antes de excluir e só envia o formulário (POST) ao confirmar
 (() => {
   const dialogo = document.getElementById("exclusao-dialog");
   if (!dialogo) return;

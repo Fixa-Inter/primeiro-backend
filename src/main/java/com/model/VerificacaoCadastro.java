@@ -2,6 +2,7 @@ package com.model;
 
 import java.sql.Timestamp;
 
+// Representa a tabela verificacao_cadastro
 public class VerificacaoCadastro {
 
     private Integer id;
@@ -9,8 +10,6 @@ public class VerificacaoCadastro {
     private Timestamp dataExpiracao;
     private String email;
     private Boolean estaValido;
-
-    // construtor
 
     public VerificacaoCadastro(Integer id, String codigoVerificacao, Timestamp dataExpiracao, String email, Boolean estaValido) {
         this.id = id;
@@ -24,9 +23,6 @@ public class VerificacaoCadastro {
         this.codigoVerificacao = codigoVerificacao;
         this.email = email;
     }
-
-    // getters e setters
-
 
     public Integer getId() {
         return id;
@@ -67,8 +63,6 @@ public class VerificacaoCadastro {
     public void setEstaValido(Boolean estaValido) {
         this.estaValido = estaValido;
     }
-
-    // toString
 
     @Override
     public String toString(){
