@@ -20,12 +20,15 @@ public class ListaWeb {
         return "none";
     }
 
-    // ordenação que a seta envia ao ser clicada: crescente, e decrescente se já estiver crescente
+    // ordenação que a seta envia ao ser clicada: crescente, depois decrescente e, no terceiro clique, envia vazio (sem seta acesa) e o DAO usa a ordem padrão, ID ASC
     public static String proximaOrdenacao(String ordenacao, String campo) {
         String atual = ordenacao == null ? "" : ordenacao.toUpperCase();
 
         if ((campo + "-ASC").equals(atual)) {
             return campo + "-DESC";
+        }
+        if ((campo + "-DESC").equals(atual)) {
+            return "";
         }
         return campo + "-ASC";
     }
